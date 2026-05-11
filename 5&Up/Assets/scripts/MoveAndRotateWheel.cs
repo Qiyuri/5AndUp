@@ -2,115 +2,96 @@ using UnityEngine;
 
 public class MoveAndRotateWheel : MonoBehaviour
 {
-    [Header("Wielen")]
-    public Transform wheel1;
-    public Transform wheel2;
+    [Header("Bikes")]
+    public Transform bike1; // First bike (arrow keys)
+    public Transform bike2; // Second bike (W/A keys)
+
+    [Header("Wielen van Bike 1")]
+    public Transform bike1_wheel1; // First wheel of bike1
+    public Transform bike1_wheel2; // Second wheel of bike1
+
+    [Header("Wielen van Bike 2")]
+    public Transform bike2_wheel1; // First wheel of bike2
+    public Transform bike2_wheel2; // Second wheel of bike2
 
     [Header("Beweging")]
-    [Tooltip("Bewegingsrichting in lokale ruimte. Pas deze aan in de Inspector.")]
-    public Vector3 moveDirection = Vector3.forward;
-
     [Tooltip("Maximale snelheid van het voertuig.")]
     public float maxSpeed = 5f;
 
     [Tooltip("Hoe snel het voertuig accelereert.")]
     public float acceleration = 5f;
 
-    [Tooltip("Hoe snel het voertuig remt wanneer je Space ingedrukt houdt.")]
-    public float brakeForce = 20f;
-
-    public enum StoppieAxis
-    {
-        X,
-        Y,
-        Z
-    }
-
-    [Tooltip("Hoe ver het voertuig kantelt tijdens een stoppie.")]
-    public float stoppieAngle = 30f;
-
-    [Tooltip("De lokale as waarop de stoppie draait.")]
-    public StoppieAxis stoppieAxis = StoppieAxis.X;
-
-    [Tooltip("Hoe snel het voertuig naar de stoppie-positie kantelt.")]
-    public float stoppieSpeed = 90f;
-
     [Header("Rotatie")]
     public float rotationSpeed = 360f;
 
     [Header("Gronddetectie")]
-    [Tooltip("Controleer met wheel1 of het wiel contact maakt met de grond.")]
+    [Tooltip("Controleer met bike1 of het wiel contact maakt met de grond.")]
     public float groundCheckDistance = 0.2f;
 
-    float currentSpeed;
-    float currentStoppieAngle;
+    float bike1Speed;
+    float bike2Speed;
 
     void Update()
     {
-        float targetSpeed = 0f;
-        bool wheel1Grounded = IsWheelGrounded(wheel1);
+        // Bike 1 - Arrow Keys
+        float bike1Target = 0f;
+        if (Input.GetKey(KeyCode.UpArrow))
+            bike1Target = maxSpeed;
+        else if (Input.GetKey(KeyCode.DownArrow))
+            bike1Target = -maxSpeed;
 
-        if (Input.GetKey(KeyCode.Space))
+        bike1Speed = Mathf.MoveTowards(bike1Speed, bike1Target, acceleration * Time.deltaTime);
+
+        // Bike 2 - W and A keys
+        float bike2Target = 0f;
+        if (Input.GetKey(KeyCode.W))
+            bike2Target = maxSpeed;
+        else if (Input.GetKey(KeyCode.A))
+            bike2Target = -maxSpeed;
+
+        bike2Speed = Mathf.MoveTowards(bike2Speed, bike2Target, acceleration * Time.deltaTime);
+
+        // Move the bike objects forward
+        if (Mathf.Abs(bike1Speed) > 0.001f && bike1 != null && IsWheelGrounded(bike1))
         {
-            targetSpeed = 0f;
+            bike1.Translate(Vector3.forward * bike1Speed * Time.deltaTime, Space.Self);
         }
-        else if (wheel1Grounded)
+        if (Mathf.Abs(bike2Speed) > 0.001f && bike2 != null && IsWheelGrounded(bike2))
         {
-            if (Input.GetKey(KeyCode.W))
-                targetSpeed = maxSpeed;
-            else if (Input.GetKey(KeyCode.S))
-                targetSpeed = -maxSpeed;
-        }
-
-        float accel = Input.GetKey(KeyCode.Space) ? brakeForce : acceleration;
-        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, accel * Time.deltaTime);
-
-        if (Mathf.Abs(currentSpeed) > 0.001f)
-        {
-            Vector3 movement = moveDirection.normalized * currentSpeed * Time.deltaTime;
-            transform.Translate(movement, Space.Self);
-
-            float rotationAmount = rotationSpeed * Mathf.Sign(currentSpeed) * Time.deltaTime;
-            if (wheel1 != null)
-                wheel1.Rotate(0f, 0f, rotationAmount, Space.Self);
-            if (wheel2 != null)
-                wheel2.Rotate(0f, 0f, rotationAmount, Space.Self);
+            bike2.Translate(Vector3.forward * bike2Speed * Time.deltaTime, Space.Self);
         }
 
-        UpdateStoppie();
-    }
+        // Move the main bar object based on both bikes
+        Vector3 combinedMovement = Vector3.zero;
+        if (Mathf.Abs(bike1Speed) > 0.001f)
+            combinedMovement += Vector3.forward * bike1Speed * Time.deltaTime;
+        if (Mathf.Abs(bike2Speed) > 0.001f)
+            combinedMovement += Vector3.forward * bike2Speed * Time.deltaTime;
 
-    void UpdateStoppie()
-    {
-        float targetStoppie = 0f;
-        if (Input.GetKey(KeyCode.Space) && currentSpeed > 0.1f && IsWheelGrounded(wheel1))
+        if (combinedMovement.sqrMagnitude > 0.0001f)
         {
-            targetStoppie = stoppieAngle;
+            transform.Translate(combinedMovement * 0.5f, Space.Self);
         }
 
-        currentStoppieAngle = Mathf.MoveTowards(currentStoppieAngle, targetStoppie, stoppieSpeed * Time.deltaTime);
-        ApplyStoppieRotation();
-    }
+        // Rotate both wheels of bike 1
+        if (Mathf.Abs(bike1Speed) > 0.001f)
+        {
+            float rotationAmount = rotationSpeed * Mathf.Sign(bike1Speed) * Time.deltaTime;
+            if (bike1_wheel1 != null)
+                bike1_wheel1.Rotate(0f, 0f, rotationAmount, Space.Self);
+            if (bike1_wheel2 != null)
+                bike1_wheel2.Rotate(0f, 0f, rotationAmount, Space.Self);
+        }
 
-    void ApplyStoppieRotation()
-    {
-        Vector3 euler = transform.localEulerAngles;
-
-        if (stoppieAxis == StoppieAxis.X)
-            euler.x = currentStoppieAngle;
-        else if (stoppieAxis == StoppieAxis.Y)
-            euler.y = currentStoppieAngle;
-        else if (stoppieAxis == StoppieAxis.Z)
-            euler.z = currentStoppieAngle;
-
-        transform.localEulerAngles = euler;
-    }
-
-    float NormalizeAngle(float angle)
-    {
-        angle %= 360f;
-        if (angle > 180f) angle -= 360f;
-        return angle;
+        // Rotate both wheels of bike 2
+        if (Mathf.Abs(bike2Speed) > 0.001f)
+        {
+            float rotationAmount = rotationSpeed * Mathf.Sign(bike2Speed) * Time.deltaTime;
+            if (bike2_wheel1 != null)
+                bike2_wheel1.Rotate(0f, 0f, rotationAmount, Space.Self);
+            if (bike2_wheel2 != null)
+                bike2_wheel2.Rotate(0f, 0f, rotationAmount, Space.Self);
+        }
     }
 
     bool IsWheelGrounded(Transform wheel)
