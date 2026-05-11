@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &64925920 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8754999393114862846, guid: 08fff82ae84cf9849ade91284026dc80, type: 3}
+  m_PrefabInstance: {fileID: 7641007716492736855}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,13 +210,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.30304185, y: -0.15162653, z: 0.04890502, w: 0.93956554}
-  m_LocalPosition: {x: 1.091414, y: 3.4522724, z: -2.8450384}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.3069262, y: -0.014766271, z: 0.0047628446, w: 0.95160687}
+  m_LocalPosition: {x: 2.413, y: 6.1, z: -8.09}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 996394432}
+  m_LocalEulerAnglesHint: {x: 35.753, y: -1.778, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,6 +437,44 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &906604898 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3421158408595942515, guid: 08fff82ae84cf9849ade91284026dc80, type: 3}
+  m_PrefabInstance: {fileID: 7641007716492736855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &996394430 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3262981096639188974, guid: 08fff82ae84cf9849ade91284026dc80, type: 3}
+  m_PrefabInstance: {fileID: 7641007716492736855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &996394432 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5606079150794692710, guid: 08fff82ae84cf9849ade91284026dc80, type: 3}
+  m_PrefabInstance: {fileID: 7641007716492736855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &996394433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996394430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9336aedd2ea37ca4ca4da6d2f0ff4df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoveAndRotateWheel
+  wheel1: {fileID: 64925920}
+  wheel2: {fileID: 906604898}
+  moveDirection: {x: -1, y: 0, z: 0}
+  maxSpeed: 100
+  acceleration: 20
+  brakeForce: 50
+  stoppieAngle: 500
+  stoppieAxis: 2
+  stoppieSpeed: 100
+  rotationSpeed: 360
+  groundCheckDistance: 0.2
 --- !u!1 &1088740354
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,7 +582,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4.0923, y: 1, z: 3.4888}
+  m_LocalScale: {x: 383.8162, y: 1, z: 3.4888}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -598,14 +641,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5606079150794692710, guid: 08fff82ae84cf9849ade91284026dc80, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 330585546}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3262981096639188974, guid: 08fff82ae84cf9849ade91284026dc80, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 996394433}
   m_SourcePrefab: {fileID: 100100000, guid: 08fff82ae84cf9849ade91284026dc80, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1088740358}
