@@ -10,8 +10,8 @@ public enum WheelRotationAxis
 public class MoveAndRotateWheel : MonoBehaviour
 {
     [Header("Bikes")]
-    public Transform bike1; // First bike (arrow keys)
-    public Transform bike2; // Second bike (W/S keys)
+    public Transform bike1; // Left bike (W/S keys)
+    public Transform bike2; // Right bike (Arrow keys)
 
     [Header("Wielen van Bike 1")]
     public Transform bike1_wheel1; // First wheel of bike1
@@ -38,7 +38,7 @@ public class MoveAndRotateWheel : MonoBehaviour
     public WheelRotationAxis wheelRotationAxis = WheelRotationAxis.Z;
 
     [Header("Gronddetectie")]
-    [Tooltip("Controleer met bike1 of het wiel contact maakt met de grond.")]
+    [Tooltip("Controleer of de wielen contact maken met de grond.")]
     public float groundCheckDistance = 0.2f;
 
     float bike1Speed;
@@ -46,7 +46,7 @@ public class MoveAndRotateWheel : MonoBehaviour
 
     void Update()
     {
-        // Bike 1 - W and S keys
+        // Bike 1 - W and S keys (left side)
         float bike1Target = 0f;
         if (Input.GetKey(KeyCode.W))
             bike1Target = maxSpeed;
@@ -55,7 +55,7 @@ public class MoveAndRotateWheel : MonoBehaviour
 
         bike1Speed = Mathf.MoveTowards(bike1Speed, bike1Target, acceleration * Time.deltaTime);
 
-        // Bike 2 - Arrow Keys
+        // Bike 2 - Arrow Keys (right side)
         float bike2Target = 0f;
         if (Input.GetKey(KeyCode.UpArrow))
             bike2Target = maxSpeed;
@@ -64,42 +64,35 @@ public class MoveAndRotateWheel : MonoBehaviour
 
         bike2Speed = Mathf.MoveTowards(bike2Speed, bike2Target, acceleration * Time.deltaTime);
 
-        // Tank-like movement: forward move and pivoting
-        bool bike1Active = Mathf.Abs(bike1Target) > 0.001f;
-        bool bike2Active = Mathf.Abs(bike2Target) > 0.001f;
+        // Hamsteria-style movement: average speed for forward, difference for rotation
+        float averageSpeed = (bike1Speed + bike2Speed) * 0.5f;
+        float speedDifference = bike1Speed - bike2Speed;
 
-        if (!bike1Active && bike2Active && bike1 != null)
-        {
-            // Arrow keys only -> rotate around bike1
-            float turnDirection = bike2Target > 0f ? 1f : -1f;
-            transform.RotateAround(bike1.position, Vector3.up, turnDirection * turnSpeed * Time.deltaTime);
-        }
-        else if (!bike2Active && bike1Active && bike2 != null)
-        {
-            // W/S only -> rotate around bike2
-            float turnDirection = bike1Target < 0f ? 1f : -1f;
-            transform.RotateAround(bike2.position, Vector3.up, turnDirection * turnSpeed * Time.deltaTime);
-        }
-        else
-        {
-            float averageSpeed = (bike1Speed + bike2Speed) * 0.5f;
-            float speedDifference = bike1Speed - bike2Speed;
+        bool bike1Grounded = IsWheelGrounded(bike1);
+        bool bike2Grounded = IsWheelGrounded(bike2);
 
-            if (Mathf.Abs(averageSpeed) > 0.001f && (IsWheelGrounded(bike1) || IsWheelGrounded(bike2)))
+        // Move forward if at least one bike is grounded
+        if (Mathf.Abs(averageSpeed) > 0.001f && (bike1Grounded || bike2Grounded))
+        {
+            Vector3 moveDir = transform.TransformDirection(Vector3.forward);
+            transform.position += moveDir * averageSpeed * Time.deltaTime;
+        }
+
+        // Rotate around the opposite bike based on which one is being moved
+        if (Mathf.Abs(speedDifference) > 0.001f && (bike1Grounded || bike2Grounded))
+        {
+            bool bike1Moving = Mathf.Abs(bike1Speed) > 0.001f;
+            bool bike2Moving = Mathf.Abs(bike2Speed) > 0.001f;
+
+            if (bike1Moving && bike2 != null)
             {
-                transform.Translate(Vector3.forward * averageSpeed * Time.deltaTime, Space.Self);
+                // Bike1 is moving -> rotate around bike2
+                transform.RotateAround(bike2.position, Vector3.up, speedDifference * turnSpeed * Time.deltaTime);
             }
-
-            if (Mathf.Abs(speedDifference) > 0.001f && (IsWheelGrounded(bike1) || IsWheelGrounded(bike2)))
+            else if (bike2Moving && bike1 != null)
             {
-                if (speedDifference > 0 && bike2 != null)
-                {
-                    transform.RotateAround(bike2.position, Vector3.up, speedDifference * turnSpeed * Time.deltaTime);
-                }
-                else if (speedDifference < 0 && bike1 != null)
-                {
-                    transform.RotateAround(bike1.position, Vector3.up, -speedDifference * turnSpeed * Time.deltaTime);
-                }
+                // Bike2 is moving -> rotate around bike1
+                transform.RotateAround(bike1.position, Vector3.up, speedDifference * turnSpeed * Time.deltaTime);
             }
         }
 
