@@ -51,6 +51,15 @@ public class MoveAndRotateWheel : MonoBehaviour
     {
         bool isBraking = Input.GetKey(KeyCode.Space);
 
+        // Check ground contact for each bike
+        int bike1GroundedWheels = CountGroundedWheels(bike1_wheel1, bike1_wheel2);
+        int bike2GroundedWheels = CountGroundedWheels(bike2_wheel1, bike2_wheel2);
+        
+        // Calculate acceleration multiplier based on ground contact
+        // 2 wheels = full power, 1 wheel = half power, 0 wheels = no acceleration
+        float bike1AccelMultiplier = bike1GroundedWheels >= 2 ? 1f : (bike1GroundedWheels == 1 ? 0.5f : 0f);
+        float bike2AccelMultiplier = bike2GroundedWheels >= 2 ? 1f : (bike2GroundedWheels == 1 ? 0.5f : 0f);
+
         // Bike 1 - W and S keys (left side)
         float bike1Target = 0f;
         if (!isBraking)
@@ -61,7 +70,7 @@ public class MoveAndRotateWheel : MonoBehaviour
                 bike1Target = -maxSpeed;
         }
 
-        float bike1Accel = isBraking ? brakeForce : acceleration;
+        float bike1Accel = isBraking ? brakeForce : (acceleration * bike1AccelMultiplier);
         bike1Speed = Mathf.MoveTowards(bike1Speed, bike1Target, bike1Accel * Time.deltaTime);
 
         // Bike 2 - Arrow Keys (right side)
@@ -74,31 +83,31 @@ public class MoveAndRotateWheel : MonoBehaviour
                 bike2Target = -maxSpeed;
         }
 
-        float bike2Accel = isBraking ? brakeForce : acceleration;
+        float bike2Accel = isBraking ? brakeForce : (acceleration * bike2AccelMultiplier);
         bike2Speed = Mathf.MoveTowards(bike2Speed, bike2Target, bike2Accel * Time.deltaTime);
 
         // Hamsteria-style movement: average speed for forward, difference for rotation
         float averageSpeed = (bike1Speed + bike2Speed) * 0.5f;
         float speedDifference = bike1Speed - bike2Speed;
 
-        bool bike1Grounded = IsWheelGrounded(bike1);
-        bool bike2Grounded = IsWheelGrounded(bike2);
+        bool bike1HasGroundContact = bike1GroundedWheels > 0;
+        bool bike2HasGroundContact = bike2GroundedWheels > 0;
 
-        // Move forward if at least one bike is grounded
-        if (Mathf.Abs(averageSpeed) > 0.001f && (bike1Grounded || bike2Grounded))
+        // Move forward always (keeps momentum even when airborne)
+        if (Mathf.Abs(averageSpeed) > 0.001f)
         {
             Vector3 moveDir = transform.TransformDirection(Vector3.forward);
             transform.position += moveDir * averageSpeed * Time.deltaTime;
         }
 
-        // Rotate around the opposite bike based on which one is powered (Hamsteria style)
-        if (Mathf.Abs(speedDifference) > 0.001f && (bike1Grounded || bike2Grounded))
+        // Rotate around the opposite bike only if at least one has ground contact
+        if (Mathf.Abs(speedDifference) > 0.001f && (bike1HasGroundContact || bike2HasGroundContact))
         {
             Vector3 pivotPoint = GetHamsteriaRotationPivot();
             transform.RotateAround(pivotPoint, Vector3.up, speedDifference * turnSpeed * Time.deltaTime);
         }
 
-        // Rotate both wheels of bike 1
+        // Rotate both wheels of bike 1 (regardless of ground contact)
         if (Mathf.Abs(bike1Speed) > 0.001f)
         {
             float rotationAmount = rotationSpeed * Mathf.Sign(bike1Speed) * Time.deltaTime;
@@ -109,7 +118,7 @@ public class MoveAndRotateWheel : MonoBehaviour
                 bike1_wheel2.Rotate(axis * rotationAmount, Space.Self);
         }
 
-        // Rotate both wheels of bike 2
+        // Rotate both wheels of bike 2 (regardless of ground contact)
         if (Mathf.Abs(bike2Speed) > 0.001f)
         {
             float rotationAmount = rotationSpeed * Mathf.Sign(bike2Speed) * Time.deltaTime;
@@ -119,6 +128,14 @@ public class MoveAndRotateWheel : MonoBehaviour
             if (bike2_wheel2 != null)
                 bike2_wheel2.Rotate(axis * rotationAmount, Space.Self);
         }
+    }
+
+    int CountGroundedWheels(Transform wheel1, Transform wheel2)
+    {
+        int count = 0;
+        if (IsWheelGrounded(wheel1)) count++;
+        if (IsWheelGrounded(wheel2)) count++;
+        return count;
     }
 
     Vector3 GetHamsteriaRotationPivot()
