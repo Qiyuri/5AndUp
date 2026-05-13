@@ -419,34 +419,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BikeDuo
       objectReference: {fileID: 0}
-    - target: {fileID: 6620607720691080400, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.008233607
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620607720691080400, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.564807
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620607720691080400, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.6058893
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620607720691080400, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9629081
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620607720691080400, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.26960516
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620607720691080400, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.010592776
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620607720691080400, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.0029653113
-      objectReference: {fileID: 0}
     - target: {fileID: 7247105269004231841, guid: bfb2c7d072a7f864ca10a1925b87d51a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.2187963
