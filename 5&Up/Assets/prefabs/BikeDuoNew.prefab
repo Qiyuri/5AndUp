@@ -628,6 +628,7 @@ GameObject:
   - component: {fileID: 7151092173895748166}
   - component: {fileID: 1368055743186604721}
   - component: {fileID: 3486115080640246914}
+  - component: {fileID: 9100718104832018487}
   m_Layer: 0
   m_Name: BikeDuoNew
   m_TagString: Untagged
@@ -644,7 +645,7 @@ Transform:
   m_GameObject: {fileID: 1492216375395030547}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.04, y: 0.74, z: 6.2852163}
+  m_LocalPosition: {x: -6.3006735, y: 0.19998915, z: 4.888998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -686,13 +687,40 @@ MonoBehaviour:
   bike1_wheel2: {fileID: 1058254814379444488}
   bike2_wheel1: {fileID: 6257876854037673408}
   bike2_wheel2: {fileID: 8502663124326409042}
-  maxSpeed: 10
-  acceleration: 5
+  maxSpeed: 25
+  acceleration: 12
   brakeForce: 20
-  rotationSpeed: 360
-  turnSpeed: 100
+  rotationSpeed: 2000
+  turnSpeed: 10
   wheelRotationAxis: 0
   groundCheckDistance: 10
+--- !u!54 &9100718104832018487
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1492216375395030547}
+  serializedVersion: 5
+  m_Mass: 150
+  m_LinearDamping: 0
+  m_AngularDamping: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1763490781703923806
 GameObject:
   m_ObjectHideFlags: 0
@@ -798,7 +826,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2170134251119834684}
-  - component: {fileID: 9034188068545910246}
   m_Layer: 0
   m_Name: Bike Left
   m_TagString: Untagged
@@ -826,33 +853,6 @@ Transform:
   - {fileID: 7957605730898767903}
   m_Father: {fileID: 7151092173895748166}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &9034188068545910246
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2309143533829454154}
-  serializedVersion: 5
-  m_Mass: 150
-  m_LinearDamping: 0
-  m_AngularDamping: 300
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &2442152750147772266
 GameObject:
   m_ObjectHideFlags: 0
@@ -1910,7 +1910,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.1
   m_ForceAppPointDistance: 0
-  m_Mass: 100
+  m_Mass: 200
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
@@ -2267,7 +2267,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.1
   m_ForceAppPointDistance: 0
-  m_Mass: 100
+  m_Mass: 200
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
@@ -2840,6 +2840,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8605795356097532556}
   - component: {fileID: 4451348112081940930}
+  - component: {fileID: 9222024213985962554}
   - component: {fileID: 585504612653031661}
   - component: {fileID: 6641751134785660625}
   m_Layer: 0
@@ -2915,6 +2916,26 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &9222024213985962554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7153658292867987219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 832aa7a55af278549869b47d53644e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::camera
+  target: {fileID: 7151092173895748166}
+  distance: 5
+  minDistance: 2
+  maxDistance: 20
+  mouseSensitivity: 2
+  heightOffset: 2
+  smoothSpeed: 5
+  freecamSpeed: 5
 --- !u!81 &585504612653031661
 AudioListener:
   m_ObjectHideFlags: 0
@@ -3231,7 +3252,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.1
   m_ForceAppPointDistance: 0
-  m_Mass: 100
+  m_Mass: 200
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
@@ -3602,7 +3623,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.1
   m_ForceAppPointDistance: 0
-  m_Mass: 100
+  m_Mass: 200
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
@@ -3856,7 +3877,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5028505524186356009}
-  - component: {fileID: 374217466500736416}
   m_Layer: 0
   m_Name: Bike Right
   m_TagString: Untagged
@@ -3884,30 +3904,3 @@ Transform:
   - {fileID: 6257876854037673408}
   m_Father: {fileID: 7151092173895748166}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &374217466500736416
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9166334658476842868}
-  serializedVersion: 5
-  m_Mass: 150
-  m_LinearDamping: 0
-  m_AngularDamping: 300
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
