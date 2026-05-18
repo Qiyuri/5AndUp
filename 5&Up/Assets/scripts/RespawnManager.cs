@@ -6,15 +6,27 @@ public class RespawnManager : MonoBehaviour
     [Tooltip("Time required to hold F for respawn.")]
     public float respawnHoldTime = 1f;
 
+    [Header("Audio")]
+    [Tooltip("Sound to play when respawning.")]
+    public AudioClip respawnSound;
+
     private Vector3 spawnPosition;
     private Quaternion spawnRotation;
     private float holdTimer = 0f;
+    private AudioSource audioSource;
 
     void Start()
     {
         // Store the initial position and rotation as spawn point
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
+
+        // Get or create AudioSource
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     void Update()
@@ -43,6 +55,12 @@ public class RespawnManager : MonoBehaviour
         // Reset position and rotation
         transform.position = spawnPosition;
         transform.rotation = spawnRotation;
+
+        // Play respawn sound
+        if (audioSource != null && respawnSound != null)
+        {
+            audioSource.PlayOneShot(respawnSound);
+        }
 
         // Reset velocity/momentum by getting the movement script
         MoveAndRotateWheel moveScript = GetComponent<MoveAndRotateWheel>();
