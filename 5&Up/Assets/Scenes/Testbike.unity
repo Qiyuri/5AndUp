@@ -361,7 +361,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 3e0be82bd4695b24f844ae53c6a2ae95, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1205,11 +1205,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7151092173416170201}
   - component: {fileID: 1368055742157806126}
-  - component: {fileID: 3486115081083452445}
   - component: {fileID: 9100718105425297578}
   - component: {fileID: 9100718105425297576}
   - component: {fileID: 9100718105425297577}
-  - component: {fileID: 9100718105425297580}
   - component: {fileID: 9100718105425297579}
   m_Layer: 0
   m_Name: BikeDuoNew
@@ -1869,31 +1867,6 @@ Transform:
   - {fileID: 3609243852927035791}
   m_Father: {fileID: 2170134252132908707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3486115081083452445
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1492216375183990412}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9336aedd2ea37ca4ca4da6d2f0ff4df2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoveAndRotateWheel
-  bike1: {fileID: 2170134252132908707}
-  bike2: {fileID: 5028505524679365046}
-  bike1_wheel1: {fileID: 7957605731781884032}
-  bike1_wheel2: {fileID: 1058254814720475543}
-  bike2_wheel1: {fileID: 6257876854366027103}
-  bike2_wheel2: {fileID: 8502663125359930317}
-  maxSpeed: 25
-  acceleration: 12
-  brakeForce: 20
-  rotationSpeed: 360
-  turnSpeed: 30
-  wheelRotationAxis: 0
-  groundCheckDistance: 10
 --- !u!1 &3561390477266494414
 GameObject:
   m_ObjectHideFlags: 0
@@ -3487,7 +3460,7 @@ Transform:
   m_GameObject: {fileID: 1492216375183990412}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.96, y: 2.65, z: 6.627682}
+  m_LocalPosition: {x: -0.96, y: 3.84, z: 6.627682}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4093,9 +4066,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7153658293477556108}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.11610599, y: -0.5739729, z: 0.08264215, w: -0.80637753}
-  m_LocalPosition: {x: -3.7586546, y: 1.3763156, z: -1.1534257}
-  m_LocalScale: {x: 0.06503563, y: 1.2841218, z: 3.0651066}
+  m_LocalRotation: {x: -0.29838258, y: -0.0043901987, z: 0.0013691136, w: -0.9544353}
+  m_LocalPosition: {x: -0.26045114, y: 3.6969676, z: -4.5952363}
+  m_LocalScale: {x: 0.06503564, y: 1.2841215, z: 3.0651069}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7151092173416170201}
@@ -4357,9 +4330,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1492216375183990412}
   serializedVersion: 5
-  m_Mass: 150
-  m_LinearDamping: 0
-  m_AngularDamping: 0
+  m_Mass: 2000
+  m_LinearDamping: 0.5
+  m_AngularDamping: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -4395,8 +4368,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.5, y: 1.2973082, z: 2.1}
-  m_Center: {x: 0, y: 0.5976254, z: -0.22000003}
+  m_Size: {x: 3.2760892, y: 1.6438708, z: 2.2103848}
+  m_Center: {x: 0.024566174, y: 0.70786595, z: -0.211416}
 --- !u!114 &9100718105425297578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4415,13 +4388,13 @@ MonoBehaviour:
   rightBike: {fileID: 5028505524679365046}
   rightBike_frontWheel: {fileID: 6257876854366027103}
   rightBike_rearWheel: {fileID: 8502663125359930317}
-  maxSpeed: 25
+  maxSpeed: 20
   acceleration: 15
   brakeForce: 25
   wheelRotationSpeed: 180
   turnSpeed: 10
---- !u!135 &9100718105425297579
-SphereCollider:
+--- !u!64 &9100718105425297579
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4438,30 +4411,10 @@ SphereCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.8
-  m_Center: {x: -1.25, y: 0.7, z: -0.2}
---- !u!135 &9100718105425297580
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1492216375183990412}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.8
-  m_Center: {x: 1.25, y: 0.7, z: -0.2}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &9102573023305485674
 GameObject:
   m_ObjectHideFlags: 0
