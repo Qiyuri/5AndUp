@@ -62,15 +62,11 @@ public class RespawnManager : MonoBehaviour
             audioSource.PlayOneShot(respawnSound);
         }
 
-        // Reset velocity/momentum by getting the movement script
+        // Reset velocity/momentum using the public method
         MoveAndRotateWheel moveScript = GetComponent<MoveAndRotateWheel>();
         if (moveScript != null)
         {
-            // Reset speeds via reflection since they're private
-            moveScript.GetType().GetField("bike1Speed", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(moveScript, 0f);
-            moveScript.GetType().GetField("bike2Speed", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(moveScript, 0f);
+            moveScript.ResetSpeeds();
         }
     }
 }

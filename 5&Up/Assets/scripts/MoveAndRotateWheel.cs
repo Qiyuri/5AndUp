@@ -44,6 +44,10 @@ public class MoveAndRotateWheel : MonoBehaviour
     [Tooltip("Check if the wheels make contact with the ground.")]
     public float groundCheckDistance = 0.2f;
 
+    [Header("Air Friction")]
+    [Tooltip("Friction applied when airborne (0-1, higher = more drag).")]
+    public float airFriction = 0.8f;
+
     float bike1Speed;
     float bike2Speed;
 
@@ -55,10 +59,10 @@ public class MoveAndRotateWheel : MonoBehaviour
         int bike1GroundedWheels = CountGroundedWheels(bike1_wheel1, bike1_wheel2);
         int bike2GroundedWheels = CountGroundedWheels(bike2_wheel1, bike2_wheel2);
         
-        // Calculate acceleration multiplier based on ground contact
-        // 2 wheels = full power, 1 wheel = half power, 0 wheels = no acceleration
-        float bike1AccelMultiplier = bike1GroundedWheels >= 2 ? 1f : (bike1GroundedWheels == 1 ? 0.5f : 0f);
-        float bike2AccelMultiplier = bike2GroundedWheels >= 2 ? 1f : (bike2GroundedWheels == 1 ? 0.5f : 0f);
+        // Can only accelerate when BOTH wheels are grounded
+        // 2 wheels = full power, less than 2 wheels = no acceleration
+        float bike1AccelMultiplier = bike1GroundedWheels >= 2 ? 1f : 0f;
+        float bike2AccelMultiplier = bike2GroundedWheels >= 2 ? 1f : 0f;
 
         // Bike 1 - W and S keys (left side)
         float bike1Target = 0f;
@@ -92,8 +96,17 @@ public class MoveAndRotateWheel : MonoBehaviour
 
         bool bike1HasGroundContact = bike1GroundedWheels > 0;
         bool bike2HasGroundContact = bike2GroundedWheels > 0;
+        bool anyBikeGrounded = bike1HasGroundContact || bike2HasGroundContact;
 
-        // Move forward always (keeps momentum even when airborne)
+        // Apply air friction when airborne to prevent endless sliding
+        if (!anyBikeGrounded)
+        {
+            bike1Speed *= (1f - (airFriction * Time.deltaTime));
+            bike2Speed *= (1f - (airFriction * Time.deltaTime));
+            averageSpeed = (bike1Speed + bike2Speed) * 0.5f;
+        }
+
+        // Move forward with current momentum (even when airborne)
         if (Mathf.Abs(averageSpeed) > 0.001f)
         {
             Vector3 moveDir = transform.TransformDirection(Vector3.forward);
@@ -101,7 +114,7 @@ public class MoveAndRotateWheel : MonoBehaviour
         }
 
         // Rotate around the opposite bike only if at least one has ground contact
-        if (Mathf.Abs(speedDifference) > 0.001f && (bike1HasGroundContact || bike2HasGroundContact))
+        if (Mathf.Abs(speedDifference) > 0.001f && anyBikeGrounded)
         {
             Vector3 pivotPoint = GetHamsteriaRotationPivot();
             transform.RotateAround(pivotPoint, Vector3.up, speedDifference * turnSpeed * Time.deltaTime);
@@ -175,5 +188,12 @@ public class MoveAndRotateWheel : MonoBehaviour
             WheelRotationAxis.Z => Vector3.forward,
             _ => Vector3.forward
         };
+    }
+
+    // Public method to reset speeds (called by RespawnManager)
+    public void ResetSpeeds()
+    {
+        bike1Speed = 0f;
+        bike2Speed = 0f;
     }
 }
