@@ -1,25 +1,25 @@
 using UnityEngine;
 
-public class TestMovement : MonoBehaviour
+public class TestMovement2 : MonoBehaviour
 {
     [Header("Left Bike")]
-    public Transform leftBike; // Left bike (W/S keys)
-    public Transform leftBike_frontWheel;
-    public Transform leftBike_rearWheel;
+    public Transform leftBike2; // Left bike (W/S keys)
+    public Transform leftBike_frontWheel2;
+    public Transform leftBike_rearWheel2;
 
     [Header("Right Bike")]
-    public Transform rightBike; // Right bike (Arrow keys)
-    public Transform rightBike_frontWheel;
-    public Transform rightBike_rearWheel;
+    public Transform rightBike2; // Right bike (Arrow keys)
+    public Transform rightBike_frontWheel2;
+    public Transform rightBike_rearWheel2;
 
     [Header("Movement")]
-    public float maxSpeed = 5f;
-    public float acceleration = 5f;
-    public float brakeForce = 25f;
+    public float maxSpeed2 = 5f;
+    public float acceleration2 = 5f;
+    public float brakeForce2 = 25f;
 
     [Header("Rotation")]
-    public float wheelRotationSpeed = 360f;
-    public float turnSpeed = 100f;
+    public float wheelRotationSpeed2 = 360f;
+    public float turnSpeed2 = 100f;
 
     [Header("Air Roll Control")]
     public float airRollSpeed = 180f;
@@ -33,30 +33,30 @@ public class TestMovement : MonoBehaviour
     public float airFriction = 0.8f;
     public float airRotationMultiplier = 1.5f;
 
-    private float leftBikeSpeed;
-    private float rightBikeSpeed;
-    private Vector3 currentVelocity;
+    private float leftBikeSpeed2;
+    private float rightBikeSpeed2;
+    private Vector3 currentVelocity2;
     private Rigidbody rb;
 
-    private void Start()
+    private void Start2()
     {
-        currentVelocity = Vector3.zero;
+        currentVelocity2 = Vector3.zero;
     }
 
-    private void Update()
+    private void Update2()
     {
-        HandleInput();
-        HandleMovement();
-        HandleWheelRotation();
+        HandleInput2();
+        HandleMovement2();
+        HandleWheelRotation2();
     }
 
-    private void HandleInput()
+    private void HandleInput2()
     {
         bool isBraking = Input.GetKey(KeyCode.Space);
 
         // Check ground contact for each bike
-        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel, leftBike_rearWheel);
-        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel, rightBike_rearWheel);
+        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel2, leftBike_rearWheel2);
+        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel2, rightBike_rearWheel2);
 
         // Can only control input when wheels are fully grounded (both wheels down)
         bool leftBikeCanAccelerate = leftBikeGroundedWheels >= 2;
@@ -67,30 +67,30 @@ public class TestMovement : MonoBehaviour
         if (leftBikeCanAccelerate && !isBraking)
         {
             if (Input.GetKey(KeyCode.W))
-                leftBikeTarget = maxSpeed;
+                leftBikeTarget = maxSpeed2;
             else if (Input.GetKey(KeyCode.S))
-                leftBikeTarget = -maxSpeed;
+                leftBikeTarget = -maxSpeed2;
         }
-        leftBikeSpeed = Mathf.MoveTowards(leftBikeSpeed, leftBikeTarget, (isBraking ? brakeForce : acceleration) * Time.deltaTime);
+        leftBikeSpeed2 = Mathf.MoveTowards(leftBikeSpeed2, leftBikeTarget, (isBraking ? brakeForce2 : acceleration2) * Time.deltaTime);
 
         // Right Bike (Arrow keys) - only responsive when grounded
         float rightBikeTarget = 0f;
         if (rightBikeCanAccelerate && !isBraking)
         {
             if (Input.GetKey(KeyCode.UpArrow))
-                rightBikeTarget = maxSpeed;
+                rightBikeTarget = maxSpeed2;
             else if (Input.GetKey(KeyCode.DownArrow))
-                rightBikeTarget = -maxSpeed;
+                rightBikeTarget = -maxSpeed2;
         }
-        rightBikeSpeed = Mathf.MoveTowards(rightBikeSpeed, rightBikeTarget, (isBraking ? brakeForce : acceleration) * Time.deltaTime);
+        rightBikeSpeed2 = Mathf.MoveTowards(rightBikeSpeed2, rightBikeTarget, (isBraking ? brakeForce2 : acceleration2) * Time.deltaTime);
     }
 
-    private void HandleMovement()
+    private void HandleMovement2()
     {
         // Check ground contact
-        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel, leftBike_rearWheel);
-        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel, rightBike_rearWheel);
-        
+        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel2, leftBike_rearWheel2);
+        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel2, rightBike_rearWheel2);
+
         bool leftBikeHasGroundContact = leftBikeGroundedWheels > 0;
         bool rightBikeHasGroundContact = rightBikeGroundedWheels > 0;
         bool anyBikeGrounded = leftBikeHasGroundContact || rightBikeHasGroundContact;
@@ -98,12 +98,12 @@ public class TestMovement : MonoBehaviour
         // Apply air friction when airborne
         if (!anyBikeGrounded)
         {
-            leftBikeSpeed *= (1f - (airFriction * Time.deltaTime));
-            rightBikeSpeed *= (1f - (airFriction * Time.deltaTime));
+            leftBikeSpeed2 *= (1f - (airFriction * Time.deltaTime));
+            rightBikeSpeed2 *= (1f - (airFriction * Time.deltaTime));
         }
 
-        float averageSpeed = (leftBikeSpeed + rightBikeSpeed) * 0.5f;
-        float speedDifference = leftBikeSpeed - rightBikeSpeed;
+        float averageSpeed = (leftBikeSpeed2 + rightBikeSpeed2) * 0.5f;
+        float speedDifference = leftBikeSpeed2 - rightBikeSpeed2;
 
         // Move forward with momentum preserved
         if (Mathf.Abs(averageSpeed) > 0.001f)
@@ -114,7 +114,7 @@ public class TestMovement : MonoBehaviour
         // Rotate based on speed difference (only when grounded)
         if (Mathf.Abs(speedDifference) > 0.001f && anyBikeGrounded)
         {
-            transform.Rotate(Vector3.up * speedDifference * turnSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.up * speedDifference * turnSpeed2 * Time.deltaTime);
         }
 
         // Air control (only when airborne)
@@ -148,18 +148,18 @@ public class TestMovement : MonoBehaviour
         }
     }
 
-    private void HandleWheelRotation()
+    private void HandleWheelRotation2()
     {
-        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel, leftBike_rearWheel);
-        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel, rightBike_rearWheel);
+        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel2, leftBike_rearWheel2);
+        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel2, rightBike_rearWheel2);
 
         float leftRotationMultiplier = (leftBikeGroundedWheels == 0) ? airRotationMultiplier : 1f;
         float rightRotationMultiplier = (rightBikeGroundedWheels == 0) ? airRotationMultiplier : 1f;
 
-        RotateWheel(leftBike_frontWheel, leftBikeSpeed, leftRotationMultiplier);
-        RotateWheel(leftBike_rearWheel, leftBikeSpeed, leftRotationMultiplier);
-        RotateWheel(rightBike_frontWheel, rightBikeSpeed, rightRotationMultiplier);
-        RotateWheel(rightBike_rearWheel, rightBikeSpeed, rightRotationMultiplier);
+        RotateWheel(leftBike_frontWheel2, leftBikeSpeed2, leftRotationMultiplier);
+        RotateWheel(leftBike_rearWheel2, leftBikeSpeed2, leftRotationMultiplier);
+        RotateWheel(rightBike_frontWheel2, rightBikeSpeed2, rightRotationMultiplier);
+        RotateWheel(rightBike_rearWheel2, rightBikeSpeed2, rightRotationMultiplier);
     }
 
     private void RotateWheel(Transform wheel, float speed, float rotationMultiplier = 1f)
@@ -167,7 +167,7 @@ public class TestMovement : MonoBehaviour
         if (wheel == null || Mathf.Abs(speed) < 0.001f)
             return;
 
-        float rotationAmount = wheelRotationSpeed * Mathf.Sign(speed) * rotationMultiplier * Time.deltaTime;
+        float rotationAmount = wheelRotationSpeed2 * Mathf.Sign(speed) * rotationMultiplier * Time.deltaTime;
         wheel.Rotate(Vector3.right * rotationAmount, Space.Self);
     }
 
