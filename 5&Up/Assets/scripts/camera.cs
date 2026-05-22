@@ -123,8 +123,11 @@ public class camera : MonoBehaviour
         Vector3 desiredPosition = target.position - target.forward * distance + Vector3.up * heightOffset;
         transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
 
-        // Match target's forward direction (same rotation)
-        transform.rotation = Quaternion.Lerp(transform.rotation, target.rotation, smoothSpeed * Time.deltaTime);
+        // Only match target's yaw (left/right rotation), not pitch/roll
+        float targetYaw = target.eulerAngles.y;
+        Quaternion desiredRotation = Quaternion.Euler(transform.eulerAngles.x, targetYaw, 0f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, smoothSpeed * Time.deltaTime);
+        
         transform.LookAt(target.position + Vector3.up * (heightOffset * 0.5f));
     }
 }

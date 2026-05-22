@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class SpinAndMove : MonoBehaviour
 {
@@ -13,22 +12,31 @@ public class SpinAndMove : MonoBehaviour
     [Tooltip("Rotation speed in degrees per second.")]
     public float spinSpeed = 90f;
 
+    [Header("Hitbox Trigger")]
+    [Tooltip("The object to monitor distance from (e.g., the player car).")]
+    public Transform targetObject;
+
+    [Tooltip("Distance from targetObject to trigger movement.")]
+    public float triggerDistance = 5f;
+
     [Header("Movement")]
-    [Tooltip("Enable movement between positions.")]
-    public bool enableMovement = true;
-
-    [Tooltip("Path of waypoints to follow (at least 2).")]
-    public Transform[] waypoints = new Transform[2];
-
-    [Tooltip("Speed of movement.")]
+    [Tooltip("Speed of movement towards and from trigger.")]
     public float moveSpeed = 2f;
 
-    [Tooltip("Time to wait at each waypoint (0 = no wait).")]
-    public float waitTimeAtWaypoint = 0f;
+    [Tooltip("Time to wait at trigger object.")]
+    public float waitTimeAtTrigger = 1f;
 
-    private int currentWaypointIndex = 0;
+    private Vector3 startPosition;
+    private bool isMovingToTrigger = false;
+    private bool isWaitingAtTrigger = false;
+    private bool isMovingBack = false;
     private float waitTimer = 0f;
-    private bool isWaiting = false;
+
+    void Start()
+    {
+        // Store initial position
+        startPosition = transform.position;
+    }
 
     void Update()
     {
@@ -38,47 +46,52 @@ public class SpinAndMove : MonoBehaviour
             transform.Rotate(spinAxis.normalized * spinSpeed * Time.deltaTime);
         }
 
-        // Handle movement between waypoints
-        if (enableMovement && waypoints != null && waypoints.Length >= 2)
+        if (targetObject == null)
+            return;
+
+        // Check distance from target object to this object
+        float distanceToTarget = Vector3.Distance(targetObject.position, transform.position);
+
+        // Handle waiting at position
+        if (isWaitingAtTrigger)
         {
-            if (isWaiting)
+            waitTimer -= Time.deltaTime;
+            if (waitTimer <= 0f)
             {
-                // Wait at waypoint
-                waitTimer -= Time.deltaTime;
-                if (waitTimer <= 0f)
-                {
-                    isWaiting = false;
-                    // Move to next waypoint
-                    currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
-                }
+                isWaitingAtTrigger = false;
+                isMovingBack = true;
             }
-            else
+        }
+        // Handle moving towards trigger position
+        else if (isMovingToTrigger)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, startPosition, moveSpeed * Time.deltaTime);
+
+            // Check if returned to start
+            if (distanceToTarget < 0.5f)
             {
-                // Move towards current waypoint
-                Transform targetWaypoint = waypoints[currentWaypointIndex];
-                if (targetWaypoint != null)
-                {
-                    float distance = Vector3.Distance(transform.position, targetWaypoint.position);
-
-                    // Move towards target
-                    transform.position = Vector3.MoveTowards(transform.position, targetWaypoint.position, moveSpeed * Time.deltaTime);
-
-                    // Check if reached waypoint
-                    if (distance < 0.1f)
-                    {
-                        if (waitTimeAtWaypoint > 0f)
-                        {
-                            isWaiting = true;
-                            waitTimer = waitTimeAtWaypoint;
-                        }
-                        else
-                        {
-                            // No wait time, move to next waypoint immediately
-                            currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
-                        }
-                    }
-                }
+                isMovingToTrigger = false;
+                isWaitingAtTrigger = true;
+                waitTimer = waitTimeAtTrigger;
             }
+        }
+        // Handle moving away from target
+        else if (isMovingBack)
+        {
+            Vector3 awayDirection = (transform.position - targetObject.position).normalized;
+            Vector3 moveAwayPos = transform.position + awayDirection * moveSpeed * Time.deltaTime;
+            transform.position = moveAwayPos;
+
+            // Check if far enough
+            if (distanceToTarget > triggerDistance + 2f)
+            {
+                isMovingBack = false;
+            }
+        }
+        // Check if target is close enough to trigger activation
+        else if (!isMovingToTrigger && !isMovingBack && distanceToTarget < triggerDistance)
+        {
+            isMovingToTrigger = true;
         }
     }
 }

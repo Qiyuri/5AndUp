@@ -44,9 +44,15 @@ public class MoveAndRotateWheel : MonoBehaviour
     [Tooltip("Check if the wheels make contact with the ground.")]
     public float groundCheckDistance = 0.2f;
 
+    [Tooltip("Distance to check if wheels are near the ground (for momentum loss).")]
+    public float nearGroundDistance = 1f;
+
     [Header("Air Friction")]
     [Tooltip("Friction applied when airborne (0-1, higher = more drag).")]
     public float airFriction = 0.8f;
+
+    [Tooltip("Multiplier for wheel rotation speed when airborne.")]
+    public float airRotationMultiplier = 1.5f;
 
     float bike1Speed;
     float bike2Speed;
@@ -59,14 +65,13 @@ public class MoveAndRotateWheel : MonoBehaviour
         int bike1GroundedWheels = CountGroundedWheels(bike1_wheel1, bike1_wheel2);
         int bike2GroundedWheels = CountGroundedWheels(bike2_wheel1, bike2_wheel2);
         
-        // Can only accelerate when BOTH wheels are grounded
-        // 2 wheels = full power, less than 2 wheels = no acceleration
-        float bike1AccelMultiplier = bike1GroundedWheels >= 2 ? 1f : 0f;
-        float bike2AccelMultiplier = bike2GroundedWheels >= 2 ? 1f : 0f;
+        // Can only control input when wheels are fully grounded (both wheels down)
+        bool bike1CanAccelerate = bike1GroundedWheels >= 2;
+        bool bike2CanAccelerate = bike2GroundedWheels >= 2;
 
-        // Bike 1 - W and S keys (left side)
+        // Bike 1 - W and S keys (left side) - only responsive when grounded
         float bike1Target = 0f;
-        if (!isBraking)
+        if (bike1CanAccelerate && !isBraking)
         {
             if (Input.GetKey(KeyCode.W))
                 bike1Target = maxSpeed;
@@ -74,12 +79,12 @@ public class MoveAndRotateWheel : MonoBehaviour
                 bike1Target = -maxSpeed;
         }
 
-        float bike1Accel = isBraking ? brakeForce : (acceleration * bike1AccelMultiplier);
+        float bike1Accel = isBraking ? brakeForce : acceleration;
         bike1Speed = Mathf.MoveTowards(bike1Speed, bike1Target, bike1Accel * Time.deltaTime);
 
-        // Bike 2 - Arrow Keys (right side)
+        // Bike 2 - Arrow Keys (right side) - only responsive when grounded
         float bike2Target = 0f;
-        if (!isBraking)
+        if (bike2CanAccelerate && !isBraking)
         {
             if (Input.GetKey(KeyCode.UpArrow))
                 bike2Target = maxSpeed;
@@ -87,7 +92,7 @@ public class MoveAndRotateWheel : MonoBehaviour
                 bike2Target = -maxSpeed;
         }
 
-        float bike2Accel = isBraking ? brakeForce : (acceleration * bike2AccelMultiplier);
+        float bike2Accel = isBraking ? brakeForce : acceleration;
         bike2Speed = Mathf.MoveTowards(bike2Speed, bike2Target, bike2Accel * Time.deltaTime);
 
         // Hamsteria-style movement: average speed for forward, difference for rotation
@@ -98,7 +103,12 @@ public class MoveAndRotateWheel : MonoBehaviour
         bool bike2HasGroundContact = bike2GroundedWheels > 0;
         bool anyBikeGrounded = bike1HasGroundContact || bike2HasGroundContact;
 
-        // Apply air friction when airborne to prevent endless sliding
+        // Check if wheels are near the ground (not far up in the air)
+        bool bike1NearGround = IsWheelNearGround(bike1_wheel1) || IsWheelNearGround(bike1_wheel2);
+        bool bike2NearGround = IsWheelNearGround(bike2_wheel1) || IsWheelNearGround(bike2_wheel2);
+        bool anyBikeNearGround = bike1NearGround || bike2NearGround;
+
+        // Apply air friction when airborne to preserve momentum but slow it down gradually
         if (!anyBikeGrounded)
         {
             bike1Speed *= (1f - (airFriction * Time.deltaTime));
@@ -106,7 +116,7 @@ public class MoveAndRotateWheel : MonoBehaviour
             averageSpeed = (bike1Speed + bike2Speed) * 0.5f;
         }
 
-        // Move forward with current momentum (even when airborne)
+        // Move forward with current momentum (even when airborne, momentum is preserved)
         if (Mathf.Abs(averageSpeed) > 0.001f)
         {
             Vector3 moveDir = transform.TransformDirection(Vector3.forward);
@@ -120,10 +130,11 @@ public class MoveAndRotateWheel : MonoBehaviour
             transform.RotateAround(pivotPoint, Vector3.up, speedDifference * turnSpeed * Time.deltaTime);
         }
 
-        // Rotate both wheels of bike 1 (regardless of ground contact)
+        // Rotate both wheels of bike 1 (faster when airborne)
         if (Mathf.Abs(bike1Speed) > 0.001f)
         {
-            float rotationAmount = rotationSpeed * Mathf.Sign(bike1Speed) * Time.deltaTime;
+            float rotationMultiplier = (bike1GroundedWheels == 0) ? airRotationMultiplier : 1f;
+            float rotationAmount = rotationSpeed * Mathf.Sign(bike1Speed) * rotationMultiplier * Time.deltaTime;
             Vector3 axis = GetRotationAxis(wheelRotationAxis);
             if (bike1_wheel1 != null)
                 bike1_wheel1.Rotate(axis * rotationAmount, Space.Self);
@@ -131,10 +142,11 @@ public class MoveAndRotateWheel : MonoBehaviour
                 bike1_wheel2.Rotate(axis * rotationAmount, Space.Self);
         }
 
-        // Rotate both wheels of bike 2 (regardless of ground contact)
+        // Rotate both wheels of bike 2 (faster when airborne)
         if (Mathf.Abs(bike2Speed) > 0.001f)
         {
-            float rotationAmount = rotationSpeed * Mathf.Sign(bike2Speed) * Time.deltaTime;
+            float rotationMultiplier = (bike2GroundedWheels == 0) ? airRotationMultiplier : 1f;
+            float rotationAmount = rotationSpeed * Mathf.Sign(bike2Speed) * rotationMultiplier * Time.deltaTime;
             Vector3 axis = GetRotationAxis(wheelRotationAxis);
             if (bike2_wheel1 != null)
                 bike2_wheel1.Rotate(axis * rotationAmount, Space.Self);
@@ -177,6 +189,14 @@ public class MoveAndRotateWheel : MonoBehaviour
             return false;
 
         return Physics.Raycast(wheel.position, Vector3.down, groundCheckDistance);
+    }
+
+    bool IsWheelNearGround(Transform wheel)
+    {
+        if (wheel == null)
+            return false;
+
+        return Physics.Raycast(wheel.position, Vector3.down, nearGroundDistance);
     }
 
     Vector3 GetRotationAxis(WheelRotationAxis axis)
