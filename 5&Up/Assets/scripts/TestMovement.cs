@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TestMovement2 : MonoBehaviour
+public class TestMovement : MonoBehaviour
 {
     [Header("Left Bike")]
     public Transform leftBike2; // Left bike (W/S keys)

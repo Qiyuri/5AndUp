@@ -4196,17 +4196,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5574dd5c27d74b479ea4b96d92e3bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestMovement
-  leftBike: {fileID: 0}
-  leftBike_frontWheel: {fileID: 0}
-  leftBike_rearWheel: {fileID: 0}
-  rightBike: {fileID: 0}
-  rightBike_frontWheel: {fileID: 0}
-  rightBike_rearWheel: {fileID: 0}
-  maxSpeed: 5
-  acceleration: 5
+  leftBike: {fileID: 1263401380892250907}
+  leftBike_frontWheel: {fileID: 3719988603656135563}
+  leftBike_rearWheel: {fileID: 2855311990439956416}
+  rightBike: {fileID: 2942888917856473360}
+  rightBike_frontWheel: {fileID: 5304193900109552476}
+  rightBike_rearWheel: {fileID: 8057100126476930731}
+  maxSpeed: 25
+  acceleration: 15
   brakeForce: 25
-  wheelRotationSpeed: 360
-  turnSpeed: 100
+  wheelRotationSpeed: 180
+  turnSpeed: 10
 --- !u!1 &8453488899000646663
 GameObject:
   m_ObjectHideFlags: 0
