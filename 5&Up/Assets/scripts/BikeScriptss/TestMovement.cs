@@ -95,12 +95,8 @@ public class TestMovement : MonoBehaviour
         bool rightBikeHasGroundContact = rightBikeGroundedWheels > 0;
         bool anyBikeGrounded = leftBikeHasGroundContact || rightBikeHasGroundContact;
 
-        // Apply air friction when airborne
-        if (!anyBikeGrounded)
-        {
-            leftBikeSpeed2 *= (1f - (airFriction * Time.deltaTime));
-            rightBikeSpeed2 *= (1f - (airFriction * Time.deltaTime));
-        }
+        // Preserve momentum when airborne - no speed decay for forward/backward movement
+        // Speeds will only degrade when braking or landing
 
         float averageSpeed = (leftBikeSpeed2 + rightBikeSpeed2) * 0.5f;
         float speedDifference = leftBikeSpeed2 - rightBikeSpeed2;
