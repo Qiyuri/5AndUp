@@ -52,9 +52,18 @@ public class RespawnManager : MonoBehaviour
 
     void Respawn()
     {
+        RespawnToPosition(spawnPosition, spawnRotation);
+    }
+
+    /// <summary>
+    /// Respawn to a specific position and rotation.
+    /// Can be called from CheckPoints manager or other systems.
+    /// </summary>
+    public void RespawnToPosition(Vector3 position, Quaternion rotation)
+    {
         // Reset position and rotation
-        transform.position = spawnPosition;
-        transform.rotation = spawnRotation;
+        transform.position = position;
+        transform.rotation = rotation;
 
         // Play respawn sound
         if (audioSource != null && respawnSound != null)

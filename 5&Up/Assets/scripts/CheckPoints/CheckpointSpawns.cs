@@ -2,15 +2,21 @@ using UnityEngine;
 
 public class CheckpointSpawns : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField]
+    private int checkpointID;
+
     void Start()
     {
-        
+        // Register this checkpoint with the CheckPoints manager
+        CheckPoints checkpointsManager = FindAnyObjectByType<CheckPoints>();
+        if (checkpointsManager != null)
+        {
+            checkpointsManager.RegisterCheckpoint(checkpointID, transform.position, transform.rotation);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public int GetCheckpointID()
     {
-        
+        return checkpointID;
     }
 }
