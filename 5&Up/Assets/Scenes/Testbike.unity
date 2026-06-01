@@ -409,6 +409,25 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -2174622963318443954, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
+--- !u!114 &850235125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850235120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f791e35f092cc4c9556928560d01d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpinAndMove
+  enableSpin: 1
+  spinAxis: {x: 0, y: 0, z: 1}
+  spinSpeed: 20
+  targetObject: {fileID: 0}
+  triggerDistance: 5
+  moveSpeed: 2
+  waitTimeAtTrigger: 1
 --- !u!1 &1088740354
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,8 +534,8 @@ Transform:
   m_GameObject: {fileID: 1088740354}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 400, y: 1, z: 150}
+  m_LocalPosition: {x: 0, y: -1.9, z: 0}
+  m_LocalScale: {x: 400, y: 5, z: 150}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -819,15 +838,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
       propertyPath: m_LocalPosition.x
@@ -835,7 +854,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.3
+      value: 4.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
       propertyPath: m_LocalPosition.z
@@ -884,6 +903,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
       insertIndex: -1
       addedObject: {fileID: 850235121}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 850235125}
   m_SourcePrefab: {fileID: 100100000, guid: 24b46db0bd35ba94ebf25677ae119180, type: 3}
 --- !u!1001 &2051595469
 PrefabInstance:
@@ -2659,7 +2681,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!1 &2668791445355134987
 GameObject:
   m_ObjectHideFlags: 0

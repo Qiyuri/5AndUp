@@ -40,6 +40,7 @@ public class TestMovement : MonoBehaviour
 
     private void Start2()
     {
+        rb = GetComponent<Rigidbody>();
         currentVelocity2 = Vector3.zero;
     }
 
@@ -104,7 +105,8 @@ public class TestMovement : MonoBehaviour
         // Move forward with momentum preserved
         if (Mathf.Abs(averageSpeed) > 0.001f)
         {
-            transform.Translate(Vector3.forward * averageSpeed * Time.deltaTime);
+            Vector3 movement = transform.forward * averageSpeed * Time.deltaTime;
+            rb.MovePosition(rb.position + movement);
         }
 
         // Rotate based on speed difference (only when grounded)
