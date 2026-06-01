@@ -38,13 +38,13 @@ public class TestMovement : MonoBehaviour
     private Vector3 currentVelocity2;
     private Rigidbody rb;
 
-    private void Start2()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
         currentVelocity2 = Vector3.zero;
     }
 
-    private void Update2()
+    private void FixedUpdate()
     {
         HandleInput2();
         HandleMovement2();
