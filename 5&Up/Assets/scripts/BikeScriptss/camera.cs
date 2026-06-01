@@ -111,6 +111,9 @@ public class camera : MonoBehaviour
         if (target == null)
             return;
 
+        // Check if player is upside down
+        bool isUpsideDown = Vector3.Dot(target.up, Vector3.up) < 0f;
+
         // Handle vertical height adjustment with scroll wheel
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
         if (Mathf.Abs(scrollInput) > 0.01f)
@@ -123,10 +126,13 @@ public class camera : MonoBehaviour
         Vector3 desiredPosition = target.position - target.forward * distance + Vector3.up * heightOffset;
         transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
 
-        // Only match target's yaw (left/right rotation), not pitch/roll
-        float targetYaw = target.eulerAngles.y;
-        Quaternion desiredRotation = Quaternion.Euler(transform.eulerAngles.x, targetYaw, 0f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, smoothSpeed * Time.deltaTime);
+        // Only match target's yaw (left/right rotation), not pitch/roll - but freeze if upside down
+        if (!isUpsideDown)
+        {
+            float targetYaw = target.eulerAngles.y;
+            Quaternion desiredRotation = Quaternion.Euler(transform.eulerAngles.x, targetYaw, 0f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, smoothSpeed * Time.deltaTime);
+        }
         
         transform.LookAt(target.position + Vector3.up * (heightOffset * 0.5f));
     }

@@ -61,6 +61,10 @@ public class RespawnManager : MonoBehaviour
     /// </summary>
     public void RespawnToPosition(Vector3 position, Quaternion rotation)
     {
+        // Update the stored spawn position and rotation
+        spawnPosition = position;
+        spawnRotation = rotation;
+
         // Reset position and rotation
         transform.position = position;
         transform.rotation = rotation;
