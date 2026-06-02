@@ -28,6 +28,19 @@ public class camera : MonoBehaviour
     [Tooltip("Smoothing for camera movement.")]
     public float smoothSpeed = 5f;
 
+    [Header("Follow Mode - Axes")]
+    [Tooltip("Follow target on X axis.")]
+    public bool followX = true;
+
+    [Tooltip("Follow target on Y axis.")]
+    public bool followY = true;
+
+    [Tooltip("Follow target on Z axis.")]
+    public bool followZ = true;
+
+    [Tooltip("Follow target's rotation (yaw).")]
+    public bool followRotation = true;
+
     [Header("Freecam")]
     [Tooltip("Speed of freecam movement.")]
     public float freecamSpeed = 5f;
@@ -35,6 +48,7 @@ public class camera : MonoBehaviour
     private float rotationX = 0f;
     private float rotationY = 0f;
     private bool isFreecam = false;
+    private Vector3 lastTargetPosition;
 
     void Start()
     {
@@ -122,12 +136,26 @@ public class camera : MonoBehaviour
             heightOffset = Mathf.Clamp(heightOffset, 0.5f, 5f);
         }
 
-        // Follow target position with player's rotation
-        Vector3 desiredPosition = target.position - target.forward * distance + Vector3.up * heightOffset;
+        // Calculate offset in target's local space
+        Vector3 offsetInTargetSpace = new Vector3(0, heightOffset, -distance);
+        
+        // Convert to world space to maintain constant distance
+        Vector3 offsetInWorldSpace = target.TransformDirection(offsetInTargetSpace);
+        Vector3 idealPosition = target.position + offsetInWorldSpace;
+        
+        // Apply axis-specific following while maintaining distance
+        Vector3 desiredPosition = transform.position;
+        if (followX)
+            desiredPosition.x = idealPosition.x;
+        if (followY)
+            desiredPosition.y = idealPosition.y;
+        if (followZ)
+            desiredPosition.z = idealPosition.z;
+
         transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
 
         // Only match target's yaw (left/right rotation), not pitch/roll - but freeze if upside down
-        if (!isUpsideDown)
+        if (!isUpsideDown && followRotation)
         {
             float targetYaw = target.eulerAngles.y;
             Quaternion desiredRotation = Quaternion.Euler(transform.eulerAngles.x, targetYaw, 0f);
