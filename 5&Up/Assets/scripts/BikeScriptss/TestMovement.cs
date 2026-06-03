@@ -1,187 +1,211 @@
 using UnityEngine;
 
+/// <summary>
+/// Arcade bike controller — Hamsteria-style feel.
+///
+/// Left motor  : W / S keys
+/// Right motor : Up / Down Arrow keys
+/// Brake       : Space
+/// </summary>
 public class TestMovement : MonoBehaviour
 {
-    [Header("Left Bike")]
-    public Transform leftBike2; // Left bike (W/S keys)
-    public Transform leftBike_frontWheel2;
-    public Transform leftBike_rearWheel2;
+    // -------------------------------------------------------------------------
+    // Inspector fields
+    // -------------------------------------------------------------------------
 
-    [Header("Right Bike")]
-    public Transform rightBike2; // Right bike (Arrow keys)
-    public Transform rightBike_frontWheel2;
-    public Transform rightBike_rearWheel2;
+    [Header("Left Bike Transforms")]
+    public Transform leftBike_frontWheel;
+    public Transform leftBike_rearWheel;
+
+    [Header("Right Bike Transforms")]
+    public Transform rightBike_frontWheel;
+    public Transform rightBike_rearWheel;
 
     [Header("Movement")]
-    public float maxSpeed2 = 5f;
-    public float acceleration2 = 5f;
-    public float brakeForce2 = 25f;
+    public float maxSpeed     = 5f;
+    public float acceleration = 20f;
+    public float brakeForce   = 40f;
 
-    [Header("Rotation")]
-    public float wheelRotationSpeed2 = 360f;
-    public float turnSpeed2 = 100f;
+    [Header("Turning")]
+    public float turnSpeed = 120f;
 
-    [Header("Air Roll Control")]
-    public float airRollSpeed = 180f;
-    public float airPitchSpeed = 180f;
+    [Header("Wheel Visuals")]
+    public float wheelRotationSpeed = 360f;
 
     [Header("Ground Detection")]
+    [Tooltip("Ray length for a wheel to be considered grounded.")]
     public float groundCheckDistance = 0.2f;
-    public float nearGroundDistance = 1f;
+    [Tooltip("Assign to your ground layer to exclude the bike's own colliders.")]
+    public LayerMask groundLayerMask = Physics.DefaultRaycastLayers;
 
-    [Header("Air Friction")]
-    public float airFriction = 0.8f;
-    public float airRotationMultiplier = 1.5f;
+    [Header("Airborne — Extra Gravity")]
+    [Tooltip("Extra downward force added on top of Unity gravity while airborne.")]
+    public float extraGravityForce = 20f;
 
-    private float leftBikeSpeed2;
-    private float rightBikeSpeed2;
-    private Vector3 currentVelocity2;
+    [Header("Airborne — Self-Righting")]
+    [Tooltip("Degrees per second the bike rotates back to upright while airborne.")]
+    public float selfRightSpeed = 90f;
+
+    // -------------------------------------------------------------------------
+    // Private state
+    // -------------------------------------------------------------------------
+
+    private float leftMotorSpeed;
+    private float rightMotorSpeed;
     private Rigidbody rb;
+
+    // -------------------------------------------------------------------------
+    // Unity lifecycle
+    // -------------------------------------------------------------------------
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        currentVelocity2 = Vector3.zero;
     }
 
     private void FixedUpdate()
     {
-        HandleInput2();
-        HandleMovement2();
-        HandleWheelRotation2();
+        bool leftGrounded  = IsAnyWheelGrounded(leftBike_frontWheel,  leftBike_rearWheel);
+        bool rightGrounded = IsAnyWheelGrounded(rightBike_frontWheel, rightBike_rearWheel);
+        bool anyGrounded   = leftGrounded || rightGrounded;
+
+        HandleInput(leftGrounded, rightGrounded);
+        HandleMovement(anyGrounded);
+        HandleAirborne(anyGrounded);
+        HandleWheelRotation();
     }
 
-    private void HandleInput2()
+    // -------------------------------------------------------------------------
+    // Input — speed only changes while grounded; airborne preserves momentum
+    // -------------------------------------------------------------------------
+
+    private void HandleInput(bool leftGrounded, bool rightGrounded)
     {
-        bool isBraking = Input.GetKey(KeyCode.Space);
+        bool  braking = Input.GetKey(KeyCode.Space);
+        float dt      = Time.fixedDeltaTime;
 
-        // Check ground contact for each bike
-        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel2, leftBike_rearWheel2);
-        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel2, rightBike_rearWheel2);
-
-        // Can only control input when wheels are fully grounded (both wheels down)
-        bool leftBikeCanAccelerate = leftBikeGroundedWheels >= 2;
-        bool rightBikeCanAccelerate = rightBikeGroundedWheels >= 2;
-
-        // Left Bike (W/S keys) - only responsive when grounded
-        float leftBikeTarget = 0f;
-        if (leftBikeCanAccelerate && !isBraking)
+        if (leftGrounded)
         {
-            if (Input.GetKey(KeyCode.W))
-                leftBikeTarget = maxSpeed2;
-            else if (Input.GetKey(KeyCode.S))
-                leftBikeTarget = -maxSpeed2;
+            float target = 0f;
+            if (!braking)
+            {
+                if      (Input.GetKey(KeyCode.W)) target =  maxSpeed;
+                else if (Input.GetKey(KeyCode.S)) target = -maxSpeed;
+            }
+            leftMotorSpeed = Mathf.MoveTowards(
+                leftMotorSpeed, target,
+                (braking ? brakeForce : acceleration) * dt);
         }
-        leftBikeSpeed2 = Mathf.MoveTowards(leftBikeSpeed2, leftBikeTarget, (isBraking ? brakeForce2 : acceleration2) * Time.deltaTime);
 
-        // Right Bike (Arrow keys) - only responsive when grounded
-        float rightBikeTarget = 0f;
-        if (rightBikeCanAccelerate && !isBraking)
+        if (rightGrounded)
         {
-            if (Input.GetKey(KeyCode.UpArrow))
-                rightBikeTarget = maxSpeed2;
-            else if (Input.GetKey(KeyCode.DownArrow))
-                rightBikeTarget = -maxSpeed2;
+            float target = 0f;
+            if (!braking)
+            {
+                if      (Input.GetKey(KeyCode.UpArrow))   target =  maxSpeed;
+                else if (Input.GetKey(KeyCode.DownArrow)) target = -maxSpeed;
+            }
+            rightMotorSpeed = Mathf.MoveTowards(
+                rightMotorSpeed, target,
+                (braking ? brakeForce : acceleration) * dt);
         }
-        rightBikeSpeed2 = Mathf.MoveTowards(rightBikeSpeed2, rightBikeTarget, (isBraking ? brakeForce2 : acceleration2) * Time.deltaTime);
     }
 
-    private void HandleMovement2()
+    // -------------------------------------------------------------------------
+    // Movement — tank-steer; snap to rest when grounded and coasting
+    // -------------------------------------------------------------------------
+
+    private void HandleMovement(bool anyGrounded)
     {
-        // Check ground contact
-        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel2, leftBike_rearWheel2);
-        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel2, rightBike_rearWheel2);
+        float dt           = Time.fixedDeltaTime;
+        float averageSpeed = (leftMotorSpeed + rightMotorSpeed) * 0.5f;
+        float speedDiff    = leftMotorSpeed - rightMotorSpeed;
 
-        bool leftBikeHasGroundContact = leftBikeGroundedWheels > 0;
-        bool rightBikeHasGroundContact = rightBikeGroundedWheels > 0;
-        bool anyBikeGrounded = leftBikeHasGroundContact || rightBikeHasGroundContact;
+        // Snap residual creep to zero while grounded so the bike feels planted.
+        if (anyGrounded && Mathf.Abs(averageSpeed) < 0.05f)
+        {
+            leftMotorSpeed  = 0f;
+            rightMotorSpeed = 0f;
+            averageSpeed    = 0f;
+        }
 
-        // Preserve momentum when airborne - no speed decay for forward/backward movement
-        // Speeds will only degrade when braking or landing
-
-        float averageSpeed = (leftBikeSpeed2 + rightBikeSpeed2) * 0.5f;
-        float speedDifference = leftBikeSpeed2 - rightBikeSpeed2;
-
-        // Move forward with momentum preserved
+        // Translate forward/backward — runs grounded or airborne to carry momentum.
         if (Mathf.Abs(averageSpeed) > 0.001f)
-        {
-            Vector3 movement = transform.forward * averageSpeed * Time.deltaTime;
-            rb.MovePosition(rb.position + movement);
-        }
+            rb.MovePosition(rb.position + transform.forward * averageSpeed * dt);
 
-        // Rotate based on speed difference (only when grounded)
-        if (Mathf.Abs(speedDifference) > 0.001f && anyBikeGrounded)
-        {
-            transform.Rotate(Vector3.up * speedDifference * turnSpeed2 * Time.deltaTime);
-        }
-
-        // Air control (only when airborne)
-        if (!anyBikeGrounded)
-        {
-            float leftInput = 0f;
-            if (Input.GetKey(KeyCode.W))
-                leftInput = 1f;
-            else if (Input.GetKey(KeyCode.S))
-                leftInput = -1f;
-
-            float rightInput = 0f;
-            if (Input.GetKey(KeyCode.UpArrow))
-                rightInput = 1f;
-            else if (Input.GetKey(KeyCode.DownArrow))
-                rightInput = -1f;
-
-            // Roll around local forward axis based on left/right input difference
-            float rollInput = rightInput - leftInput;
-            if (Mathf.Abs(rollInput) > 0.001f)
-            {
-                transform.Rotate(Vector3.forward * rollInput * airRollSpeed * Time.deltaTime);
-            }
-
-            // Pitch forward/backward based on combined input
-            float pitchInput = leftInput + rightInput;
-            if (Mathf.Abs(pitchInput) > 0.001f)
-            {
-                transform.Rotate(Vector3.right * pitchInput * airPitchSpeed * Time.deltaTime);
-            }
-        }
+        // Yaw — only while grounded so the bike has ground to push against.
+        if (anyGrounded && Mathf.Abs(speedDiff) > 0.001f)
+            transform.Rotate(Vector3.up * speedDiff * turnSpeed * dt);
     }
 
-    private void HandleWheelRotation2()
+    // -------------------------------------------------------------------------
+    // Airborne — extra gravity + self-righting; skipped when grounded
+    // -------------------------------------------------------------------------
+
+    private void HandleAirborne(bool anyGrounded)
     {
-        int leftBikeGroundedWheels = CountGroundedWheels(leftBike_frontWheel2, leftBike_rearWheel2);
-        int rightBikeGroundedWheels = CountGroundedWheels(rightBike_frontWheel2, rightBike_rearWheel2);
+        if (anyGrounded) return;
 
-        float leftRotationMultiplier = (leftBikeGroundedWheels == 0) ? airRotationMultiplier : 1f;
-        float rightRotationMultiplier = (rightBikeGroundedWheels == 0) ? airRotationMultiplier : 1f;
+        float dt = Time.fixedDeltaTime;
 
-        RotateWheel(leftBike_frontWheel2, leftBikeSpeed2, leftRotationMultiplier);
-        RotateWheel(leftBike_rearWheel2, leftBikeSpeed2, leftRotationMultiplier);
-        RotateWheel(rightBike_frontWheel2, rightBikeSpeed2, rightRotationMultiplier);
-        RotateWheel(rightBike_rearWheel2, rightBikeSpeed2, rightRotationMultiplier);
+        // Pull the bike down faster to kill floaty high bounces.
+        rb.linearVelocity += Vector3.down * extraGravityForce * dt;
+
+        // Rotate back to level — preserves current yaw, corrects roll and pitch only.
+        Quaternion upright = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+        transform.rotation = Quaternion.RotateTowards(
+            transform.rotation, upright, selfRightSpeed * dt);
     }
 
-    private void RotateWheel(Transform wheel, float speed, float rotationMultiplier = 1f)
+    // -------------------------------------------------------------------------
+    // Wheel visuals — spin proportional to each motor's speed
+    // -------------------------------------------------------------------------
+
+    private void HandleWheelRotation()
     {
-        if (wheel == null || Mathf.Abs(speed) < 0.001f)
-            return;
-
-        float rotationAmount = wheelRotationSpeed2 * Mathf.Sign(speed) * rotationMultiplier * Time.deltaTime;
-        wheel.Rotate(Vector3.right * rotationAmount, Space.Self);
+        float dt = Time.fixedDeltaTime;
+        SpinWheel(leftBike_frontWheel,  leftMotorSpeed,  dt);
+        SpinWheel(leftBike_rearWheel,   leftMotorSpeed,  dt);
+        SpinWheel(rightBike_frontWheel, rightMotorSpeed, dt);
+        SpinWheel(rightBike_rearWheel,  rightMotorSpeed, dt);
     }
 
-    private int CountGroundedWheels(Transform wheel1, Transform wheel2)
+    private void SpinWheel(Transform wheel, float speed, float dt)
     {
-        int count = 0;
-        if (IsWheelGrounded(wheel1)) count++;
-        if (IsWheelGrounded(wheel2)) count++;
-        return count;
+        if (wheel == null || Mathf.Abs(speed) < 0.001f) return;
+        wheel.Rotate(
+            Vector3.right * wheelRotationSpeed * Mathf.Sign(speed) * dt,
+            Space.Self);
     }
+
+    // -------------------------------------------------------------------------
+    // Ground detection — layer-masked raycasts per wheel
+    // -------------------------------------------------------------------------
+
+    private bool IsAnyWheelGrounded(Transform w1, Transform w2)
+        => IsWheelGrounded(w1) || IsWheelGrounded(w2);
 
     private bool IsWheelGrounded(Transform wheel)
     {
-        if (wheel == null)
-            return false;
+        if (wheel == null) return false;
+        return Physics.Raycast(
+            wheel.position, Vector3.down,
+            groundCheckDistance, groundLayerMask);
+    }
 
-        return Physics.Raycast(wheel.position, Vector3.down, groundCheckDistance);
+    // -------------------------------------------------------------------------
+    // Respawn — called by RespawnManager to clear all momentum
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Zeros both motor speeds and wipes Rigidbody velocity so the bike
+    /// starts completely still after a respawn.
+    /// </summary>
+    public void ResetSpeeds()
+    {
+        leftMotorSpeed     = 0f;
+        rightMotorSpeed    = 0f;
+        rb.linearVelocity  = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 }

@@ -10,33 +10,28 @@ public class RespawnManager : MonoBehaviour
     [Tooltip("Sound to play when respawning.")]
     public AudioClip respawnSound;
 
-    private Vector3 spawnPosition;
+    private Vector3    spawnPosition;
     private Quaternion spawnRotation;
-    private float holdTimer = 0f;
+    private float      holdTimer = 0f;
     private AudioSource audioSource;
 
     void Start()
     {
-        // Store the initial position and rotation as spawn point
+        // Store the initial position and rotation as the spawn point.
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
 
-        // Get or create AudioSource
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
-        {
             audioSource = gameObject.AddComponent<AudioSource>();
-        }
     }
 
     void Update()
     {
-        // Check if F is held
         if (Input.GetKey(KeyCode.F))
         {
             holdTimer += Time.deltaTime;
 
-            // If held long enough, respawn
             if (holdTimer >= respawnHoldTime)
             {
                 Respawn();
@@ -45,7 +40,6 @@ public class RespawnManager : MonoBehaviour
         }
         else
         {
-            // Reset timer when F is released
             holdTimer = 0f;
         }
     }
@@ -57,29 +51,26 @@ public class RespawnManager : MonoBehaviour
 
     /// <summary>
     /// Respawn to a specific position and rotation.
-    /// Can be called from CheckPoints manager or other systems.
+    /// Can be called from a CheckpointManager or any other system.
     /// </summary>
     public void RespawnToPosition(Vector3 position, Quaternion rotation)
     {
-        // Update the stored spawn position and rotation
+        // Update stored spawn point so the next manual respawn
+        // returns here rather than the original start position.
         spawnPosition = position;
         spawnRotation = rotation;
 
-        // Reset position and rotation
+        // Reposition the bike.
         transform.position = position;
         transform.rotation = rotation;
 
-        // Play respawn sound
+        // Play respawn sound.
         if (audioSource != null && respawnSound != null)
-        {
             audioSource.PlayOneShot(respawnSound);
-        }
 
-        // Reset velocity/momentum using the public method
-        MoveAndRotateWheel moveScript = GetComponent<MoveAndRotateWheel>();
+        // Clear all momentum so the bike starts still.
+        TestMovement moveScript = GetComponent<TestMovement>();
         if (moveScript != null)
-        {
             moveScript.ResetSpeeds();
-        }
     }
 }
