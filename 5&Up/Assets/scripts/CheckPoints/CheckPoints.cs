@@ -73,4 +73,24 @@ public class CheckPoints : MonoBehaviour
         Debug.LogError($"Checkpoint {checkpointID} not found!");
         return Vector3.zero;
     }
+
+    /// <summary>
+    /// Set the active checkpoint as the respawn point without moving the player immediately.
+    /// </summary>
+    public void SetActiveCheckpoint(int checkpointID)
+    {
+        if (checkpoints.ContainsKey(checkpointID))
+        {
+            Checkpoint checkpoint = checkpoints[checkpointID];
+            if (respawnManager != null)
+            {
+                // Only update the spawn point, don't respawn yet
+                respawnManager.SetSpawnPoint(checkpoint.position, checkpoint.rotation);
+            }
+        }
+        else
+        {
+            Debug.LogError($"Checkpoint {checkpointID} not found!");
+        }
+    }
 }

@@ -73,4 +73,17 @@ public class RespawnManager : MonoBehaviour
         if (moveScript != null)
             moveScript.ResetSpeeds();
     }
+
+    /// <summary>
+    /// Set the spawn point without moving the player immediately.
+    /// Used by checkpoints to register as the respawn location.
+    /// </summary>
+    public void SetSpawnPoint(Vector3 position, Quaternion rotation)
+    {
+        // Only update the spawn point, don't move the player
+        spawnPosition = position;
+        spawnRotation = rotation;
+        
+        Debug.Log("Spawn point updated to new checkpoint.");
+    }
 }
