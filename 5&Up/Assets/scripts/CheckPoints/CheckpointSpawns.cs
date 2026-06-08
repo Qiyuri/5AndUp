@@ -59,10 +59,10 @@ public class CheckpointSpawns : MonoBehaviour
                     audioSource.PlayOneShot(checkpointSound);
                 }
 
-                // Spawn particle system at player's position
+                // Spawn particle system at checkpoint's position
                 if (!hasBeenActivated && particleSystemPrefab != null)
                 {
-                    Instantiate(particleSystemPrefab, other.transform.position, Quaternion.identity);
+                    Instantiate(particleSystemPrefab, transform.position, Quaternion.identity);
                 }
 
                 // Mark as activated if this is the first time

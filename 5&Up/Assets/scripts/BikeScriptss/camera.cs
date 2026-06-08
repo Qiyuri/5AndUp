@@ -3,181 +3,153 @@ using UnityEngine;
 public class camera : MonoBehaviour
 {
     [Header("Target")]
-    [Tooltip("The object the camera orbits around.")]
+    [Tooltip("The object the camera follows and orbits around.")]
     public Transform target;
 
     [Header("Camera Distance")]
-    [Tooltip("Distance from the target.")]
-    public float distance = 5f;
-
-    [Tooltip("Minimum zoom distance.")]
+    public float distance    = 5f;
     public float minDistance = 2f;
-
-    [Tooltip("Maximum zoom distance.")]
     public float maxDistance = 20f;
 
     [Header("Rotation")]
-    [Tooltip("Mouse sensitivity for rotation.")]
     public float mouseSensitivity = 2f;
 
     [Header("Height")]
-    [Tooltip("Height offset from target.")]
     public float heightOffset = 2f;
 
     [Header("Smoothing")]
-    [Tooltip("Smoothing for camera movement.")]
-    public float smoothSpeed = 5f;
+    [Tooltip("How quickly the camera moves to its desired position.")]
+    public float smoothSpeed = 8f;
 
-    [Header("Follow Mode - Axes")]
-    [Tooltip("Follow target on X axis.")]
-    public bool followX = true;
+    [Tooltip("How quickly the camera blends between follow and freecam.")]
+    public float transitionSpeed = 6f;
 
-    [Tooltip("Follow target on Y axis.")]
-    public bool followY = true;
+    // -------------------------------------------------------------------------
+    // Private state
+    // -------------------------------------------------------------------------
 
-    [Tooltip("Follow target on Z axis.")]
-    public bool followZ = true;
+    // Horizontal orbit angle — follow mode only rotates on this axis.
+    private float yaw   = 0f;
 
-    [Tooltip("Follow target's rotation (yaw).")]
-    public bool followRotation = true;
+    // Both angles used in freecam.
+    private float freecamYaw   = 0f;
+    private float freecamPitch = 10f;
 
-    [Header("Freecam")]
-    [Tooltip("Speed of freecam movement.")]
-    public float freecamSpeed = 5f;
+    private bool  isFreecam     = false;
+    private float blendT        = 0f;   // 0 = follow, 1 = freecam
 
-    private float rotationX = 0f;
-    private float rotationY = 0f;
-    private bool isFreecam = false;
-    private Vector3 lastTargetPosition;
-    private bool wasFreecam = false;
+    // Desired positions computed each frame — blended for smooth transition.
+    private Vector3 followDesired;
+    private Vector3 freecamDesired;
 
     void Start()
     {
         if (target == null)
-        {
             target = transform.parent;
-        }
+
+        // Seed yaw from the camera's current angle so there's no snap on frame 1.
+        yaw         = transform.eulerAngles.y;
+        freecamYaw  = yaw;
 
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        // Toggle freecam with right mouse button
+        if (target == null) return;
+
+        // Toggle freecam with right mouse button.
         if (Input.GetMouseButtonDown(1))
         {
             isFreecam = !isFreecam;
+
+            // When entering freecam, inherit follow cam's current yaw so
+            // it starts from the same view without a jump.
+            if (isFreecam)
+            {
+                freecamYaw   = yaw;
+                freecamPitch = 10f;
+            }
         }
 
-        if (isFreecam)
+        // ESC toggles cursor lock.
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            HandleFreecam();
+            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked
+                ? CursorLockMode.None
+                : CursorLockMode.Locked;
+        }
+
+        HandleInput();
+        UpdatePositions();
+
+        // Blend smoothly toward the active mode.
+        float blendTarget = isFreecam ? 1f : 0f;
+        blendT = Mathf.Lerp(blendT, blendTarget, transitionSpeed * Time.deltaTime);
+
+        Vector3 desiredPos  = Vector3.Lerp(followDesired, freecamDesired, blendT);
+        Vector3 lookPoint   = target.position + Vector3.up * heightOffset * 0.5f;
+
+        transform.position = Vector3.Lerp(transform.position, desiredPos, smoothSpeed * Time.deltaTime);
+        transform.LookAt(lookPoint);
+    }
+
+    // -------------------------------------------------------------------------
+    // Input
+    // -------------------------------------------------------------------------
+
+    private void HandleInput()
+    {
+        if (Cursor.lockState != CursorLockMode.Locked) return;
+
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+        if (!isFreecam)
+        {
+            // Follow mode — horizontal orbit only.
+            yaw += mouseX;
+
+            // Scroll adjusts height offset in follow mode.
+            if (Mathf.Abs(scroll) > 0.01f)
+            {
+                heightOffset -= scroll * 2f;
+                heightOffset  = Mathf.Clamp(heightOffset, 0.5f, 8f);
+            }
         }
         else
         {
-            // Reset to original follow cam POV when switching from freecam
-            if (wasFreecam)
+            // Freecam — full orbit with both axes.
+            freecamYaw   += mouseX;
+            freecamPitch -= mouseY;
+            freecamPitch  = Mathf.Clamp(freecamPitch, -60f, 60f);
+
+            // Scroll adjusts distance in freecam.
+            if (Mathf.Abs(scroll) > 0.01f)
             {
-                ResetFollowCamPOV();
-                wasFreecam = false;
+                distance -= scroll * 2f;
+                distance  = Mathf.Clamp(distance, minDistance, maxDistance);
             }
-            HandleFollowCam();
-        }
-
-        wasFreecam = isFreecam;
-
-        // Unlock cursor with ESC
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
         }
     }
 
-    void HandleFreecam()
+    // -------------------------------------------------------------------------
+    // Compute desired positions for both modes every frame
+    // -------------------------------------------------------------------------
+
+    private void UpdatePositions()
     {
-        // Handle orbital camera rotation and zoom
-        if (Cursor.lockState == CursorLockMode.Locked)
-        {
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        // --- Follow mode ---
+        // Orbits horizontally around the target, camera stays level.
+        Quaternion followRot    = Quaternion.Euler(0f, yaw, 0f);
+        Vector3    followOffset = followRot * new Vector3(0f, heightOffset, -distance);
+        followDesired = target.position + followOffset;
 
-            rotationY += mouseX;
-            rotationX -= mouseY;
-            rotationX = Mathf.Clamp(rotationX, -60f, 60f);
-        }
-
-        // Handle zoom
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scrollInput) > 0.01f)
-        {
-            distance -= scrollInput * 2f;
-            distance = Mathf.Clamp(distance, minDistance, maxDistance);
-        }
-
-        if (target == null)
-            return;
-
-        // Calculate orbital position around target
-        Vector3 direction = new Vector3(
-            Mathf.Sin(rotationY * Mathf.Deg2Rad) * Mathf.Cos(rotationX * Mathf.Deg2Rad),
-            Mathf.Sin(rotationX * Mathf.Deg2Rad),
-            -Mathf.Cos(rotationY * Mathf.Deg2Rad) * Mathf.Cos(rotationX * Mathf.Deg2Rad)
-        ).normalized;
-
-        Vector3 desiredPosition = target.position + direction * distance + Vector3.up * heightOffset;
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-        transform.LookAt(target.position + Vector3.up * (heightOffset * 0.5f));
-    }
-
-    void HandleFollowCam()
-    {
-        if (target == null)
-            return;
-
-        // Check if player is upside down
-        bool isUpsideDown = Vector3.Dot(target.up, Vector3.up) < 0f;
-
-        // Handle vertical height adjustment with scroll wheel
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scrollInput) > 0.01f)
-        {
-            heightOffset -= scrollInput * 2f;
-            heightOffset = Mathf.Clamp(heightOffset, 0.5f, 5f);
-        }
-
-        // Calculate offset in target's local space
-        Vector3 offsetInTargetSpace = new Vector3(0, heightOffset, -distance);
-        
-        // Convert to world space to maintain constant distance
-        Vector3 offsetInWorldSpace = target.TransformDirection(offsetInTargetSpace);
-        Vector3 idealPosition = target.position + offsetInWorldSpace;
-        
-        // Apply axis-specific following while maintaining distance
-        Vector3 desiredPosition = transform.position;
-        if (followX)
-            desiredPosition.x = idealPosition.x;
-        if (followY)
-            desiredPosition.y = idealPosition.y;
-        if (followZ)
-            desiredPosition.z = idealPosition.z;
-
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-
-        // Look at target without following rotation
-        transform.LookAt(target.position + Vector3.up * (heightOffset * 0.5f));
-    }
-
-    void ResetFollowCamPOV()
-    {
-        // Instantly snap to original follow cam position and rotation
-        if (target == null)
-            return;
-
-        Vector3 offsetInTargetSpace = new Vector3(0, heightOffset, -distance);
-        Vector3 offsetInWorldSpace = target.TransformDirection(offsetInTargetSpace);
-        Vector3 resetPosition = target.position + offsetInWorldSpace;
-        
-        transform.position = resetPosition;
-        transform.LookAt(target.position + Vector3.up * (heightOffset * 0.5f));
+        // --- Freecam ---
+        // Full spherical orbit: pitch + yaw around the target.
+        Quaternion freecamRot    = Quaternion.Euler(freecamPitch, freecamYaw, 0f);
+        Vector3    freecamOffset = freecamRot * new Vector3(0f, 0f, -distance);
+        freecamDesired = target.position + freecamOffset + Vector3.up * heightOffset * 0.5f;
     }
 }
