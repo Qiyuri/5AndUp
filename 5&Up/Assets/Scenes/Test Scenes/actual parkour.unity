@@ -1931,9 +1931,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1035892078}
   m_SourcePrefab: {fileID: 100100000, guid: 21b8c094757843f4384013f00d455c90, type: 3}
---- !u!4 &392635467 stripped
+--- !u!4 &408092124 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 7481077119392225819, guid: f27246ef404f00d46ad77672c535a17a, type: 3}
+  m_CorrespondingSourceObject: {fileID: 5816425718914804711, guid: f27246ef404f00d46ad77672c535a17a, type: 3}
   m_PrefabInstance: {fileID: 821350710}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &421578227
@@ -3703,7 +3703,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3338563820295511048, guid: f27246ef404f00d46ad77672c535a17a, type: 3}
       propertyPath: groundCheckDistance
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3338563820295511048, guid: f27246ef404f00d46ad77672c535a17a, type: 3}
       propertyPath: leftBike_frontWheel
@@ -3791,10 +3791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 7481077119392225819, guid: f27246ef404f00d46ad77672c535a17a, type: 3}
-      insertIndex: 0
-      addedObject: {fileID: 1566743027}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f27246ef404f00d46ad77672c535a17a, type: 3}
 --- !u!1001 &829724754
@@ -7261,14 +7258,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 832aa7a55af278549869b47d53644e26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::camera
-  target: {fileID: 392635467}
+  target: {fileID: 408092124}
   distance: 5
   minDistance: 2
   maxDistance: 20
-  mouseSensitivity: 2
   heightOffset: 2
-  smoothSpeed: 5
-  transitionSpeed: 8
+  mouseSensitivity: 2
+  autoFollowSpeed: 50
+  autoFollowThreshold: 0.5
+  rotationSmoothing: 1
 --- !u!4 &1566743027
 Transform:
   m_ObjectHideFlags: 0
@@ -7278,11 +7276,11 @@ Transform:
   m_GameObject: {fileID: 1566743022}
   serializedVersion: 2
   m_LocalRotation: {x: 0.121592976, y: -0, z: -0, w: 0.99258006}
-  m_LocalPosition: {x: 0.000030517578, y: 3.1539814, z: -4.7545547}
+  m_LocalPosition: {x: 337.0043, y: 3.153881, z: 116.83257}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 392635467}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 13.968, y: 0, z: 0}
 --- !u!1001 &1627999113
 PrefabInstance:
@@ -14404,6 +14402,7 @@ SceneRoots:
   - {fileID: 773981362}
   - {fileID: 66392114}
   - {fileID: 1640629237}
+  - {fileID: 1566743027}
   - {fileID: 821350710}
   - {fileID: 7067379718723344353}
   - {fileID: 2033982041}
