@@ -58,25 +58,21 @@ public class camera : MonoBehaviour
 
         float dt = Time.fixedDeltaTime;
 
+        HandleCursorLock();
+        HandleInput();
         HandleAutoFollow(dt);
         ComputeDesired();
 
-        // Rotation follows instantly with no smoothing
-        smoothedRotation = desiredRotation;
-
-        previousTargetPosition = target.position;
-    }
-
-    void LateUpdate()
-    {
-        if (target == null) return;
-
-        HandleCursorLock();
-        HandleInput();
+        // Apply light smoothing to reduce jitter
+        smoothedRotation = Quaternion.Lerp(
+            smoothedRotation, desiredRotation,
+            rotationSmoothing * dt);
 
         // Position is set directly with no smoothing.
         transform.position = ComputeDesiredPosition();
         transform.rotation = smoothedRotation;
+
+        previousTargetPosition = target.position;
     }
 
     // -------------------------------------------------------------------------
@@ -118,18 +114,25 @@ public class camera : MonoBehaviour
     }
 
     // -------------------------------------------------------------------------
-    // Auto-follow — rotates yaw to stay behind the target when moving
+    // Auto-follow — rotates yaw to stay behind the target based on target's facing direction
     // -------------------------------------------------------------------------
 
     private void HandleAutoFollow(float dt)
     {
+        if (target == null) return;
+
         Vector3 delta           = target.position - previousTargetPosition;
         Vector3 horizontalDelta = new Vector3(delta.x, 0f, delta.z);
 
+        // Only auto-follow if the character is moving fast enough
         if (horizontalDelta.magnitude / dt < autoFollowThreshold)
             return;
 
-        float targetYaw = Mathf.Atan2(horizontalDelta.x, horizontalDelta.z) * Mathf.Rad2Deg;
+        // Use the target's forward direction
+        Vector3 targetForward = new Vector3(target.forward.x, 0f, target.forward.z).normalized;
+        float targetYaw = Mathf.Atan2(targetForward.x, targetForward.z) * Mathf.Rad2Deg;
+        
+        // Smoothly rotate to face the target's direction
         yaw = Mathf.LerpAngle(yaw, targetYaw, autoFollowSpeed * dt);
     }
 
