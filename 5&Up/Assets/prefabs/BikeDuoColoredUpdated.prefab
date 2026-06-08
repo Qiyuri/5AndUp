@@ -940,7 +940,7 @@ MonoBehaviour:
   groundCheckDistance: 5
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 59
   extraGravityForce: 20
   selfRightSpeed: 90
 --- !u!54 &7217346928080095453

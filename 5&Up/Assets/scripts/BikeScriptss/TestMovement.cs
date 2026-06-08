@@ -84,30 +84,79 @@ public class TestMovement : MonoBehaviour
         bool  braking = Input.GetKey(KeyCode.Space);
         float dt      = Time.fixedDeltaTime;
 
-        if (leftGrounded)
-        {
-            float target = 0f;
-            if (!braking)
-            {
-                if      (Input.GetKey(KeyCode.W)) target =  maxSpeed;
-                else if (Input.GetKey(KeyCode.S)) target = -maxSpeed;
-            }
-            leftMotorSpeed = Mathf.MoveTowards(
-                leftMotorSpeed, target,
-                (braking ? brakeForce : acceleration) * dt);
-        }
+        bool isMultiplayer = GameModeManager.IsMultiplayer();
 
-        if (rightGrounded)
+        if (isMultiplayer)
         {
-            float target = 0f;
+            // Multiplayer: left bike uses W/S, right bike uses Up/Down
+            if (leftGrounded)
+            {
+                float target = 0f;
+                if (!braking)
+                {
+                    if      (Input.GetKey(KeyCode.W)) target =  maxSpeed;
+                    else if (Input.GetKey(KeyCode.S)) target = -maxSpeed;
+                }
+                leftMotorSpeed = Mathf.MoveTowards(
+                    leftMotorSpeed, target,
+                    (braking ? brakeForce : acceleration) * dt);
+            }
+
+            if (rightGrounded)
+            {
+                float target = 0f;
+                if (!braking)
+                {
+                    if      (Input.GetKey(KeyCode.UpArrow))   target =  maxSpeed;
+                    else if (Input.GetKey(KeyCode.DownArrow)) target = -maxSpeed;
+                }
+                rightMotorSpeed = Mathf.MoveTowards(
+                    rightMotorSpeed, target,
+                    (braking ? brakeForce : acceleration) * dt);
+            }
+        }
+        else
+        {
+            // Singleplayer: W/S for forward/backward, A/D for tank steering
+            float forwardTarget = 0f;
             if (!braking)
             {
-                if      (Input.GetKey(KeyCode.UpArrow))   target =  maxSpeed;
-                else if (Input.GetKey(KeyCode.DownArrow)) target = -maxSpeed;
+                if      (Input.GetKey(KeyCode.W)) forwardTarget =  maxSpeed;
+                else if (Input.GetKey(KeyCode.S)) forwardTarget = -maxSpeed;
             }
-            rightMotorSpeed = Mathf.MoveTowards(
-                rightMotorSpeed, target,
-                (braking ? brakeForce : acceleration) * dt);
+
+            float turnInput = 0f;
+            if      (Input.GetKey(KeyCode.A)) turnInput = -1f;
+            else if (Input.GetKey(KeyCode.D)) turnInput =  1f;
+
+            float decel = (braking ? brakeForce : acceleration) * dt;
+            
+            // Apply forward/backward movement
+            if (leftGrounded)
+            {
+                leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, forwardTarget, decel);
+            }
+            
+            if (rightGrounded)
+            {
+                rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, forwardTarget, decel);
+            }
+
+            // Apply tank steering with A/D
+            // A turns left (increase left motor, reduce right motor)
+            // D turns right (reduce left motor, increase right motor)
+            if (turnInput != 0f)
+            {
+                float steeringAmount = maxSpeed * turnInput * 0.5f;
+                if (leftGrounded)
+                {
+                    leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, forwardTarget + steeringAmount, decel);
+                }
+                if (rightGrounded)
+                {
+                    rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, forwardTarget - steeringAmount, decel);
+                }
+            }
         }
     }
 
