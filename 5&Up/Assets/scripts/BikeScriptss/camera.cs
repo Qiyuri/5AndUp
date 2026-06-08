@@ -19,31 +19,36 @@ public class camera : MonoBehaviour
     public float mouseSensitivity = 2f;
 
     [Header("Auto-Follow")]
-    [Tooltip("How quickly the camera snaps behind the player when moving.")]
-    public float autoFollowSpeed = 3f;
-    [Tooltip("How fast the target must be moving before auto-follow kicks in.")]
+    [Tooltip("How quickly the camera yaw snaps behind the player when moving.")]
+    public float autoFollowSpeed = 5f;
+    [Tooltip("How fast the target must be moving (m/s) before auto-follow kicks in.")]
     public float autoFollowThreshold = 0.5f;
 
     [Header("Smoothing")]
-    [Tooltip("How quickly the camera rotates to look at the target.")]
-    public float rotationSmoothing = 10f;
+    [Tooltip("How quickly the camera position smooths toward its desired spot.")]
+    public float positionSmoothing = 10f;
 
     [Header("Manual Look")]
     [Tooltip("Vertical angle range when manually looking.")]
     public float minPitch = -30f;
-    public float maxPitch =  60f;
+    public float maxPitch =  70f;
 
     // -------------------------------------------------------------------------
     // Private state
     // -------------------------------------------------------------------------
 
-    private float      yaw          = 0f;
-    private float      pitch        = 10f;
-    private bool       cursorLocked = false;
-    private bool       isManualLook = false;   // True only while right mouse is held
-    private Vector3    previousTargetPosition;
-    private Quaternion smoothedRotation;
-    private Quaternion desiredRotation;
+    private float   yaw;
+    private float   pitch        = 10f;
+    private bool    cursorLocked = false;
+
+    // True the moment the player starts moving; false again once they stop.
+    private bool    playerIsMoving = false;
+
+    private Vector3 previousTargetPosition;
+    private float   smoothedSpeed = 0f;   // low-pass filtered speed to avoid jitter
+
+    // Smoothed world position of the camera.
+    private Vector3 smoothedPosition;
 
     void Start()
     {
@@ -51,54 +56,63 @@ public class camera : MonoBehaviour
             target = transform.parent;
 
         yaw = transform.eulerAngles.y;
-        previousTargetPosition = target != null ? target.position : Vector3.zero;
+        pitch = Mathf.Clamp(transform.eulerAngles.x, minPitch, maxPitch);
 
-        smoothedRotation = transform.rotation;
-        desiredRotation  = transform.rotation;
+        previousTargetPosition = target != null ? target.position : Vector3.zero;
+        smoothedPosition       = transform.position;
 
         SetCursorLock(false);
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         if (target == null) return;
 
-        float dt = Time.fixedDeltaTime;
+        float dt = Time.deltaTime;
 
+        // ── Movement detection (smoothed to avoid floating-point jitter) ────────
         Vector3 delta           = target.position - previousTargetPosition;
         Vector3 horizontalDelta = new Vector3(delta.x, 0f, delta.z);
-        bool    isMoving        = horizontalDelta.magnitude / dt >= autoFollowThreshold;
+        float   rawSpeed        = horizontalDelta.magnitude / Mathf.Max(dt, 0.0001f);
+        // Low-pass filter: rises quickly, falls slowly — avoids 1-frame spikes
+        smoothedSpeed   = rawSpeed > smoothedSpeed
+            ? Mathf.Lerp(smoothedSpeed, rawSpeed, 25f * dt)   // fast rise
+            : Mathf.Lerp(smoothedSpeed, rawSpeed,  8f * dt);  // slow fall
+        playerIsMoving  = smoothedSpeed >= autoFollowThreshold;
 
+        // ── Input ─────────────────────────────────────────────────────────────
         HandleCursorLock();
-        HandleInput(isMoving);
+        HandleInput();
 
-        // Auto-follow only runs when the player is not manually looking.
-        if (isMoving && !isManualLook)
-            HandleAutoFollow(dt, horizontalDelta);
-
-        ComputeDesired();
-
-        // Apply smoothing only when NOT in manual look mode (for responsive feel while looking)
-        if (!isManualLook)
+        // ── Auto-follow yaw only while moving ─────────────────────────────────
+        // Pitch and distance are NEVER touched by auto-follow — they stay
+        // exactly where the player left them.
+        if (playerIsMoving)
         {
-            smoothedRotation = Quaternion.Lerp(
-                smoothedRotation, desiredRotation,
-                rotationSmoothing * dt);
-        }
-        else
-        {
-            // No smoothing when manually looking — immediate response
-            smoothedRotation = desiredRotation;
+            Vector3 flatForward = new Vector3(target.forward.x, 0f, target.forward.z);
+            if (flatForward.sqrMagnitude > 0.001f)
+            {
+                float targetYaw = Mathf.Atan2(flatForward.x, flatForward.z) * Mathf.Rad2Deg;
+                yaw = Mathf.LerpAngle(yaw, targetYaw, autoFollowSpeed * dt);
+            }
         }
 
-        transform.position = ComputeDesiredPosition();
-        transform.rotation = smoothedRotation;
+        // ── Compute desired position & rotation ───────────────────────────────
+        Vector3    desiredPos = ComputeDesiredPosition();
+        Vector3    lookPoint  = target.position + Vector3.up * heightOffset * 0.5f;
+        Quaternion desiredRot = Quaternion.LookRotation(lookPoint - desiredPos, Vector3.up);
+
+        // ── Smooth position, snap rotation ────────────────────────────────────
+        smoothedPosition = Vector3.Lerp(smoothedPosition, desiredPos, positionSmoothing * dt);
+
+        transform.position = smoothedPosition;
+        transform.rotation = desiredRot;
 
         previousTargetPosition = target.position;
     }
 
     // -------------------------------------------------------------------------
-    // Cursor lock — left click to lock, Tab or Esc to unlock
+    // Cursor lock
     // -------------------------------------------------------------------------
 
     private void HandleCursorLock()
@@ -118,12 +132,12 @@ public class camera : MonoBehaviour
     }
 
     // -------------------------------------------------------------------------
-    // Input — right mouse held = free look; released = back to auto-follow
+    // Input — mouse always rotates freely; scroll always zooms
     // -------------------------------------------------------------------------
 
-    private void HandleInput(bool isMoving)
+    private void HandleInput()
     {
-        // Scroll zoom always works.
+        // Zoom — always works.
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (Mathf.Abs(scroll) > 0.01f)
         {
@@ -133,42 +147,19 @@ public class camera : MonoBehaviour
 
         if (!cursorLocked) return;
 
-        // Right mouse button toggles manual look mode.
-        if (Input.GetMouseButtonDown(1))
-        {
-            isManualLook = !isManualLook;
-        }
+        // Mouse drag always orbits the camera freely (both axes).
+        // Auto-follow will ease yaw back behind the player once they move,
+        // but pitch and distance are always preserved.
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        if (isManualLook)
-        {
-            // Full orbit — both axes — while in manual look mode.
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-            yaw   += mouseX;
-            pitch -= mouseY;
-            pitch  = Mathf.Clamp(pitch, minPitch, maxPitch);
-        }
-        // When exiting manual look mode, distance and pitch are preserved
-        // and auto-follow will gradually take over.
+        yaw   += mouseX;
+        pitch -= mouseY;
+        pitch  = Mathf.Clamp(pitch, minPitch, maxPitch);
     }
 
     // -------------------------------------------------------------------------
-    // Auto-follow — eases yaw behind the target; pitch returns to neutral
-    // -------------------------------------------------------------------------
-
-    private void HandleAutoFollow(float dt, Vector3 horizontalDelta)
-    {
-        Vector3 targetForward = new Vector3(target.forward.x, 0f, target.forward.z).normalized;
-        float   targetYaw     = Mathf.Atan2(targetForward.x, targetForward.z) * Mathf.Rad2Deg;
-        yaw = Mathf.LerpAngle(yaw, targetYaw, autoFollowSpeed * dt);
-
-        // Ease pitch back to a neutral angle so the view isn't stuck tilted.
-        pitch = Mathf.Lerp(pitch, 10f, autoFollowSpeed * dt);
-    }
-
-    // -------------------------------------------------------------------------
-    // Position and rotation helpers
+    // Position helper
     // -------------------------------------------------------------------------
 
     private Vector3 ComputeDesiredPosition()
@@ -176,12 +167,5 @@ public class camera : MonoBehaviour
         Quaternion orbitRotation = Quaternion.Euler(pitch, yaw, 0f);
         Vector3    orbitOffset   = orbitRotation * new Vector3(0f, 0f, -distance);
         return target.position + orbitOffset + Vector3.up * heightOffset;
-    }
-
-    private void ComputeDesired()
-    {
-        Vector3 desiredPos = ComputeDesiredPosition();
-        Vector3 lookPoint  = target.position + Vector3.up * heightOffset * 0.5f;
-        desiredRotation    = Quaternion.LookRotation(lookPoint - desiredPos, Vector3.up);
     }
 }
