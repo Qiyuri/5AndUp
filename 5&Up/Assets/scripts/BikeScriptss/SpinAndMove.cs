@@ -12,25 +12,26 @@ public class SpinAndMove : MonoBehaviour
     [Tooltip("Rotation speed in degrees per second.")]
     public float spinSpeed = 90f;
 
-    [Header("Hitbox Trigger")]
-    [Tooltip("The object to monitor distance from (e.g., the player car).")]
-    public Transform targetObject;
+    [Header("Travel Points")]
+    [Tooltip("First point to travel to.")]
+    public Transform pointA;
 
-    [Tooltip("Distance from targetObject to trigger movement.")]
-    public float triggerDistance = 5f;
+    [Tooltip("Second point to travel to.")]
+    public Transform pointB;
 
     [Header("Movement")]
-    [Tooltip("Speed of movement towards and from trigger.")]
-    public float moveSpeed = 2f;
+    [Tooltip("Speed of movement towards point B.")]
+    public float forwardSpeed = 2f;
 
-    [Tooltip("Time to wait at trigger object.")]
-    public float waitTimeAtTrigger = 1f;
+    [Tooltip("Speed of movement back to point A (faster return).")]
+    public float backwardSpeed = 5f;
+
+    [Tooltip("Acceleration when moving forward.")]
+    public float forwardAcceleration = 1f;
 
     private Vector3 startPosition;
-    private bool isMovingToTrigger = false;
-    private bool isWaitingAtTrigger = false;
-    private bool isMovingBack = false;
-    private float waitTimer = 0f;
+    private bool movingToB = true;
+    private float currentForwardSpeed = 0f;
 
     void Start()
     {
@@ -46,52 +47,34 @@ public class SpinAndMove : MonoBehaviour
             transform.Rotate(spinAxis.normalized * spinSpeed * Time.deltaTime);
         }
 
-        if (targetObject == null)
+        if (pointA == null || pointB == null)
             return;
 
-        // Check distance from target object to this object
-        float distanceToTarget = Vector3.Distance(targetObject.position, transform.position);
-
-        // Handle waiting at position
-        if (isWaitingAtTrigger)
+        // Determine target position
+        Vector3 targetPosition = movingToB ? pointB.position : pointA.position;
+        
+        // Determine current speed
+        float currentSpeed;
+        if (movingToB)
         {
-            waitTimer -= Time.deltaTime;
-            if (waitTimer <= 0f)
-            {
-                isWaitingAtTrigger = false;
-                isMovingBack = true;
-            }
+            // Moving forward - accelerate up to forwardSpeed
+            currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, forwardSpeed, forwardAcceleration * Time.deltaTime);
+            currentSpeed = currentForwardSpeed;
         }
-        // Handle moving towards trigger position
-        else if (isMovingToTrigger)
+        else
         {
-            transform.position = Vector3.MoveTowards(transform.position, startPosition, moveSpeed * Time.deltaTime);
-
-            // Check if returned to start
-            if (distanceToTarget < 0.5f)
-            {
-                isMovingToTrigger = false;
-                isWaitingAtTrigger = true;
-                waitTimer = waitTimeAtTrigger;
-            }
+            // Moving backward - use backwardSpeed (faster return)
+            currentForwardSpeed = 0f; // Reset acceleration for next forward movement
+            currentSpeed = backwardSpeed;
         }
-        // Handle moving away from target
-        else if (isMovingBack)
-        {
-            Vector3 awayDirection = (transform.position - targetObject.position).normalized;
-            Vector3 moveAwayPos = transform.position + awayDirection * moveSpeed * Time.deltaTime;
-            transform.position = moveAwayPos;
+        
+        // Move towards target
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, currentSpeed * Time.deltaTime);
 
-            // Check if far enough
-            if (distanceToTarget > triggerDistance + 2f)
-            {
-                isMovingBack = false;
-            }
-        }
-        // Check if target is close enough to trigger activation
-        else if (!isMovingToTrigger && !isMovingBack && distanceToTarget < triggerDistance)
+        // Check if reached target, then switch direction
+        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
         {
-            isMovingToTrigger = true;
+            movingToB = !movingToB;
         }
     }
 }

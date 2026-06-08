@@ -49,6 +49,7 @@ public class camera : MonoBehaviour
     private float rotationY = 0f;
     private bool isFreecam = false;
     private Vector3 lastTargetPosition;
+    private bool wasFreecam = false;
 
     void Start()
     {
@@ -74,8 +75,16 @@ public class camera : MonoBehaviour
         }
         else
         {
+            // Reset to original follow cam POV when switching from freecam
+            if (wasFreecam)
+            {
+                ResetFollowCamPOV();
+                wasFreecam = false;
+            }
             HandleFollowCam();
         }
+
+        wasFreecam = isFreecam;
 
         // Unlock cursor with ESC
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -154,14 +163,21 @@ public class camera : MonoBehaviour
 
         transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
 
-        // Only match target's yaw (left/right rotation), not pitch/roll - but freeze if upside down
-        if (!isUpsideDown && followRotation)
-        {
-            float targetYaw = target.eulerAngles.y;
-            Quaternion desiredRotation = Quaternion.Euler(transform.eulerAngles.x, targetYaw, 0f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, smoothSpeed * Time.deltaTime);
-        }
+        // Look at target without following rotation
+        transform.LookAt(target.position + Vector3.up * (heightOffset * 0.5f));
+    }
+
+    void ResetFollowCamPOV()
+    {
+        // Instantly snap to original follow cam position and rotation
+        if (target == null)
+            return;
+
+        Vector3 offsetInTargetSpace = new Vector3(0, heightOffset, -distance);
+        Vector3 offsetInWorldSpace = target.TransformDirection(offsetInTargetSpace);
+        Vector3 resetPosition = target.position + offsetInWorldSpace;
         
+        transform.position = resetPosition;
         transform.LookAt(target.position + Vector3.up * (heightOffset * 0.5f));
     }
 }
