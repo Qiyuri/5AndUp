@@ -117,45 +117,68 @@ public class TestMovement : MonoBehaviour
         }
         else
         {
-            // Singleplayer: W/S for forward/backward, A/D for tank steering
-            float forwardTarget = 0f;
-            if (!braking)
-            {
-                if      (Input.GetKey(KeyCode.W)) forwardTarget =  maxSpeed;
-                else if (Input.GetKey(KeyCode.S)) forwardTarget = -maxSpeed;
-            }
-
-            float turnInput = 0f;
-            if      (Input.GetKey(KeyCode.A)) turnInput = -1f;
-            else if (Input.GetKey(KeyCode.D)) turnInput =  1f;
+            // Singleplayer: W/S for forward/backward, A/D for steering
+            bool inputW = Input.GetKey(KeyCode.W);
+            bool inputS = Input.GetKey(KeyCode.S);
+            bool inputA = Input.GetKey(KeyCode.A);
+            bool inputD = Input.GetKey(KeyCode.D);
 
             float decel = (braking ? brakeForce : acceleration) * dt;
             
-            // Apply forward/backward movement
-            if (leftGrounded)
+            // Determine left motor target
+            float leftTarget = 0f;
+            if (!braking)
             {
-                leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, forwardTarget, decel);
-            }
-            
-            if (rightGrounded)
-            {
-                rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, forwardTarget, decel);
+                if (inputW && inputA)
+                    leftTarget = 0f; // W+A: left neutral
+                else if (inputW && inputD)
+                    leftTarget = maxSpeed; // W+D: left forward
+                else if (inputW)
+                    leftTarget = maxSpeed; // W alone: left forward
+                else if (inputS && inputA)
+                    leftTarget = 0f; // S+A: left neutral
+                else if (inputS && inputD)
+                    leftTarget = -maxSpeed; // S+D: left backward
+                else if (inputS)
+                    leftTarget = -maxSpeed; // S alone: left backward
+                else if (inputA)
+                    leftTarget = -maxSpeed; // A alone: left backward
+                else if (inputD)
+                    leftTarget = maxSpeed; // D alone: left forward
             }
 
-            // Apply tank steering with A/D
-            // A turns left (increase left motor, reduce right motor)
-            // D turns right (reduce left motor, increase right motor)
-            if (turnInput != 0f)
+            // Determine right motor target
+            float rightTarget = 0f;
+            if (!braking)
             {
-                float steeringAmount = maxSpeed * turnInput * 0.5f;
-                if (leftGrounded)
-                {
-                    leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, forwardTarget + steeringAmount, decel);
-                }
-                if (rightGrounded)
-                {
-                    rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, forwardTarget - steeringAmount, decel);
-                }
+                if (inputW && inputA)
+                    rightTarget = maxSpeed; // W+A: right forward
+                else if (inputW && inputD)
+                    rightTarget = 0f; // W+D: right neutral
+                else if (inputW)
+                    rightTarget = maxSpeed; // W alone: right forward
+                else if (inputS && inputA)
+                    rightTarget = -maxSpeed; // S+A: right backward
+                else if (inputS && inputD)
+                    rightTarget = 0f; // S+D: right neutral
+                else if (inputS)
+                    rightTarget = -maxSpeed; // S alone: right backward
+                else if (inputA)
+                    rightTarget = maxSpeed; // A alone: right forward
+                else if (inputD)
+                    rightTarget = -maxSpeed; // D alone: right backward
+            }
+            
+            // Apply left motor speed
+            if (leftGrounded)
+            {
+                leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, leftTarget, decel);
+            }
+            
+            // Apply right motor speed
+            if (rightGrounded)
+            {
+                rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, rightTarget, decel);
             }
         }
     }
