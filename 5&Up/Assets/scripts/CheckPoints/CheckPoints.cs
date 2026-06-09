@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class CheckPoints : MonoBehaviour
@@ -12,7 +13,11 @@ public class CheckPoints : MonoBehaviour
     }
 
     private Dictionary<int, Checkpoint> checkpoints = new Dictionary<int, Checkpoint>();
+    private HashSet<int> triggeredCheckpoints = new HashSet<int>(); // Tracks which checkpoints have been obtained
     private RespawnManager respawnManager;
+    
+    [SerializeField] private float checkpointWaitTime = 2f; // Time player must stand on checkpoint to obtain it
+    private Coroutine activeCheckpointCoroutine;
 
     void Start()
     {
@@ -39,9 +44,16 @@ public class CheckPoints : MonoBehaviour
     /// <summary>
     /// Respawn the player to a specific checkpoint.
     /// Call this from button OnClick events.
+    /// Only works if the checkpoint has been triggered.
     /// </summary>
     public void RespawnToCheckpoint(int checkpointID)
     {
+        if (!triggeredCheckpoints.Contains(checkpointID))
+        {
+            Debug.LogWarning($"Checkpoint {checkpointID} has not been obtained yet!");
+            return;
+        }
+
         if (checkpoints.ContainsKey(checkpointID))
         {
             Checkpoint checkpoint = checkpoints[checkpointID];
@@ -76,21 +88,59 @@ public class CheckPoints : MonoBehaviour
 
     /// <summary>
     /// Set the active checkpoint as the respawn point without moving the player immediately.
+    /// Player must stand on the checkpoint for checkpointWaitTime seconds.
     /// </summary>
     public void SetActiveCheckpoint(int checkpointID)
     {
         if (checkpoints.ContainsKey(checkpointID))
         {
-            Checkpoint checkpoint = checkpoints[checkpointID];
-            if (respawnManager != null)
+            // Stop any existing checkpoint coroutine
+            if (activeCheckpointCoroutine != null)
             {
-                // Only update the spawn point, don't respawn yet
-                respawnManager.SetSpawnPoint(checkpoint.position, checkpoint.rotation);
+                StopCoroutine(activeCheckpointCoroutine);
             }
+            activeCheckpointCoroutine = StartCoroutine(WaitAndSetCheckpoint(checkpointID));
         }
         else
         {
             Debug.LogError($"Checkpoint {checkpointID} not found!");
+        }
+    }
+
+    /// <summary>
+    /// Coroutine that waits for the specified time before setting the checkpoint.
+    /// </summary>
+    private IEnumerator WaitAndSetCheckpoint(int checkpointID)
+    {
+        yield return new WaitForSeconds(checkpointWaitTime);
+        
+        Checkpoint checkpoint = checkpoints[checkpointID];
+        if (respawnManager != null)
+        {
+            respawnManager.SetSpawnPoint(checkpoint.position, checkpoint.rotation);
+            triggeredCheckpoints.Add(checkpointID); // Mark checkpoint as obtained
+            Debug.Log($"Checkpoint {checkpointID} obtained after {checkpointWaitTime} seconds");
+        }
+    }
+
+    /// <summary>
+    /// Check if a checkpoint has been triggered/obtained.
+    /// </summary>
+    public bool IsCheckpointTriggered(int checkpointID)
+    {
+        return triggeredCheckpoints.Contains(checkpointID);
+    }
+
+    /// <summary>
+    /// Cancel the checkpoint wait coroutine (called when player leaves the trigger).
+    /// </summary>
+    public void CancelCheckpointWait()
+    {
+        if (activeCheckpointCoroutine != null)
+        {
+            StopCoroutine(activeCheckpointCoroutine);
+            activeCheckpointCoroutine = null;
+            Debug.Log("Checkpoint wait cancelled - player left the trigger");
         }
     }
 }
