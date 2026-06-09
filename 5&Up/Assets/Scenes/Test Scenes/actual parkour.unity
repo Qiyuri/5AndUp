@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 2bd8959f5fbd3644aa33af1a155fc147, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5651b321bc392841abd3ecc4f70cb88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckPoints
+  checkpointWaitTime: 2
 --- !u!114 &21678243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1035,6 +1036,8 @@ MonoBehaviour:
   checkpointID: 6
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &107803318
 GameObject:
   m_ObjectHideFlags: 0
@@ -1449,6 +1452,8 @@ MonoBehaviour:
   checkpointID: 1
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &211220739
 GameObject:
   m_ObjectHideFlags: 0
@@ -1937,6 +1942,8 @@ MonoBehaviour:
   checkpointID: 4
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &327596607
 GameObject:
   m_ObjectHideFlags: 0
@@ -2096,6 +2103,8 @@ MonoBehaviour:
   checkpointID: 8
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &341097279
 GameObject:
   m_ObjectHideFlags: 0
@@ -7760,6 +7769,8 @@ MonoBehaviour:
   checkpointID: 6
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &1065987496 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8bd51a5ba43606b40a03cde9abc7fa79, type: 3}
@@ -8652,6 +8663,8 @@ MonoBehaviour:
   checkpointID: 0
   checkpointSound: {fileID: 8300000, guid: 570f8af5c1bc54348b18b24603c87841, type: 3}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &1253703227 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8bd51a5ba43606b40a03cde9abc7fa79, type: 3}
@@ -8766,6 +8779,8 @@ MonoBehaviour:
   checkpointID: 5
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1001 &1289128638
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9000,6 +9015,8 @@ MonoBehaviour:
   checkpointID: 3
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1001 &1338241667
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11026,6 +11043,8 @@ MonoBehaviour:
   checkpointID: 8
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1001 &1591868932
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11147,6 +11166,8 @@ MonoBehaviour:
   checkpointID: 8
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &1611285337 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8bd51a5ba43606b40a03cde9abc7fa79, type: 3}
@@ -12664,6 +12685,8 @@ MonoBehaviour:
   checkpointID: 3
   checkpointSound: {fileID: 8300000, guid: 570f8af5c1bc54348b18b24603c87841, type: 3}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1001 &1846610366
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18586,6 +18609,8 @@ MonoBehaviour:
   checkpointID: 5
   checkpointSound: {fileID: 0}
   particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable: []
+  gameObjectsToDisable: []
 --- !u!1 &2110612899
 GameObject:
   m_ObjectHideFlags: 0
