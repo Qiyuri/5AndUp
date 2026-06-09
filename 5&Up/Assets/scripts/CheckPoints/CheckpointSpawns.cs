@@ -78,4 +78,21 @@ public class CheckpointSpawns : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Detects when the player leaves the checkpoint trigger.
+    /// Cancels the checkpoint wait if they leave before the wait time completes.
+    /// </summary>
+    void OnTriggerExit(Collider other)
+    {
+        // Check if the collider belongs to the player
+        if (other.CompareTag("Player"))
+        {
+            if (checkpointsManager != null)
+            {
+                // Cancel the checkpoint wait if player leaves before completing it
+                checkpointsManager.CancelCheckpointWait();
+            }
+        }
+    }
 }
