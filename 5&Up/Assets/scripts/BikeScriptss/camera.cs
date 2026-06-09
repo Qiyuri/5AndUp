@@ -23,6 +23,10 @@ public class camera : MonoBehaviour
     public float autoFollowSpeed = 5f;
     [Tooltip("How fast the target must be moving (m/s) before auto-follow kicks in.")]
     public float autoFollowThreshold = 0.5f;
+    [Tooltip("Seconds the player must be moving before auto-follow starts easing in.")]
+    public float autoFollowDelay = 0.3f;
+    [Tooltip("How quickly the auto-follow weight ramps from 0 to full once the delay is met.")]
+    public float autoFollowRampSpeed = 3f;
 
     [Header("Smoothing")]
     [Tooltip("How quickly the camera position smooths toward its desired spot.")]
@@ -40,15 +44,18 @@ public class camera : MonoBehaviour
     private float   yaw;
     private float   pitch        = 10f;
     private bool    cursorLocked = false;
-    private bool    menuOpen     = false;   // Track if menu is open
+    private bool    menuOpen     = false;
 
-    // True the moment the player starts moving; false again once they stop.
     private bool    playerIsMoving = false;
 
-    private Vector3 previousTargetPosition;
-    private float   smoothedSpeed = 0f;   // low-pass filtered speed to avoid jitter
+    // How long the player has been continuously moving.
+    private float   movingTimer   = 0f;
+    // Current blend weight of auto-follow (0 = off, 1 = full).
+    private float   autoFollowWeight = 0f;
 
-    // Smoothed world position of the camera.
+    private Vector3 previousTargetPosition;
+    private float   smoothedSpeed = 0f;
+
     private Vector3 smoothedPosition;
 
     void Start()
@@ -56,7 +63,7 @@ public class camera : MonoBehaviour
         if (target == null)
             target = transform.parent;
 
-        yaw = transform.eulerAngles.y;
+        yaw   = transform.eulerAngles.y;
         pitch = Mathf.Clamp(transform.eulerAngles.x, minPitch, maxPitch);
 
         previousTargetPosition = target != null ? target.position : Vector3.zero;
@@ -71,30 +78,45 @@ public class camera : MonoBehaviour
 
         float dt = Time.deltaTime;
 
-        // ── Movement detection (smoothed to avoid floating-point jitter) ────────
+        // ── Movement detection ────────────────────────────────────────────────
         Vector3 delta           = target.position - previousTargetPosition;
         Vector3 horizontalDelta = new Vector3(delta.x, 0f, delta.z);
         float   rawSpeed        = horizontalDelta.magnitude / Mathf.Max(dt, 0.0001f);
-        // Low-pass filter: rises quickly, falls slowly — avoids 1-frame spikes
-        smoothedSpeed   = rawSpeed > smoothedSpeed
-            ? Mathf.Lerp(smoothedSpeed, rawSpeed, 25f * dt)   // fast rise
-            : Mathf.Lerp(smoothedSpeed, rawSpeed,  8f * dt);  // slow fall
-        playerIsMoving  = smoothedSpeed >= autoFollowThreshold;
+        smoothedSpeed = rawSpeed > smoothedSpeed
+            ? Mathf.Lerp(smoothedSpeed, rawSpeed, 25f * dt)
+            : Mathf.Lerp(smoothedSpeed, rawSpeed,  8f * dt);
+        playerIsMoving = smoothedSpeed >= autoFollowThreshold;
+
+        // ── Auto-follow weight: delay then ramp in, ramp out instantly ────────
+        if (playerIsMoving)
+        {
+            movingTimer += dt;
+            // Only start blending in once the player has been moving for 'autoFollowDelay' seconds.
+            if (movingTimer >= autoFollowDelay)
+                autoFollowWeight = Mathf.MoveTowards(autoFollowWeight, 1f, autoFollowRampSpeed * dt);
+        }
+        else
+        {
+            // Player stopped — reset immediately so the next movement starts fresh.
+            movingTimer      = 0f;
+            autoFollowWeight = 0f;
+        }
 
         // ── Input ─────────────────────────────────────────────────────────────
         HandleCursorLock();
         HandleInput();
 
-        // ── Auto-follow yaw only while moving ─────────────────────────────────
-        // Pitch and distance are NEVER touched by auto-follow — they stay
-        // exactly where the player left them.
-        if (playerIsMoving)
+        // ── Auto-follow yaw ───────────────────────────────────────────────────
+        // Weight goes 0→1 smoothly after the delay, so the camera eases behind
+        // the player instead of snapping. Pitch and distance are never touched.
+        if (autoFollowWeight > 0f)
         {
             Vector3 flatForward = new Vector3(target.forward.x, 0f, target.forward.z);
             if (flatForward.sqrMagnitude > 0.001f)
             {
-                float targetYaw = Mathf.Atan2(flatForward.x, flatForward.z) * Mathf.Rad2Deg;
-                yaw = Mathf.LerpAngle(yaw, targetYaw, autoFollowSpeed * dt);
+                float targetYaw    = Mathf.Atan2(flatForward.x, flatForward.z) * Mathf.Rad2Deg;
+                float effectiveSpd = autoFollowSpeed * autoFollowWeight;
+                yaw = Mathf.LerpAngle(yaw, targetYaw, effectiveSpd * dt);
             }
         }
 
@@ -118,20 +140,16 @@ public class camera : MonoBehaviour
 
     private void HandleCursorLock()
     {
-        // Toggle menu state when Tab is pressed
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             menuOpen = !menuOpen;
-            // Unlock cursor when menu opens
             if (menuOpen)
                 SetCursorLock(false);
         }
 
-        // Can only lock cursor if menu is closed
         if (!cursorLocked && !menuOpen && Input.GetMouseButtonDown(0))
             SetCursorLock(true);
 
-        // Unlock with Escape (menu stays in its current state)
         if (cursorLocked && Input.GetKeyDown(KeyCode.Escape))
             SetCursorLock(false);
     }
@@ -144,12 +162,11 @@ public class camera : MonoBehaviour
     }
 
     // -------------------------------------------------------------------------
-    // Input — mouse always rotates freely; scroll always zooms
+    // Input
     // -------------------------------------------------------------------------
 
     private void HandleInput()
     {
-        // Zoom — always works.
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (Mathf.Abs(scroll) > 0.01f)
         {
@@ -159,15 +176,20 @@ public class camera : MonoBehaviour
 
         if (!cursorLocked) return;
 
-        // Mouse drag always orbits the camera freely (both axes).
-        // Auto-follow will ease yaw back behind the player once they move,
-        // but pitch and distance are always preserved.
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
         yaw   += mouseX;
         pitch -= mouseY;
         pitch  = Mathf.Clamp(pitch, minPitch, maxPitch);
+
+        // Any manual mouse input resets the auto-follow timer so the camera
+        // doesn't immediately fight the player's deliberate rotation.
+        if (Mathf.Abs(mouseX) > 0.01f)
+        {
+            movingTimer      = 0f;
+            autoFollowWeight = 0f;
+        }
     }
 
     // -------------------------------------------------------------------------

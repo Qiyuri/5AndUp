@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CheckpointSpawns : MonoBehaviour
@@ -10,7 +11,23 @@ public class CheckpointSpawns : MonoBehaviour
     private AudioClip checkpointSound;
 
     [SerializeField]
+    [Tooltip("Played after the wait time, when the checkpoint fully activates.")]
+    private AudioClip checkpointActivatedSound;
+
+    [SerializeField]
+    [Tooltip("How long (seconds) the first sound plays before the checkpoint activates.")]
+    private float activationDelay = 2f;
+
+    [SerializeField]
     private ParticleSystem particleSystemPrefab;
+
+    [Header("Visual – Green on Activation")]
+    [SerializeField]
+    [Tooltip("Renderer(s) whose material colour will change to green when the checkpoint activates.")]
+    private Renderer[] renderersToTurnGreen;
+
+    [SerializeField]
+    private Color activatedColour = Color.green;
 
     [Header("GameObject Changes")]
     [SerializeField]
@@ -20,100 +37,95 @@ public class CheckpointSpawns : MonoBehaviour
     private GameObject[] gameObjectsToDisable;
 
     private CheckPoints checkpointsManager;
-    private bool hasBeenActivated = false;
+    private bool        hasBeenActivated = false;
+    private bool        activationPending = false;   // waiting the 2-second delay
     private AudioSource audioSource;
+    private Coroutine   activationCoroutine;
 
     void Start()
     {
-        // Register this checkpoint with the CheckPoints manager
         checkpointsManager = FindAnyObjectByType<CheckPoints>();
         if (checkpointsManager != null)
-        {
             checkpointsManager.RegisterCheckpoint(checkpointID, transform.position, transform.rotation);
-        }
 
-        // Get or add AudioSource component
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
-        {
             audioSource = gameObject.AddComponent<AudioSource>();
-        }
     }
 
-    public int GetCheckpointID()
-    {
-        return checkpointID;
-    }
+    public int GetCheckpointID() => checkpointID;
 
-    /// <summary>
-    /// Detects when the player enters the checkpoint trigger.
-    /// Activates this checkpoint as the respawn point (only once).
-    /// Plays a sound and spawns particles at the player's position.
-    /// </summary>
+    // ── Trigger Enter ─────────────────────────────────────────────────────────
     void OnTriggerEnter(Collider other)
     {
-        // Check if the collider belongs to the player
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player")) return;
+        if (checkpointsManager == null) { Debug.LogError("CheckPoints manager not found!"); return; }
+
+        // Always update the active respawn point (even on re-entry after activation)
+        checkpointsManager.SetActiveCheckpoint(checkpointID);
+
+        // Only run the activation sequence once
+        if (hasBeenActivated || activationPending) return;
+
+        activationPending    = true;
+        activationCoroutine  = StartCoroutine(ActivationSequence());
+    }
+
+    // ── Trigger Exit ──────────────────────────────────────────────────────────
+    void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        checkpointsManager?.CancelCheckpointWait();
+
+        // If the player leaves before the delay finishes, cancel the sequence
+        if (activationPending && !hasBeenActivated)
         {
-            if (checkpointsManager != null)
-            {
-                // Set this checkpoint as the active respawn point
-                checkpointsManager.SetActiveCheckpoint(checkpointID);
-                
-                // Play sound only once
-                if (!hasBeenActivated && checkpointSound != null)
-                {
-                    audioSource.PlayOneShot(checkpointSound);
-                }
+            if (activationCoroutine != null)
+                StopCoroutine(activationCoroutine);
 
-                // Spawn particle system at checkpoint's position
-                if (!hasBeenActivated && particleSystemPrefab != null)
-                {
-                    Instantiate(particleSystemPrefab, transform.position, Quaternion.identity);
-                }
-
-                // Mark as activated if this is the first time
-                if (!hasBeenActivated)
-                {
-                    hasBeenActivated = true;
-                    Debug.Log($"Checkpoint {checkpointID} activated! Press F to respawn here.");
-                    
-                    // Enable specified gameobjects
-                    foreach (GameObject go in gameObjectsToEnable)
-                    {
-                        if (go != null)
-                            go.SetActive(true);
-                    }
-
-                    // Disable specified gameobjects
-                    foreach (GameObject go in gameObjectsToDisable)
-                    {
-                        if (go != null)
-                            go.SetActive(false);
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogError("CheckPoints manager not found!");
-            }
+            activationPending = false;
+            audioSource.Stop();
+            Debug.Log($"Checkpoint {checkpointID}: player left before activation completed.");
         }
     }
 
-    /// <summary>
-    /// Detects when the player leaves the checkpoint trigger.
-    /// Cancels the checkpoint wait if they leave before the wait time completes.
-    /// </summary>
-    void OnTriggerExit(Collider other)
+    // ── Activation sequence ───────────────────────────────────────────────────
+    private IEnumerator ActivationSequence()
     {
-        // Check if the collider belongs to the player
-        if (other.CompareTag("Player"))
+        // Step 1: play the "entering" sound immediately
+        if (checkpointSound != null)
+            audioSource.PlayOneShot(checkpointSound);
+
+        // Step 2: wait for the delay
+        yield return new WaitForSeconds(activationDelay);
+
+        // ── Fully activated from here ─────────────────────────────────────────
+        hasBeenActivated  = true;
+        activationPending = false;
+
+        // Turn renderers green
+        foreach (Renderer r in renderersToTurnGreen)
         {
-            if (checkpointsManager != null)
-            {
-                // Cancel the checkpoint wait if player leaves before completing it
-                checkpointsManager.CancelCheckpointWait();
-            }
+            if (r != null)
+                r.material.color = activatedColour;
         }
+
+        // Play the "activated" sound
+        if (checkpointActivatedSound != null)
+            audioSource.PlayOneShot(checkpointActivatedSound);
+
+        // Spawn particles at the checkpoint position
+        if (particleSystemPrefab != null)
+            Instantiate(particleSystemPrefab, transform.position, Quaternion.identity);
+
+        // Enable / disable game objects
+        foreach (GameObject go in gameObjectsToEnable)
+            if (go != null) go.SetActive(true);
+
+        foreach (GameObject go in gameObjectsToDisable)
+            if (go != null) go.SetActive(false);
+
+        Debug.Log($"Checkpoint {checkpointID} activated! Press F to respawn here.");
     }
 }
