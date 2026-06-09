@@ -10,38 +10,42 @@ public class TestMovement : MonoBehaviour
     public Transform rightBike_frontWheel;
     public Transform rightBike_rearWheel;
 
-    [Header("Hamsteria Physics")]
-    public float driveForce     = 70f;
-    public float reverseForce   = 50f;
-    public float steeringTorque = 8f;
-    public float leanTorque     = 16f;
-    public float balanceTorque  = 24f;
-    [Tooltip("How strongly the bike resists pitching forward/backward while grounded.")]
-    public float pitchTorque     = 20f;
-    public float maxLeanAngle   = 35f;
-
-    [Header("Traction")]
-    [Tooltip("How hard lateral (sideways) slip is cancelled each frame. Higher = less drift.")]
-    public float lateralFriction = 15f;
-    [Tooltip("Linear drag applied while grounded and throttle is held.")]
-    public float drivingDrag = 1f;
-    [Tooltip("Linear drag applied while grounded and coasting (no throttle).")]
-    public float coastingDrag = 8f;
+    [Header("Drive")]
+    public float driveForce   = 70f;
+    public float reverseForce = 50f;
+    public float maxSpeed     = 20f;
 
     [Header("Steering")]
-    [Tooltip("How quickly yaw velocity reaches the target. Higher = snappier turning.")]
-    public float steerSnapSpeed = 12f;
-    [Tooltip("Max yaw rotation speed in degrees/sec.")]
-    public float maxYawSpeed = 90f;
+    public float maxYawSpeed    = 120f;   // deg/s
+    public float steerSnapSpeed = 14f;    // how fast yaw velocity snaps to target
+    public float maxLeanAngle   = 30f;
+    public float leanSnapSpeed  = 10f;    // how fast lean catches up
+
+    [Header("Step-Up")]
+    [Tooltip("How far in front of the bike to check for obstacles to climb.")]
+    public float stepCheckDistance = 0.5f;
+    [Tooltip("Max height of a step the bike can automatically climb.")]
+    public float maxStepHeight     = 0.4f;
+    [Tooltip("Upward force applied when a climbable step is detected.")]
+    public float stepUpForce       = 35f;
 
     [Header("Stability")]
-    public float maxAngularVelocity    = 4f;
-    public float angularDampingGrounded = 8f;
-    public float angularDampingAirborne = 5f;
-    public float maxCorrectionAngle    = 45f;
+    [Tooltip("How strongly the bike rights itself upright while grounded.")]
+    public float uprightTorque  = 60f;
+    [Tooltip("Angular velocity is lerped toward zero by this amount each second.")]
+    public float angularDamping = 6f;
 
-    [Header("Motor Settings")]
-    public float maxSpeed     = 5f;
+    [Header("Traction")]
+    [Tooltip("Fraction of sideways velocity cancelled per second. 1 = instant grip, 0 = full slip.")]
+    [Range(0f, 1f)]
+    public float lateralGrip = 0.92f;
+    public float drivingDrag  = 1f;
+    public float coastingDrag = 6f;
+
+    [Header("Brake")]
+    public float coastBrakeForce = 30f;
+
+    [Header("Multiplayer Motors")]
     public float acceleration = 20f;
     public float brakeForce   = 40f;
 
@@ -49,27 +53,30 @@ public class TestMovement : MonoBehaviour
     public float wheelRotationSpeed = 360f;
 
     [Header("Ground Detection")]
-    public float groundCheckDistance = 0.2f;
-    public LayerMask groundLayerMask = Physics.DefaultRaycastLayers;
-    [Tooltip("If the ground normal tilts more than this many degrees from vertical, disable lateral friction and linear damping so the bike flows freely with the ramp.")]
-    public float maxFlatAngle = 15f;
+    public float    groundCheckDistance = 0.3f;
+    public LayerMask groundLayerMask    = Physics.DefaultRaycastLayers;
 
     [Header("Airborne")]
-    public float extraGravityForce = 20f;
-    public float selfRightSpeed    = 90f;
+    public float extraGravity  = 60f;
+    public float selfRightSpeed = 180f;  // deg/s toward upright
 
-    // ── private state ────────────────────────────────────────────────────────
-    private float leftMotorSpeed;
-    private float rightMotorSpeed;
-    private Rigidbody rb;
+    // ── private ──────────────────────────────────────────────────────────────
+    private float      leftMotorSpeed;
+    private float      rightMotorSpeed;
+    private Rigidbody  rb;
+    private float      stuckTimer;
+    private const float StuckVelThreshold  = 0.25f;
+    private const float StuckTimeThreshold = 0.12f;
+    private bool        wasGrounded         = true;
+    private int         landingGripFrames   = 0;   // extra grip applied right after landing
 
-    // ── lifecycle ────────────────────────────────────────────────────────────
+    // ── lifecycle ─────────────────────────────────────────────────────────────
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.interpolation          = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        rb.maxAngularVelocity     = maxAngularVelocity;
+        rb.maxAngularVelocity     = 8f;
     }
 
     private void FixedUpdate()
@@ -80,154 +87,102 @@ public class TestMovement : MonoBehaviour
                           || IsWheelGrounded(rightBike_rearWheel);
         bool grounded      = leftGrounded || rightGrounded;
 
+        // Ground normal for surface-aligned traction (works on ramps too)
+        Vector3 groundNormal = GetGroundNormal(grounded);
+
+        // Landing detection — boost lateral grip for a few frames after touching down
+        if (grounded && !wasGrounded) landingGripFrames = 8;
+        if (landingGripFrames > 0)    landingGripFrames--;
+        wasGrounded = grounded;
+
         if (GameModeManager.IsSingleplayer())
-            HandleSingleplayerMovement(grounded);
+            HandleSingleplayer(grounded, groundNormal);
         else
         {
             HandleMultiplayerInput(leftGrounded, rightGrounded);
-            HandleMultiplayerMovement(grounded);
+            HandleMultiplayer(grounded, groundNormal);
         }
 
-        // Only apply lateral friction and linear damping on flat ground.
-        // On ramps the bike should flow freely with the surface.
-        bool onFlatGround = grounded && IsGroundFlat();
-        if (onFlatGround)
-            ApplyLateralFriction();
+        if (grounded) ApplyStepUp();
+        ApplyStability(grounded, groundNormal);
 
-        ApplyAngularDamping(grounded);
-        HandleAirborne(grounded);
+        if (!grounded)
+            HandleAirborne();
+
         HandleWheelRotation();
     }
 
-    // ── lateral friction ──────────────────────────────────────────────────────
-    // Cancels sideways velocity directly — eliminates drift/sliding without
-    // affecting forward or vertical movement at all.
-    private void ApplyLateralFriction()
+    // ── singleplayer ──────────────────────────────────────────────────────────
+    private void HandleSingleplayer(bool grounded, Vector3 groundNormal)
     {
-        Vector3 localVel    = transform.InverseTransformDirection(rb.linearVelocity);
-        float   lateralSlip = localVel.x;                         // X = right in local space
-        float   correction  = -lateralSlip * lateralFriction * Time.fixedDeltaTime;
-        correction          = Mathf.Clamp(correction, -Mathf.Abs(lateralSlip), Mathf.Abs(lateralSlip));
-        rb.linearVelocity  += transform.right * correction;
-    }
-
-    // ── angular damping ───────────────────────────────────────────────────────
-    private void ApplyAngularDamping(bool grounded)
-    {
-        float dt = Time.fixedDeltaTime;
+        float throttle = Input.GetKey(KeyCode.W) ? 1f
+                       : Input.GetKey(KeyCode.S) ? -1f : 0f;
+        float steer    = Input.GetKey(KeyCode.D) ? 1f
+                       : Input.GetKey(KeyCode.A) ? -1f : 0f;
 
         if (!grounded)
         {
-            rb.angularVelocity = Vector3.Lerp(
-                rb.angularVelocity, Vector3.zero,
-                angularDampingAirborne * dt);
+            rb.linearDamping = 0f;
+            leftMotorSpeed = rightMotorSpeed = rb.linearVelocity.magnitude * Mathf.Sign(throttle == 0f ? 0f : throttle);
             return;
         }
 
-        // Grounded: damp pitch and roll in local space, leave yaw free.
-        Vector3 localAV = transform.InverseTransformDirection(rb.angularVelocity);
-        localAV.x = Mathf.Lerp(localAV.x, 0f, angularDampingGrounded * dt);
-        localAV.z = Mathf.Lerp(localAV.z, 0f, angularDampingGrounded * dt);
-        rb.angularVelocity = transform.TransformDirection(localAV);
-    }
+        float forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
 
-    // ── singleplayer ─────────────────────────────────────────────────────────
-    private void HandleSingleplayerMovement(bool grounded)
-    {
-        float throttle = 0f;
-        float steer    = 0f;
-
-        if (Input.GetKey(KeyCode.W))      throttle =  1f;
-        else if (Input.GetKey(KeyCode.S)) throttle = -1f;
-
-        if (Input.GetKey(KeyCode.A))      steer = -1f;
-        else if (Input.GetKey(KeyCode.D)) steer =  1f;
-
-        if (grounded)
-        {
-            // ── Drive force — tapered acceleration ───────────────────────────
-            // Force is full at standstill and tapers to zero at maxSpeed,
-            // giving a snappy start that smoothly levels off at top speed.
-            float forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
-            bool  belowMax     = Mathf.Abs(forwardSpeed) < maxSpeed;
-
-            if (throttle != 0f && (belowMax || Mathf.Sign(forwardSpeed) != Mathf.Sign(throttle)))
-            {
-                float speedRatio  = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / maxSpeed);
-                float taper       = 1f - speedRatio;               // 1 at 0 speed → 0 at maxSpeed
-                float baseForce   = throttle > 0f ? driveForce : reverseForce;
-                float force       = throttle * baseForce * taper;
-                rb.AddForce(transform.forward * force, ForceMode.Acceleration);
-            }
-
-            // ── Active coast braking ─────────────────────────────────────────
-            // When no throttle is held, push back against the current forward
-            // velocity so the bike stops quickly instead of rolling far.
-            if (throttle == 0f && IsGroundFlat())
-            {
-                float brakePush = -forwardSpeed * coastingDrag * 0.5f;
-                rb.AddForce(transform.forward * brakePush, ForceMode.Acceleration);
-            }
-
-            // ── Steering: direct yaw velocity snap, no torque buildup ────────
-            // Instead of accumulating torque over frames, we directly drive
-            // the world-space yaw component of angularVelocity toward a target.
-            // This gives frame-1 response with no delay.
-            float targetYawSpeed  = steer * maxYawSpeed * Mathf.Deg2Rad;
-            Vector3 localAV       = transform.InverseTransformDirection(rb.angularVelocity);
-            localAV.y             = Mathf.Lerp(localAV.y, targetYawSpeed,
-                                               steerSnapSpeed * Time.fixedDeltaTime);
-            rb.angularVelocity    = transform.TransformDirection(localAV);
-
-            // ── Lean into turns ──────────────────────────────────────────────
-            float currentLean = Vector3.SignedAngle(Vector3.up, transform.up, transform.forward);
-            float targetLean  = -steer * maxLeanAngle;
-            float leanError   = Mathf.Clamp(targetLean - currentLean,
-                                            -maxCorrectionAngle, maxCorrectionAngle);
-
-            rb.AddTorque(transform.forward * leanError * leanTorque * Time.fixedDeltaTime,
-                         ForceMode.Acceleration);
-
-            // ── Self-balance (roll) ──────────────────────────────────────────
-            float rollError = Mathf.Clamp(
-                Vector3.SignedAngle(transform.up, Vector3.up, transform.forward),
-                -maxCorrectionAngle, maxCorrectionAngle);
-
-            rb.AddTorque(transform.forward * rollError * balanceTorque * Time.fixedDeltaTime,
-                         ForceMode.Acceleration);
-
-            // ── Pitch correction ─────────────────────────────────────────────
-            // Resists the bike tipping forward/backward when accelerating or
-            // braking. Measures how far transform.forward has tilted from flat.
-            float pitchError = Mathf.Clamp(
-                Vector3.SignedAngle(
-                    new Vector3(transform.forward.x, 0f, transform.forward.z).normalized,
-                    transform.forward,
-                    transform.right),
-                -maxCorrectionAngle, maxCorrectionAngle);
-
-            rb.AddTorque(-transform.right * pitchError * pitchTorque * Time.fixedDeltaTime,
-                         ForceMode.Acceleration);
-
-            // ── Drag (flat ground only) ──────────────────────────────────────
-            // On ramps: zero damping so the bike rides the surface naturally.
-            if (IsGroundFlat())
-                rb.linearDamping = throttle != 0f ? drivingDrag : coastingDrag;
-            else
-                rb.linearDamping = 0f;
-        }
+        // ── Stuck guard ──────────────────────────────────────────────────────
+        if (throttle != 0f && rb.linearVelocity.magnitude < StuckVelThreshold)
+            stuckTimer += Time.fixedDeltaTime;
         else
+            stuckTimer = 0f;
+
+        bool stuck = stuckTimer >= StuckTimeThreshold;
+        if (stuck) rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, StuckVelThreshold);
+
+        // ── Drive force ───────────────────────────────────────────────────────
+        if (throttle != 0f && !stuck)
         {
-            rb.linearDamping = 0f;
+            bool  canDrive  = Mathf.Abs(forwardSpeed) < maxSpeed
+                           || Mathf.Sign(forwardSpeed) != Mathf.Sign(throttle);
+            float speedRatio = Mathf.Clamp01(Mathf.Abs(forwardSpeed) / maxSpeed);
+            float taper      = 1f - speedRatio;
+            float baseForce  = throttle > 0f ? driveForce : reverseForce;
+
+            if (canDrive)
+                rb.AddForce(transform.forward * throttle * baseForce * taper,
+                            ForceMode.Acceleration);
         }
 
-        // Wheel visuals
-        float sign = throttle == 0f ? 0f : Mathf.Sign(throttle);
-        leftMotorSpeed  = rb.linearVelocity.magnitude * sign;
-        rightMotorSpeed = leftMotorSpeed;
+        // ── Coast brake ───────────────────────────────────────────────────────
+        if (throttle == 0f)
+            rb.AddForce(-transform.forward * forwardSpeed * coastBrakeForce * Time.fixedDeltaTime,
+                        ForceMode.Acceleration);
+
+        // ── Steering: snap yaw angular velocity directly ─────────────────────
+        float   targetYaw = steer * maxYawSpeed * Mathf.Deg2Rad;
+        Vector3 localAV   = transform.InverseTransformDirection(rb.angularVelocity);
+        localAV.y = Mathf.Lerp(localAV.y, targetYaw, steerSnapSpeed * Time.fixedDeltaTime);
+        rb.angularVelocity = transform.TransformDirection(localAV);
+
+        // ── Lean ──────────────────────────────────────────────────────────────
+        float currentLean = Vector3.SignedAngle(Vector3.up, transform.up, transform.forward);
+        float targetLean  = -steer * maxLeanAngle;
+        float leanError   = Mathf.Clamp(targetLean - currentLean, -60f, 60f);
+        rb.AddTorque(transform.forward * leanError * leanSnapSpeed * Time.fixedDeltaTime,
+                     ForceMode.Acceleration);
+
+        // ── Lateral traction (surface-space) ─────────────────────────────────
+        // Project velocity onto the surface plane then cancel the component
+        // perpendicular to the bike's forward direction.
+        // This works on ramps because we use surface normal, not world up.
+        ApplyLateralTraction(groundNormal);
+
+        rb.linearDamping = throttle != 0f ? drivingDrag : coastingDrag;
+
+        leftMotorSpeed = rightMotorSpeed =
+            rb.linearVelocity.magnitude * (throttle == 0f ? 0f : Mathf.Sign(throttle));
     }
 
-    // ── multiplayer input ────────────────────────────────────────────────────
+    // ── multiplayer input ─────────────────────────────────────────────────────
     private void HandleMultiplayerInput(bool leftGrounded, bool rightGrounded)
     {
         bool  braking = Input.GetKey(KeyCode.Space);
@@ -235,79 +190,164 @@ public class TestMovement : MonoBehaviour
 
         if (leftGrounded)
         {
-            float target = 0f;
-            if (!braking)
-            {
-                if (Input.GetKey(KeyCode.W))      target =  maxSpeed;
-                else if (Input.GetKey(KeyCode.S)) target = -maxSpeed;
-            }
-            leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, target,
+            float t = braking ? 0f : Input.GetKey(KeyCode.W) ? maxSpeed
+                    : Input.GetKey(KeyCode.S) ? -maxSpeed : 0f;
+            leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, t,
                              (braking ? brakeForce : acceleration) * dt);
         }
 
         if (rightGrounded)
         {
-            float target = 0f;
-            if (!braking)
-            {
-                if (Input.GetKey(KeyCode.UpArrow))        target =  maxSpeed;
-                else if (Input.GetKey(KeyCode.DownArrow)) target = -maxSpeed;
-            }
-            rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, target,
+            float t = braking ? 0f : Input.GetKey(KeyCode.UpArrow) ? maxSpeed
+                    : Input.GetKey(KeyCode.DownArrow) ? -maxSpeed : 0f;
+            rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, t,
                               (braking ? brakeForce : acceleration) * dt);
         }
     }
 
-    // ── multiplayer movement ─────────────────────────────────────────────────
-    private void HandleMultiplayerMovement(bool grounded)
+    // ── multiplayer movement ──────────────────────────────────────────────────
+    private void HandleMultiplayer(bool grounded, Vector3 groundNormal)
     {
-        bool throttleHeld = Input.GetKey(KeyCode.W)       || Input.GetKey(KeyCode.S)
-                         || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow);
-
         if (!grounded) { rb.linearDamping = 0f; return; }
 
-        float averageSpeed = (leftMotorSpeed + rightMotorSpeed) * 0.5f;
-        float speedDiff    = leftMotorSpeed - rightMotorSpeed;
+        bool throttleHeld = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)
+                         || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow);
 
-        rb.AddForce(transform.forward * averageSpeed * driveForce * 0.05f,
-                    ForceMode.Acceleration);
+        float avg  = (leftMotorSpeed + rightMotorSpeed) * 0.5f;
+        float diff = leftMotorSpeed - rightMotorSpeed;
 
-        // Differential steering via direct yaw snap as well
-        float targetYawSpeed = speedDiff * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
-        Vector3 localAV      = transform.InverseTransformDirection(rb.angularVelocity);
-        localAV.y            = Mathf.Lerp(localAV.y, targetYawSpeed,
-                                          steerSnapSpeed * Time.fixedDeltaTime);
-        rb.angularVelocity   = transform.TransformDirection(localAV);
+        rb.AddForce(transform.forward * avg * driveForce * 0.05f, ForceMode.Acceleration);
 
-        float rollError = Mathf.Clamp(
-            Vector3.SignedAngle(transform.up, Vector3.up, transform.forward),
-            -maxCorrectionAngle, maxCorrectionAngle);
+        float   targetYaw = diff * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
+        Vector3 localAV   = transform.InverseTransformDirection(rb.angularVelocity);
+        localAV.y = Mathf.Lerp(localAV.y, targetYaw, steerSnapSpeed * Time.fixedDeltaTime);
+        rb.angularVelocity = transform.TransformDirection(localAV);
 
-        rb.AddTorque(transform.forward * rollError * balanceTorque * Time.fixedDeltaTime,
-                     ForceMode.Acceleration);
+        ApplyLateralTraction(groundNormal);
 
-        rb.linearDamping = IsGroundFlat()
-            ? (throttleHeld ? drivingDrag : coastingDrag)
-            : 0f;
+        rb.linearDamping = throttleHeld ? drivingDrag : coastingDrag;
     }
 
-    // ── airborne ─────────────────────────────────────────────────────────────
-    private void HandleAirborne(bool grounded)
+    // ── lateral traction ──────────────────────────────────────────────────────
+    private void ApplyLateralTraction(Vector3 groundNormal)
     {
-        if (grounded) return;
+        Vector3 sideDir = Vector3.ProjectOnPlane(transform.right, groundNormal).normalized;
+        float   lateral = Vector3.Dot(rb.linearVelocity, sideDir);
+        // Use full grip (1.0) for landing frames so the bike snaps to track instantly
+        float grip = landingGripFrames > 0 ? 1f : lateralGrip;
+        rb.linearVelocity -= sideDir * lateral * grip;
+    }
 
-        rb.AddForce(Vector3.down * extraGravityForce, ForceMode.Acceleration);
+    // ── step-up ───────────────────────────────────────────────────────────────
+    // Detects low obstacles directly in front of each wheel and applies an
+    // upward force so the bike rides over them instead of catching on them.
+    private void ApplyStepUp()
+    {
+        float forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
+        if (forwardSpeed < 0.5f) return;  // only when moving forward with some speed
 
-        Vector3 fwd = transform.forward; fwd.y = 0f;
-        if (fwd.sqrMagnitude < 0.001f) fwd = Vector3.forward;
+        bool stepDetected = CheckStepAtWheel(leftBike_frontWheel)
+                         || CheckStepAtWheel(rightBike_frontWheel);
 
-        Quaternion uprightTarget = Quaternion.LookRotation(fwd.normalized, Vector3.up);
+        if (stepDetected)
+            rb.AddForce(Vector3.up * stepUpForce, ForceMode.Acceleration);
+    }
 
-        if (rb.angularVelocity.magnitude < maxAngularVelocity * 0.8f)
+    private bool CheckStepAtWheel(Transform wheel)
+    {
+        if (wheel == null) return false;
+
+        // Cast forward at wheel height to find a wall/ledge face
+        Vector3 origin    = wheel.position + Vector3.up * 0.05f;
+        Vector3 direction = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
+
+        if (!Physics.Raycast(origin, direction, out RaycastHit wallHit,
+                             stepCheckDistance, groundLayerMask))
+            return false;
+
+        // IMPORTANT: only climb if the wall face is roughly vertical (not a ceiling)
+        if (Vector3.Dot(wallHit.normal, Vector3.up) > 0.3f)
+            return false;
+
+        // Check if there's climbable ground just above the contact point
+        Vector3 aboveHit = wallHit.point + Vector3.up * maxStepHeight;
+        if (Physics.Raycast(aboveHit, Vector3.down, out RaycastHit topHit,
+                            maxStepHeight * 1.1f, groundLayerMask))
         {
-            rb.MoveRotation(Quaternion.RotateTowards(
-                rb.rotation, uprightTarget,
-                selfRightSpeed * Time.fixedDeltaTime));
+            float stepHeight = topHit.point.y - wheel.position.y;
+            // Must be above the wheel (not a pit) and within climbable range
+            return stepHeight > 0.02f && stepHeight <= maxStepHeight;
+        }
+
+        return false;
+    }
+
+    // ── stability (grounded upright torque + angular damping) ─────────────────
+    private void ApplyStability(bool grounded, Vector3 groundNormal)
+    {
+        float dt = Time.fixedDeltaTime;
+
+        // Angular velocity damping — always on, both grounded and airborne.
+        // Only damps pitch (X local) and roll (Z local), never yaw (Y local).
+        Vector3 localAV = transform.InverseTransformDirection(rb.angularVelocity);
+        localAV.x = Mathf.Lerp(localAV.x, 0f, angularDamping * dt);
+        localAV.z = Mathf.Lerp(localAV.z, 0f, angularDamping * dt);
+        rb.angularVelocity = transform.TransformDirection(localAV);
+
+        if (!grounded) return;
+
+        // Upright torque: push the bike's up axis toward the ground normal.
+        // Scale down at high speed — at speed the bike is stable and the torque
+        // was causing it to dig into ledges instead of riding over them.
+        float speedFrac    = Mathf.Clamp01(rb.linearVelocity.magnitude / maxSpeed);
+        float torqueScale  = Mathf.Lerp(1f, 0.15f, speedFrac);
+        Vector3 torqueAxis = Vector3.Cross(transform.up, groundNormal);
+        rb.AddTorque(torqueAxis * uprightTorque * torqueScale, ForceMode.Acceleration);
+    }
+
+    // ── airborne ──────────────────────────────────────────────────────────────
+    private void HandleAirborne()
+    {
+        rb.linearDamping = 0f;
+        rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+
+        // Self-right toward world upright using MoveRotation — only pitch/roll,
+        // preserves yaw. Gated on angular velocity being below max so it never
+        // fights a spinning rigidbody.
+        if (rb.angularVelocity.magnitude < 6f)
+        {
+            Vector3    fwd    = transform.forward; fwd.y = 0f;
+            if (fwd.sqrMagnitude < 0.001f) fwd = Vector3.forward;
+            Quaternion target = Quaternion.LookRotation(fwd.normalized, Vector3.up);
+            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, target,
+                            selfRightSpeed * Time.fixedDeltaTime));
+        }
+    }
+
+    // ── ground normal ─────────────────────────────────────────────────────────
+    private Vector3 GetGroundNormal(bool grounded)
+    {
+        if (!grounded) return Vector3.up;
+
+        // Average the normals from all four wheel positions for a stable result
+        Vector3 sum   = Vector3.zero;
+        int     count = 0;
+        TryGetNormal(leftBike_frontWheel,  ref sum, ref count);
+        TryGetNormal(leftBike_rearWheel,   ref sum, ref count);
+        TryGetNormal(rightBike_frontWheel, ref sum, ref count);
+        TryGetNormal(rightBike_rearWheel,  ref sum, ref count);
+
+        return count > 0 ? (sum / count).normalized : Vector3.up;
+    }
+
+    private void TryGetNormal(Transform wheel, ref Vector3 sum, ref int count)
+    {
+        if (wheel == null) return;
+        if (Physics.Raycast(wheel.position, Vector3.down, out RaycastHit hit,
+                            groundCheckDistance, groundLayerMask))
+        {
+            sum += hit.normal;
+            count++;
         }
     }
 
@@ -340,19 +380,6 @@ public class TestMovement : MonoBehaviour
     }
 
     // ── ground detection ──────────────────────────────────────────────────────
-    // Returns true when the surface directly below the bike is close to flat.
-    private bool IsGroundFlat()
-    {
-        // Cast from the centre of the bike downward and check the surface normal.
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit,
-                            groundCheckDistance + 0.5f, groundLayerMask))
-        {
-            float angle = Vector3.Angle(hit.normal, Vector3.up);
-            return angle <= maxFlatAngle;
-        }
-        return true; // no hit = treat as flat (airborne path handles it anyway)
-    }
-
     private bool IsWheelGrounded(Transform wheel)
     {
         if (wheel == null) return false;
@@ -363,7 +390,7 @@ public class TestMovement : MonoBehaviour
     // ── public API ────────────────────────────────────────────────────────────
     public void ResetSpeeds()
     {
-        leftMotorSpeed = 0f; rightMotorSpeed = 0f;
+        leftMotorSpeed = 0f; rightMotorSpeed = 0f; stuckTimer = 0f;
         if (rb == null) rb = GetComponent<Rigidbody>();
         rb.linearVelocity  = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
