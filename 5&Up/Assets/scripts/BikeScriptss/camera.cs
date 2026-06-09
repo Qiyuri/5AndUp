@@ -40,6 +40,7 @@ public class camera : MonoBehaviour
     private float   yaw;
     private float   pitch        = 10f;
     private bool    cursorLocked = false;
+    private bool    menuOpen     = false;   // Track if menu is open
 
     // True the moment the player starts moving; false again once they stop.
     private bool    playerIsMoving = false;
@@ -117,10 +118,21 @@ public class camera : MonoBehaviour
 
     private void HandleCursorLock()
     {
-        if (!cursorLocked && Input.GetMouseButtonDown(0))
+        // Toggle menu state when Tab is pressed
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            menuOpen = !menuOpen;
+            // Unlock cursor when menu opens
+            if (menuOpen)
+                SetCursorLock(false);
+        }
+
+        // Can only lock cursor if menu is closed
+        if (!cursorLocked && !menuOpen && Input.GetMouseButtonDown(0))
             SetCursorLock(true);
 
-        if (cursorLocked && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Tab)))
+        // Unlock with Escape (menu stays in its current state)
+        if (cursorLocked && Input.GetKeyDown(KeyCode.Escape))
             SetCursorLock(false);
     }
 
