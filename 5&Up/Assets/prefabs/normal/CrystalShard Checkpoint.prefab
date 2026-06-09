@@ -106,6 +106,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointSpawns
   checkpointID: 0
+  checkpointSound: {fileID: 0}
+  particleSystemPrefab: {fileID: 0}
+  gameObjectsToEnable:
+  - {fileID: 0}
+  gameObjectsToDisable: []
 --- !u!65 &4505298534300094327
 BoxCollider:
   m_ObjectHideFlags: 0

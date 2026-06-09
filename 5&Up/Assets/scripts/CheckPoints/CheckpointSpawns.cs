@@ -12,6 +12,13 @@ public class CheckpointSpawns : MonoBehaviour
     [SerializeField]
     private ParticleSystem particleSystemPrefab;
 
+    [Header("GameObject Changes")]
+    [SerializeField]
+    private GameObject[] gameObjectsToEnable;
+
+    [SerializeField]
+    private GameObject[] gameObjectsToDisable;
+
     private CheckPoints checkpointsManager;
     private bool hasBeenActivated = false;
     private AudioSource audioSource;
@@ -70,6 +77,20 @@ public class CheckpointSpawns : MonoBehaviour
                 {
                     hasBeenActivated = true;
                     Debug.Log($"Checkpoint {checkpointID} activated! Press F to respawn here.");
+                    
+                    // Enable specified gameobjects
+                    foreach (GameObject go in gameObjectsToEnable)
+                    {
+                        if (go != null)
+                            go.SetActive(true);
+                    }
+
+                    // Disable specified gameobjects
+                    foreach (GameObject go in gameObjectsToDisable)
+                    {
+                        if (go != null)
+                            go.SetActive(false);
+                    }
                 }
             }
             else
