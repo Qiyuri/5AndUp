@@ -1875,10 +1875,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8061993175154974865, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_MatchWidthOrHeight
-      value: 0.502
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061993175154974865, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_ReferenceResolution.x
       value: 2560
       objectReference: {fileID: 0}
