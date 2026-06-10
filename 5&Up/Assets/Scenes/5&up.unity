@@ -1778,7 +1778,7 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.11308649, y: 0.008305468, z: -0.0033709556}
     m_Extent: {x: 0.088225275, y: 0.09569276, z: 0.08296366}
   m_DirtyAABB: 0
---- !u!1001 &7259046545483110171
+--- !u!1001 &7284361332471708583
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1786,63 +1786,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 70969146990745250, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: donuts
-      objectReference: {fileID: 0}
-    - target: {fileID: 295911902700046724, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: Checkpoints
-      objectReference: {fileID: 0}
-    - target: {fileID: 1203068731509128502, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: donut jump
-      objectReference: {fileID: 0}
-    - target: {fileID: 1263499433880319211, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: your first checkpoint
-      objectReference: {fileID: 0}
-    - target: {fileID: 1387337931576154578, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1817988094945914461, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: airplane
-      objectReference: {fileID: 0}
-    - target: {fileID: 2088394479662280773, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: 'Checkpoints list
-
-'
-      objectReference: {fileID: 0}
-    - target: {fileID: 2845724522222836253, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: spiral top
-      objectReference: {fileID: 0}
     - target: {fileID: 3590438267515604029, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_Name
       value: MainMenuCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 3693948814515771910, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: halfpipes
-      objectReference: {fileID: 0}
-    - target: {fileID: 3829393249732171378, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: spiraltransfer
-      objectReference: {fileID: 0}
-    - target: {fileID: 5862288968936070073, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: YEET
-      objectReference: {fileID: 0}
-    - target: {fileID: 5862288968936070073, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_fontSize
-      value: 70
-      objectReference: {fileID: 0}
-    - target: {fileID: 5862288968936070073, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_fontSizeBase
-      value: 70
+    - target: {fileID: 3590438267515604029, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6741046060902707656, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_Pivot.x
@@ -1923,34 +1873,6 @@ PrefabInstance:
     - target: {fileID: 6741046060902707656, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7020248059235745396, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7319353470180650488, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: "ramp to \nspiral"
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061993175154974865, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_UiScaleMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061993175154974865, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_MatchWidthOrHeight
-      value: 0.502
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061993175154974865, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_ReferenceResolution.x
-      value: 2560
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061993175154974865, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_ReferenceResolution.y
-      value: 1440
-      objectReference: {fileID: 0}
-    - target: {fileID: 9049545254579948489, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: the "puzzle"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2188,4 +2110,4 @@ SceneRoots:
   - {fileID: 1347153679}
   - {fileID: 6367566384309949189}
   - {fileID: 680774174}
-  - {fileID: 7259046545483110171}
+  - {fileID: 7284361332471708583}
