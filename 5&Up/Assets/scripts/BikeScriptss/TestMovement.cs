@@ -16,37 +16,33 @@ public class TestMovement : MonoBehaviour
     public float maxSpeed     = 20f;
 
     [Header("Steering")]
-    public float maxYawSpeed    = 120f;   // deg/s
-    public float steerSnapSpeed = 14f;    // how fast yaw velocity snaps to target
+    public float maxYawSpeed    = 120f;
+    public float steerSnapSpeed = 14f;
     public float maxLeanAngle   = 30f;
-    public float leanSnapSpeed  = 10f;    // how fast lean catches up
+    public float leanSnapSpeed  = 10f;
 
     [Header("Step-Up")]
-    [Tooltip("How far in front of the bike to check for obstacles to climb.")]
     public float stepCheckDistance = 0.5f;
-    [Tooltip("Max height of a step the bike can automatically climb.")]
     public float maxStepHeight     = 0.4f;
-    [Tooltip("Upward force applied when a climbable step is detected.")]
     public float stepUpForce       = 35f;
 
     [Header("Stability")]
-    [Tooltip("How strongly the bike rights itself upright while grounded.")]
     public float uprightTorque  = 60f;
-    [Tooltip("Angular velocity is lerped toward zero by this amount each second.")]
     public float angularDamping = 6f;
 
     [Header("Traction")]
-    [Tooltip("Fraction of sideways velocity cancelled per second. 1 = instant grip, 0 = full slip.")]
     [Range(0f, 1f)]
-    public float lateralGrip = 0.92f;
-    public float drivingDrag  = 1f;
+    public float lateralGrip  = 0.92f;
+    // drivingDrag set low so the drive force is not immediately fought by drag
+    public float drivingDrag  = 0.2f;
     public float coastingDrag = 6f;
 
     [Header("Brake")]
     public float coastBrakeForce = 30f;
 
-    [Header("Multiplayer Motors")]
-    public float acceleration = 20f;
+    [Header("Motors")]
+    // High acceleration so the motor speed value ramps up in ~2-3 frames
+    public float acceleration = 80f;
     public float brakeForce   = 40f;
 
     [Header("Wheel Visuals")]
@@ -58,14 +54,14 @@ public class TestMovement : MonoBehaviour
 
     [Header("Airborne")]
     public float extraGravity   = 60f;
-    public float selfRightSpeed = 180f;  // deg/s toward upright
+    public float selfRightSpeed = 180f;
 
     // ── private ───────────────────────────────────────────────────────────────
-    private float       leftMotorSpeed;
-    private float       rightMotorSpeed;
-    private Rigidbody   rb;
-    private bool        wasGrounded       = true;
-    private int         landingGripFrames = 0;
+    private float     leftMotorSpeed;
+    private float     rightMotorSpeed;
+    private Rigidbody rb;
+    private bool      wasGrounded       = true;
+    private int       landingGripFrames = 0;
 
     // ── lifecycle ─────────────────────────────────────────────────────────────
     private void Start()
@@ -86,13 +82,10 @@ public class TestMovement : MonoBehaviour
 
         Vector3 groundNormal = GetGroundNormal(grounded);
 
-        // Landing detection — boost lateral grip for a few frames after touching down
         if (grounded && !wasGrounded) landingGripFrames = 8;
         if (landingGripFrames > 0)    landingGripFrames--;
         wasGrounded = grounded;
 
-        // Both modes now share the same motor/movement pipeline.
-        // Input gathering is split so WASD vs arrow keys can be configured per-side.
         if (GameModeManager.IsSingleplayer())
             HandleSingleplayerInput(leftGrounded, rightGrounded);
         else
@@ -108,9 +101,9 @@ public class TestMovement : MonoBehaviour
         HandleWheelRotation();
     }
 
-    // ── singleplayer input (WASD, differential-drive mapping) ─────────────────
-    // W/S = both motors, A/D = oppose the motors to yaw.
-    // Braking (Space) zeroes both targets and ramps down fast.
+    // ── singleplayer input ────────────────────────────────────────────────────
+    // MoveTowards with a high acceleration rate so the motor speed
+    // reaches its target in ~2-3 fixed frames — snappy but not instant.
     private void HandleSingleplayerInput(bool leftGrounded, bool rightGrounded)
     {
         bool  braking  = Input.GetKey(KeyCode.Space);
@@ -119,12 +112,8 @@ public class TestMovement : MonoBehaviour
         float steer    = Input.GetKey(KeyCode.D) ? 1f
                        : Input.GetKey(KeyCode.A) ? -1f : 0f;
 
-        // Tank-drive mixing: steer subtracts from one side, adds to the other.
-        // Using maxSpeed as the target so the ramp behaviour is identical to multiplayer.
-        float leftTarget  = braking ? 0f : (throttle + steer) * maxSpeed;
-        float rightTarget = braking ? 0f : (throttle - steer) * maxSpeed;
-        leftTarget  = Mathf.Clamp(leftTarget,  -maxSpeed, maxSpeed);
-        rightTarget = Mathf.Clamp(rightTarget, -maxSpeed, maxSpeed);
+        float leftTarget  = braking ? 0f : Mathf.Clamp((throttle + steer) * maxSpeed, -maxSpeed, maxSpeed);
+        float rightTarget = braking ? 0f : Mathf.Clamp((throttle - steer) * maxSpeed, -maxSpeed, maxSpeed);
 
         float rate = braking ? brakeForce : acceleration;
         float dt   = Time.fixedDeltaTime;
@@ -135,7 +124,7 @@ public class TestMovement : MonoBehaviour
             rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, rightTarget, rate * dt);
     }
 
-    // ── multiplayer input (unchanged) ─────────────────────────────────────────
+    // ── multiplayer input ─────────────────────────────────────────────────────
     private void HandleMultiplayerInput(bool leftGrounded, bool rightGrounded)
     {
         bool  braking = Input.GetKey(KeyCode.Space);
@@ -143,23 +132,22 @@ public class TestMovement : MonoBehaviour
 
         if (leftGrounded)
         {
-            float t = braking ? 0f : Input.GetKey(KeyCode.W)         ? maxSpeed
-                    : Input.GetKey(KeyCode.S)         ? -maxSpeed : 0f;
+            float t = braking ? 0f : Input.GetKey(KeyCode.W)       ?  maxSpeed
+                    :               Input.GetKey(KeyCode.S)         ? -maxSpeed : 0f;
             leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, t,
                              (braking ? brakeForce : acceleration) * dt);
         }
 
         if (rightGrounded)
         {
-            float t = braking ? 0f : Input.GetKey(KeyCode.UpArrow)   ? maxSpeed
-                    : Input.GetKey(KeyCode.DownArrow) ? -maxSpeed : 0f;
+            float t = braking ? 0f : Input.GetKey(KeyCode.UpArrow)   ?  maxSpeed
+                    :               Input.GetKey(KeyCode.DownArrow)   ? -maxSpeed : 0f;
             rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, t,
                               (braking ? brakeForce : acceleration) * dt);
         }
     }
 
     // ── shared differential-drive movement ────────────────────────────────────
-    // Called for BOTH singleplayer and multiplayer — one movement path.
     private void HandleDifferentialDrive(bool grounded, Vector3 groundNormal)
     {
         if (!grounded) { rb.linearDamping = 0f; return; }
@@ -169,24 +157,22 @@ public class TestMovement : MonoBehaviour
         float avg  = (leftMotorSpeed + rightMotorSpeed) * 0.5f;
         float diff = leftMotorSpeed - rightMotorSpeed;
 
-        // Drive
-        rb.AddForce(transform.forward * avg * driveForce * 0.05f, ForceMode.Acceleration);
+        // Multiplier raised from 0.05 to 0.15 so the same motor speed
+        // produces noticeably more immediate physical force.
+        rb.AddForce(transform.forward * avg * driveForce * 0.15f, ForceMode.Acceleration);
 
-        // Yaw from differential
         float   targetYaw = diff * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
         Vector3 localAV   = transform.InverseTransformDirection(rb.angularVelocity);
         localAV.y = Mathf.Lerp(localAV.y, targetYaw, steerSnapSpeed * Time.fixedDeltaTime);
         rb.angularVelocity = transform.TransformDirection(localAV);
 
-        // Lean proportional to yaw rate
-        float steerInput   = Mathf.Clamp(diff / (maxSpeed * 2f), -1f, 1f);
-        float currentLean  = Vector3.SignedAngle(Vector3.up, transform.up, transform.forward);
-        float targetLean   = -steerInput * maxLeanAngle;
-        float leanError    = Mathf.Clamp(targetLean - currentLean, -60f, 60f);
+        float steerInput  = Mathf.Clamp(diff / (maxSpeed * 2f), -1f, 1f);
+        float currentLean = Vector3.SignedAngle(Vector3.up, transform.up, transform.forward);
+        float targetLean  = -steerInput * maxLeanAngle;
+        float leanError   = Mathf.Clamp(targetLean - currentLean, -60f, 60f);
         rb.AddTorque(transform.forward * leanError * leanSnapSpeed * Time.fixedDeltaTime,
                      ForceMode.Acceleration);
 
-        // Lateral traction
         ApplyLateralTraction(groundNormal);
 
         rb.linearDamping = throttleHeld ? drivingDrag : coastingDrag;
