@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SwitchPanelMenu : MonoBehaviour
 {
     [SerializeField] private GameObject[] panels;
+    [SerializeField] private string[] sceneNames;
     private int currentPanelIndex = 0;
 
     void Start()
@@ -55,5 +57,31 @@ public class SwitchPanelMenu : MonoBehaviour
     {
         int prevIndex = (currentPanelIndex - 1 + panels.Length) % panels.Length;
         SwitchPanel(prevIndex);
+    }
+
+    /// <summary>
+    /// Switches to a scene by index
+    /// </summary>
+    public void SwitchScene(int sceneIndex)
+    {
+        if (sceneIndex < 0 || sceneIndex >= sceneNames.Length)
+        {
+            Debug.LogWarning($"Scene index {sceneIndex} is out of range!");
+            return;
+        }
+        SceneManager.LoadScene(sceneNames[sceneIndex]);
+    }
+
+    /// <summary>
+    /// Switches to a scene by name
+    /// </summary>
+    public void SwitchSceneByName(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogWarning("Scene name cannot be null or empty!");
+            return;
+        }
+        SceneManager.LoadScene(sceneName);
     }
 }
