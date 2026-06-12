@@ -2788,6 +2788,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainMenuCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 5978760603674868211, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_text
+      value: Co-op
+      objectReference: {fileID: 0}
     - target: {fileID: 6741046060902707656, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2867,6 +2871,12 @@ PrefabInstance:
     - target: {fileID: 6741046060902707656, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7059682970366549280, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_text
+      value: 'Co-op
+
+'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
