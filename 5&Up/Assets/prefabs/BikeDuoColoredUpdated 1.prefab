@@ -194,7 +194,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -444,7 +444,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -588,7 +588,9 @@ MonoBehaviour:
   mouseSensitivity: 2
   autoFollowSpeed: 50
   autoFollowThreshold: 0.001
-  rotationSmoothing: 5
+  autoFollowDelay: 0.3
+  autoFollowRampSpeed: 3
+  positionSmoothing: 10
   minPitch: -30
   maxPitch: 60
 --- !u!20 &6045894975876069760
@@ -999,7 +1001,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1153,7 +1155,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1531,7 +1533,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2409,7 +2411,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2785,7 +2787,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2907,7 +2909,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3244,7 +3246,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef36b0bf456f9d2458634edea4c0fa97, type: 2}
+  - {fileID: 2100000, guid: 556a5455a17ed6e42a3700311ab2e012, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3701,16 +3703,30 @@ MonoBehaviour:
   leftBike_rearWheel: {fileID: 1593662699876922959}
   rightBike_frontWheel: {fileID: 28854844179179052}
   rightBike_rearWheel: {fileID: 8259690360888140967}
+  driveForce: 70
+  reverseForce: 50
   maxSpeed: 40
+  maxYawSpeed: 120
+  steerSnapSpeed: 14
+  maxLeanAngle: 30
+  leanSnapSpeed: 10
+  stepCheckDistance: 0.5
+  maxStepHeight: 0.4
+  stepUpForce: 35
+  uprightTorque: 60
+  angularDamping: 6
+  lateralGrip: 0.92
+  drivingDrag: 0.2
+  coastingDrag: 6
+  coastBrakeForce: 30
   acceleration: 15
   brakeForce: 50
-  turnSpeed: 10
   wheelRotationSpeed: 2000
   groundCheckDistance: 2
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 59
-  extraGravityForce: 7
+  extraGravity: 60
   selfRightSpeed: 30
 --- !u!54 &8271926733181844106
 Rigidbody:
