@@ -1,11 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Attach this to any world-space Button that should respawn the player
-/// to a specific checkpoint. It finds the persistent CheckPoints manager
-/// at Start and wires itself up — no Inspector OnClick needed.
-/// </summary>
 public class CheckpointButton : MonoBehaviour
 {
     [SerializeField]
@@ -28,7 +23,6 @@ public class CheckpointButton : MonoBehaviour
             return;
         }
 
-        // Clear any stale Inspector listeners, then wire up fresh
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => checkPoints.RespawnToCheckpoint(checkpointID));
 
