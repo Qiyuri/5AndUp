@@ -11,25 +11,25 @@ public class CheckpointSpawns : MonoBehaviour
     private AudioClip checkpointSound;
 
     [SerializeField]
-    [Tooltip("Afgespeeld na de wachttijd, wanneer het checkpoint volledig activeert.")]
+    [Tooltip("Played after the wait time, when the checkpoint fully activates.")]
     private AudioClip checkpointActivatedSound;
 
     [SerializeField]
-    [Tooltip("Hoe lang (seconden) het eerste geluid speelt voor het checkpoint activeert.")]
+    [Tooltip("How long (seconds) the first sound plays before the checkpoint activates.")]
     private float activationDelay = 2f;
 
     [SerializeField]
     private ParticleSystem particleSystemPrefab;
 
-    [Header("Visueel – Groen bij activering")]
+    [Header("Visual – Green on Activation")]
     [SerializeField]
-    [Tooltip("Renderer(s) waarvan de kleur groen wordt als het checkpoint activeert.")]
+    [Tooltip("Renderer(s) whose material colour will change to green when the checkpoint activates.")]
     private Renderer[] renderersToTurnGreen;
 
     [SerializeField]
     private Color activatedColour = Color.green;
 
-    [Header("GameObject wijzigingen")]
+    [Header("GameObject Changes")]
     [SerializeField]
     private GameObject[] gameObjectsToEnable;
 
@@ -42,81 +42,98 @@ public class CheckpointSpawns : MonoBehaviour
     private AudioSource audioSource;
     private Coroutine   activationCoroutine;
 
-    // ── FIX: statische tellers — worden nu betrouwbaar gereset bij elke scene load ──
+    // Static counters track how many spawns exist so we know when all have registered.
+    // Reset via OnEnable (before Start) each time the scene loads.
     private static int  s_totalSpawns     = 0;
     private static int  s_registeredCount = 0;
     private static bool s_loadTriggered   = false;
+    private static bool s_sceneNotified   = false; // Guards the OnSceneReloading() call
 
-    /// <summary>
-    /// Reset de statische tellers vóór elke scene laadt, zodat het opnieuw werkt
-    /// bij het terugkeren naar een scene (bijv. vanuit main menu).
-    /// </summary>
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStaticState()
-    {
-        s_totalSpawns     = 0;
-        s_registeredCount = 0;
-        s_loadTriggered   = false;
-    }
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     void Awake()
     {
         s_totalSpawns++;
     }
 
-    void OnDestroy()
+    void OnEnable()
     {
-        s_totalSpawns     = Mathf.Max(0, s_totalSpawns - 1);
-        // Niet resetten hier — OnDestroy bij scene unload veroorzaakte vals-negatieve resets
+        // The first CheckpointSpawns to enable after a scene load tells the persistent
+        // singleton to clear its stale position data so we can re-register cleanly.
+        if (!s_sceneNotified)
+        {
+            s_sceneNotified   = true;
+            s_registeredCount = 0;
+            s_loadTriggered   = false;
+
+            // CheckPoints.Instance is already alive (DontDestroyOnLoad), call directly.
+            CheckPoints.Instance?.OnSceneReloading();
+        }
     }
 
     void Start()
     {
-        checkpointsManager = FindAnyObjectByType<CheckPoints>();
-        if (checkpointsManager != null)
+        // Use the singleton directly — no FindAnyObjectByType needed.
+        checkpointsManager = CheckPoints.Instance;
+
+        if (checkpointsManager == null)
         {
-            checkpointsManager.RegisterCheckpoint(checkpointID, transform.position, transform.rotation);
+            Debug.LogError("[CheckpointSpawns] CheckPoints singleton not found!");
+            return;
         }
-        else
-        {
-            Debug.LogError($"[CheckpointSpawns] CheckPoints manager niet gevonden in scene!");
-        }
+
+        checkpointsManager.RegisterCheckpoint(checkpointID, transform.position, transform.rotation);
 
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Zodra alle spawns Start() hebben gedraaid → zeg het aan de manager
         s_registeredCount++;
         if (!s_loadTriggered && s_registeredCount >= s_totalSpawns)
         {
             s_loadTriggered = true;
-            checkpointsManager?.OnAllCheckpointsRegistered();
+            checkpointsManager.OnAllCheckpointsRegistered();
         }
 
-        // Herstel visuele staat als dit checkpoint al was behaald in een vorige sessie
+        // Restore visuals one frame later so LoadSavedProgress has already run.
         StartCoroutine(RestoreVisualStateIfNeeded());
     }
 
+    void OnDestroy()
+    {
+        s_totalSpawns     = Mathf.Max(0, s_totalSpawns - 1);
+
+        // When all spawns are gone (scene unload), reset everything for the next load.
+        if (s_totalSpawns == 0)
+        {
+            s_registeredCount = 0;
+            s_loadTriggered   = false;
+            s_sceneNotified   = false;
+        }
+    }
+
+    // ── Visual restore ────────────────────────────────────────────────────────
+
     private IEnumerator RestoreVisualStateIfNeeded()
     {
-        yield return null; // Één frame wachten zodat LoadSavedProgress al gelopen heeft
+        yield return null; // One frame — LoadSavedProgress has now run
 
         if (checkpointsManager != null && checkpointsManager.IsCheckpointTriggered(checkpointID))
         {
             ApplyActivatedVisuals(playSounds: false, spawnParticles: false);
             hasBeenActivated = true;
-            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: visueel hersteld vanuit save.");
+            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: restored activated visuals from save.");
         }
     }
 
     public int GetCheckpointID() => checkpointID;
 
     // ── Trigger Enter ─────────────────────────────────────────────────────────
+
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        if (checkpointsManager == null) { Debug.LogError("[CheckpointSpawns] CheckPoints manager niet gevonden!"); return; }
+        if (checkpointsManager == null) { Debug.LogError("[CheckpointSpawns] CheckPoints manager not found!"); return; }
 
         checkpointsManager.SetActiveCheckpoint(checkpointID);
 
@@ -127,6 +144,7 @@ public class CheckpointSpawns : MonoBehaviour
     }
 
     // ── Trigger Exit ──────────────────────────────────────────────────────────
+
     void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Player")) return;
@@ -140,11 +158,12 @@ public class CheckpointSpawns : MonoBehaviour
 
             activationPending = false;
             audioSource.Stop();
-            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: speler verliet trigger voor activering.");
+            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: player left before activation completed.");
         }
     }
 
-    // ── Activeringssequentie ──────────────────────────────────────────────────
+    // ── Activation sequence ───────────────────────────────────────────────────
+
     private IEnumerator ActivationSequence()
     {
         if (checkpointSound != null)
@@ -157,10 +176,11 @@ public class CheckpointSpawns : MonoBehaviour
 
         ApplyActivatedVisuals(playSounds: true, spawnParticles: true);
 
-        Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID} geactiveerd!");
+        Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID} activated!");
     }
 
-    // ── Gedeelde visuele logica ───────────────────────────────────────────────
+    // ── Shared visual logic ───────────────────────────────────────────────────
+
     private void ApplyActivatedVisuals(bool playSounds, bool spawnParticles)
     {
         foreach (Renderer r in renderersToTurnGreen)

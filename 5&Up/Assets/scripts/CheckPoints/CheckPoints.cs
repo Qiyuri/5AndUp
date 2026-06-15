@@ -12,17 +12,36 @@ public class CheckPoints : MonoBehaviour
         public Quaternion rotation;
     }
 
+    // ── Singleton ─────────────────────────────────────────────────────────────
+
+    private static CheckPoints _instance;
+    public static CheckPoints Instance => _instance;
+
+    void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    // ── State ─────────────────────────────────────────────────────────────────
+
+    // Cleared on every scene load so CheckpointSpawns objects can re-register
     private Dictionary<int, Checkpoint> checkpoints = new Dictionary<int, Checkpoint>();
-    private HashSet<int> triggeredCheckpoints = new HashSet<int>(); // Tracks which checkpoints have been obtained
+    private HashSet<int> triggeredCheckpoints = new HashSet<int>();
     private SaveSystem saveSystem;
 
-    [SerializeField] private float checkpointWaitTime = 2f; // Time player must stand on checkpoint to obtain it
+    [SerializeField] private float checkpointWaitTime = 2f;
     private Coroutine activeCheckpointCoroutine;
 
-    // Tracks which checkpoint ID is currently set as the respawn point (-1 = none)
     private int activeRespawnCheckpointID = -1;
 
-    // Lazy reference — re-fetches automatically if the scene changed and the old one is gone
+    // Lazy reference — re-fetches automatically after every scene load
     private RespawnManager _respawnManager;
     private RespawnManager RespawnManager
     {
@@ -42,56 +61,55 @@ public class CheckPoints : MonoBehaviour
             Debug.LogWarning("[CheckPoints] SaveSystem not found in scene — progress will not be saved.");
     }
 
-    // Called by CheckpointSpawns objects after they have all registered.
-    // We delay load by one frame so every CheckpointSpawns has had its Start() run first.
-    private IEnumerator LoadAfterRegistration()
-    {
-        yield return null; // Wait one frame
-        LoadSavedProgress();
-    }
+    // ── Scene reload support ──────────────────────────────────────────────────
 
     /// <summary>
-    /// Called once all CheckpointSpawns have finished registering.
-    /// Kicks off the deferred save load.
+    /// Called by CheckpointSpawns in OnEnable (before Start) so the persistent
+    /// singleton knows a new scene is loading and clears stale position data.
+    /// triggeredCheckpoints is intentionally kept — they survive across scenes.
     /// </summary>
+    public void OnSceneReloading()
+    {
+        checkpoints.Clear();
+        _respawnManager = null; // Force re-fetch after scene load
+
+        if (activeCheckpointCoroutine != null)
+        {
+            StopCoroutine(activeCheckpointCoroutine);
+            activeCheckpointCoroutine = null;
+        }
+
+        Debug.Log("[CheckPoints] Scene reloading — checkpoint positions cleared for re-registration.");
+    }
+
+    // ── Registration ──────────────────────────────────────────────────────────
+
+    public void RegisterCheckpoint(int id, Vector3 position, Quaternion rotation)
+    {
+        checkpoints[id] = new Checkpoint { id = id, position = position, rotation = rotation };
+        Debug.Log($"[CheckPoints] Checkpoint {id} registered at {position}");
+    }
+
+    // ── Save / Load ───────────────────────────────────────────────────────────
+
+    // Called by CheckpointSpawns once all instances have finished registering.
     public void OnAllCheckpointsRegistered()
     {
         StartCoroutine(LoadAfterRegistration());
     }
 
-    // ── Registration ──────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Register a checkpoint with its position and rotation.
-    /// Called by CheckpointSpawns objects in the scene.
-    /// </summary>
-    public void RegisterCheckpoint(int id, Vector3 position, Quaternion rotation)
+    private IEnumerator LoadAfterRegistration()
     {
-        Checkpoint checkpoint = new Checkpoint
-        {
-            id       = id,
-            position = position,
-            rotation = rotation
-        };
-        checkpoints[id] = checkpoint;
-        Debug.Log($"Checkpoint {id} registered at position {position}");
+        yield return null;
+        LoadSavedProgress();
     }
 
-    // ── Save / Load ───────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Persist current progress via SaveSystem.
-    /// </summary>
     private void SaveProgress()
     {
         if (saveSystem != null)
             saveSystem.SaveCheckpoints(triggeredCheckpoints, activeRespawnCheckpointID);
     }
 
-    /// <summary>
-    /// Restore triggered checkpoints and the last respawn point from SaveSystem.
-    /// Called one frame after all checkpoints have registered so positions are ready.
-    /// </summary>
     private void LoadSavedProgress()
     {
         if (saveSystem == null || !saveSystem.HasSave()) return;
@@ -114,16 +132,11 @@ public class CheckPoints : MonoBehaviour
 
     // ── Respawning ────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Respawn the player to a specific checkpoint.
-    /// Call this from button OnClick events.
-    /// Only works if the checkpoint has been triggered.
-    /// </summary>
     public void RespawnToCheckpoint(int checkpointID)
     {
         if (!triggeredCheckpoints.Contains(checkpointID))
         {
-            Debug.LogWarning($"Checkpoint {checkpointID} has not been obtained yet!");
+            Debug.LogWarning($"[CheckPoints] Checkpoint {checkpointID} has not been obtained yet!");
             return;
         }
 
@@ -133,37 +146,30 @@ public class CheckPoints : MonoBehaviour
             if (RespawnManager != null)
             {
                 RespawnManager.RespawnToPosition(checkpoint.position, checkpoint.rotation);
-                Debug.Log($"Respawned to checkpoint {checkpointID}");
+                Debug.Log($"[CheckPoints] Respawned to checkpoint {checkpointID}");
             }
             else
             {
-                Debug.LogError("RespawnManager not found!");
+                Debug.LogError("[CheckPoints] RespawnManager not found!");
             }
         }
         else
         {
-            Debug.LogError($"Checkpoint {checkpointID} not found!");
+            Debug.LogError($"[CheckPoints] Checkpoint {checkpointID} not found!");
         }
     }
 
-    /// <summary>
-    /// Get a checkpoint's position by ID.
-    /// </summary>
     public Vector3 GetCheckpointPosition(int checkpointID)
     {
         if (checkpoints.ContainsKey(checkpointID))
             return checkpoints[checkpointID].position;
 
-        Debug.LogError($"Checkpoint {checkpointID} not found!");
+        Debug.LogError($"[CheckPoints] Checkpoint {checkpointID} not found!");
         return Vector3.zero;
     }
 
     // ── Activation ────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Set the active checkpoint as the respawn point without moving the player immediately.
-    /// Player must stand on the checkpoint for checkpointWaitTime seconds.
-    /// </summary>
     public void SetActiveCheckpoint(int checkpointID)
     {
         if (checkpoints.ContainsKey(checkpointID))
@@ -175,13 +181,10 @@ public class CheckPoints : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"Checkpoint {checkpointID} not found!");
+            Debug.LogError($"[CheckPoints] Checkpoint {checkpointID} not found!");
         }
     }
 
-    /// <summary>
-    /// Coroutine that waits for the specified time before setting the checkpoint.
-    /// </summary>
     private IEnumerator WaitAndSetCheckpoint(int checkpointID)
     {
         yield return new WaitForSeconds(checkpointWaitTime);
@@ -191,35 +194,26 @@ public class CheckPoints : MonoBehaviour
         {
             RespawnManager.SetSpawnPoint(checkpoint.position, checkpoint.rotation);
             triggeredCheckpoints.Add(checkpointID);
-            activeRespawnCheckpointID = checkpointID; // Track which checkpoint is active
-
-            // ── AUTO-SAVE ─────────────────────────────────────────────────────
+            activeRespawnCheckpointID = checkpointID;
             SaveProgress();
-
-            Debug.Log($"Checkpoint {checkpointID} obtained after {checkpointWaitTime} seconds");
+            Debug.Log($"[CheckPoints] Checkpoint {checkpointID} obtained after {checkpointWaitTime}s");
         }
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Check if a checkpoint has been triggered/obtained.
-    /// </summary>
     public bool IsCheckpointTriggered(int checkpointID)
     {
         return triggeredCheckpoints.Contains(checkpointID);
     }
 
-    /// <summary>
-    /// Cancel the checkpoint wait coroutine (called when player leaves the trigger).
-    /// </summary>
     public void CancelCheckpointWait()
     {
         if (activeCheckpointCoroutine != null)
         {
             StopCoroutine(activeCheckpointCoroutine);
             activeCheckpointCoroutine = null;
-            Debug.Log("Checkpoint wait cancelled - player left the trigger");
+            Debug.Log("[CheckPoints] Checkpoint wait cancelled — player left the trigger.");
         }
     }
 }
