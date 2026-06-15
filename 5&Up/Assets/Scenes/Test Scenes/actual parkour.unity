@@ -390,6 +390,24 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7400668529e561242b6658a5cc5ff9a3, type: 3}
+--- !u!1 &36271814 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4469583210387484597, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &36271819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36271814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 7
 --- !u!1001 &48259052
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1150,7 +1168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (2)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1571,6 +1589,24 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -5495902117074765545, guid: 65e4de6e38c9d04469d05c39f9cac2b3, type: 3}
+--- !u!1 &323131484 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8042456777900146205, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &323131489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 323131484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 3
 --- !u!1 &333848206 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5694182098109609355, guid: 54bd71b6f0daa35449ac255834c2abfd, type: 3}
@@ -1767,7 +1803,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (5)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2162,7 +2198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (4)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3093,6 +3129,24 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1611704686}
   m_SourcePrefab: {fileID: 100100000, guid: 01268ebbca6229145a1f089da166f214, type: 3}
+--- !u!1 &593204236 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1711128942554219762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &593204241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593204236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 8
 --- !u!1001 &611209973
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3357,6 +3411,24 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -8803937527578110353, guid: 8bd51a5ba43606b40a03cde9abc7fa79, type: 3}
+--- !u!1 &656137066 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1694144040339744878, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &656137071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656137066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 2
 --- !u!1 &662765080
 GameObject:
   m_ObjectHideFlags: 0
@@ -3470,6 +3542,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: -90}
+--- !u!1 &663935885 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2246468288245585762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &663935890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663935885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 9
 --- !u!1001 &676050552
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4345,6 +4435,24 @@ MonoBehaviour:
   boostSpeed: 700
   boostCooldown: 0
   debugDrawRaycast: 1
+--- !u!1 &806539378 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5786863560941900944, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &806539383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806539378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 0
 --- !u!1001 &817350347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4427,7 +4535,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (8)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4625,6 +4733,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &863712932 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3515293101891389854, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &863712937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863712932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 5
 --- !u!1001 &866639642
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5657,7 +5783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (3)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6287,6 +6413,77 @@ MonoBehaviour:
   forwardSpeed: 5
   backwardSpeed: 70
   forwardAcceleration: 1
+--- !u!1 &1105080595
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1105080597}
+  - component: {fileID: 1105080596}
+  - component: {fileID: 1105080598}
+  - component: {fileID: 1105080599}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1105080596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105080595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bc441e5dc688545adaa10eaab205f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveSystem
+--- !u!4 &1105080597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105080595}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1280, y: 720, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1105080598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105080595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5651b321bc392841abd3ecc4f70cb88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckPoints
+  checkpointWaitTime: 2
+--- !u!114 &1105080599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105080595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2babf6e5775c53e428f54dcc9deb85c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
 --- !u!1 &1127195034
 GameObject:
   m_ObjectHideFlags: 0
@@ -7900,7 +8097,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (7)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9639,7 +9836,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (6)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10335,7 +10532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (10)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10568,6 +10765,42 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1808788777 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7069319772648424857, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1808788782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808788777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 1
+--- !u!1 &1818035280 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 768471533172055278, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1818035285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818035280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 4
 --- !u!1 &1825891473 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a605ea0d454657c418674e6516015b2d, type: 3}
@@ -10703,7 +10936,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (9)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15824,6 +16057,70 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1082357752364099400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082357752364099400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082357752364099400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 1082357752364099400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 1811550879212383664, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1811550879212383664, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 1811550879212383664, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047345786282343559, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047345786282343559, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 3047345786282343559, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 3645702104617886237, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3645702104617886237, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 3645702104617886237, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 3881419825324495699, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3881419825324495699, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 3881419825324495699, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
     - target: {fileID: 3886424358960084158, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 5
@@ -15868,15 +16165,124 @@ PrefabInstance:
       propertyPath: m_Name
       value: MenuCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7015958268277263882, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7015958268277263882, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 7015958268277263882, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
     - target: {fileID: 7055092550272352086, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_text
       value: Back to menu
       objectReference: {fileID: 0}
+    - target: {fileID: 7078272967302800315, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7078272967302800315, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 7078272967302800315, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 7399599505225817145, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7399599505225817145, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 7399599505225817145, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 7862886822822056697, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864926330168572812, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864926330168572812, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1105080598}
+    - target: {fileID: 7864926330168572812, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1917336676}
+    - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RespawnToCheckpoint
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5786863560941900944, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 806539383}
+    - targetCorrespondingSourceObject: {fileID: 7069319772648424857, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1808788782}
+    - targetCorrespondingSourceObject: {fileID: 1694144040339744878, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 656137071}
+    - targetCorrespondingSourceObject: {fileID: 8042456777900146205, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 323131489}
+    - targetCorrespondingSourceObject: {fileID: 768471533172055278, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1818035285}
+    - targetCorrespondingSourceObject: {fileID: 3515293101891389854, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 863712937}
+    - targetCorrespondingSourceObject: {fileID: 6568118766781500326, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2098255969}
+    - targetCorrespondingSourceObject: {fileID: 4469583210387484597, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 36271819}
+    - targetCorrespondingSourceObject: {fileID: 1711128942554219762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 593204241}
+    - targetCorrespondingSourceObject: {fileID: 2246468288245585762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 663935890}
   m_SourcePrefab: {fileID: 100100000, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+--- !u!114 &1917336676 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7862886822822056697, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5651b321bc392841abd3ecc4f70cb88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckPoints
 --- !u!1001 &1956563519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16556,6 +16962,24 @@ MonoBehaviour:
   activatedColour: {r: 0, g: 1, b: 0, a: 1}
   gameObjectsToEnable: []
   gameObjectsToDisable: []
+--- !u!1 &2098255964 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6568118766781500326, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+  m_PrefabInstance: {fileID: 1917336675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2098255969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2098255964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 6
 --- !u!1001 &2132936576
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17063,7 +17487,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303737863561545096, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
       propertyPath: m_Name
-      value: CrystalShard Checkpoint (22) 1 (1)
+      value: Crystal colors
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17148,14 +17572,16 @@ SceneRoots:
   - {fileID: 414391058279246710}
   - {fileID: 7067379718723344353}
   - {fileID: 1917336675}
-  - {fileID: 1163487543}
+  - {fileID: 1105080597}
   - {fileID: 720685244}
   - {fileID: 539106493}
   - {fileID: 857420713}
   - {fileID: 1427922935}
+  - {fileID: 1163487543}
   - {fileID: 1054185674}
   - {fileID: 1846610366}
   - {fileID: 1488492313}
+  - {fileID: 746035655}
   - {fileID: 1045855101}
   - {fileID: 1642476170}
   - {fileID: 1454063877}
@@ -17164,6 +17590,16 @@ SceneRoots:
   - {fileID: 1521431758}
   - {fileID: 680103009}
   - {fileID: 2089604625}
+  - {fileID: 1749004377}
+  - {fileID: 1839399192}
+  - {fileID: 830324657497323199}
+  - {fileID: 159910614}
+  - {fileID: 1007229643}
+  - {fileID: 467154670}
+  - {fileID: 358038289}
+  - {fileID: 1601002303}
+  - {fileID: 1358885143}
+  - {fileID: 817350347}
   - {fileID: 696640748}
   - {fileID: 926746761}
   - {fileID: 1002064455}
@@ -17200,7 +17636,6 @@ SceneRoots:
   - {fileID: 353738752}
   - {fileID: 1627999113}
   - {fileID: 26342533}
-  - {fileID: 746035655}
   - {fileID: 1901946498}
   - {fileID: 612645221}
   - {fileID: 923428291}
@@ -17231,16 +17666,6 @@ SceneRoots:
   - {fileID: 1183364228}
   - {fileID: 1052346011}
   - {fileID: 662765084}
-  - {fileID: 1749004377}
-  - {fileID: 1839399192}
-  - {fileID: 830324657497323199}
-  - {fileID: 159910614}
-  - {fileID: 1007229643}
-  - {fileID: 467154670}
-  - {fileID: 358038289}
-  - {fileID: 1601002303}
-  - {fileID: 1358885143}
-  - {fileID: 817350347}
   - {fileID: 1127195038}
   - {fileID: 1451093623}
   - {fileID: 1204175770}

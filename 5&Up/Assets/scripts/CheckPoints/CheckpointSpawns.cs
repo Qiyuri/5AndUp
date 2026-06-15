@@ -37,20 +37,68 @@ public class CheckpointSpawns : MonoBehaviour
     private GameObject[] gameObjectsToDisable;
 
     private CheckPoints checkpointsManager;
-    private bool        hasBeenActivated = false;
-    private bool        activationPending = false;   // waiting the 2-second delay
+    private bool        hasBeenActivated  = false;
+    private bool        activationPending = false;
     private AudioSource audioSource;
     private Coroutine   activationCoroutine;
+
+    // Tracks how many CheckpointSpawns instances exist so we know when all have registered
+    private static int  s_totalSpawns      = 0;
+    private static int  s_registeredCount  = 0;
+    private static bool s_loadTriggered    = false; // Only fire OnAllCheckpointsRegistered once per scene load
+
+    void Awake()
+    {
+        s_totalSpawns++;
+    }
+
+    void OnDestroy()
+    {
+        // Keep counts consistent if objects are destroyed before Start
+        s_totalSpawns    = Mathf.Max(0, s_totalSpawns - 1);
+        s_loadTriggered  = false;
+        s_registeredCount = 0;
+    }
 
     void Start()
     {
         checkpointsManager = FindAnyObjectByType<CheckPoints>();
         if (checkpointsManager != null)
+        {
             checkpointsManager.RegisterCheckpoint(checkpointID, transform.position, transform.rotation);
+        }
 
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
+
+        // Track how many spawns have finished Start(); when all are done, tell the manager to load.
+        s_registeredCount++;
+        if (!s_loadTriggered && s_registeredCount >= s_totalSpawns)
+        {
+            s_loadTriggered = true;
+            checkpointsManager?.OnAllCheckpointsRegistered();
+        }
+
+        // Restore visual state for checkpoints that were already activated in a previous session.
+        // We wait one frame so that OnAllCheckpointsRegistered / LoadSavedProgress has run first.
+        StartCoroutine(RestoreVisualStateIfNeeded());
+    }
+
+    /// <summary>
+    /// Wait one frame so the save data has been loaded, then restore visuals if this
+    /// checkpoint was already obtained in a previous session.
+    /// </summary>
+    private IEnumerator RestoreVisualStateIfNeeded()
+    {
+        yield return null; // One frame — LoadSavedProgress has now run
+
+        if (checkpointsManager != null && checkpointsManager.IsCheckpointTriggered(checkpointID))
+        {
+            ApplyActivatedVisuals(playSounds: false, spawnParticles: false);
+            hasBeenActivated = true;
+            Debug.Log($"Checkpoint {checkpointID}: restored activated visuals from save.");
+        }
     }
 
     public int GetCheckpointID() => checkpointID;
@@ -67,8 +115,8 @@ public class CheckpointSpawns : MonoBehaviour
         // Only run the activation sequence once
         if (hasBeenActivated || activationPending) return;
 
-        activationPending    = true;
-        activationCoroutine  = StartCoroutine(ActivationSequence());
+        activationPending   = true;
+        activationCoroutine = StartCoroutine(ActivationSequence());
     }
 
     // ── Trigger Exit ──────────────────────────────────────────────────────────
@@ -78,7 +126,6 @@ public class CheckpointSpawns : MonoBehaviour
 
         checkpointsManager?.CancelCheckpointWait();
 
-        // If the player leaves before the delay finishes, cancel the sequence
         if (activationPending && !hasBeenActivated)
         {
             if (activationCoroutine != null)
@@ -93,39 +140,40 @@ public class CheckpointSpawns : MonoBehaviour
     // ── Activation sequence ───────────────────────────────────────────────────
     private IEnumerator ActivationSequence()
     {
-        // Step 1: play the "entering" sound immediately
         if (checkpointSound != null)
             audioSource.PlayOneShot(checkpointSound);
 
-        // Step 2: wait for the delay
         yield return new WaitForSeconds(activationDelay);
 
-        // ── Fully activated from here ─────────────────────────────────────────
         hasBeenActivated  = true;
         activationPending = false;
 
-        // Turn renderers green
-        foreach (Renderer r in renderersToTurnGreen)
-        {
-            if (r != null)
-                r.material.color = activatedColour;
-        }
+        ApplyActivatedVisuals(playSounds: true, spawnParticles: true);
 
-        // Play the "activated" sound
-        if (checkpointActivatedSound != null)
+        Debug.Log($"Checkpoint {checkpointID} activated! Press F to respawn here.");
+    }
+
+    // ── Shared visual logic ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Apply the fully-activated visual state.
+    /// playAudio and spawnParticles are false when restoring from a save (already seen/heard before).
+    /// </summary>
+    private void ApplyActivatedVisuals(bool playSounds, bool spawnParticles)
+    {
+        foreach (Renderer r in renderersToTurnGreen)
+            if (r != null) r.material.color = activatedColour;
+
+        if (playSounds && checkpointActivatedSound != null)
             audioSource.PlayOneShot(checkpointActivatedSound);
 
-        // Spawn particles at the checkpoint position
-        if (particleSystemPrefab != null)
+        if (spawnParticles && particleSystemPrefab != null)
             Instantiate(particleSystemPrefab, transform.position, Quaternion.identity);
 
-        // Enable / disable game objects
         foreach (GameObject go in gameObjectsToEnable)
             if (go != null) go.SetActive(true);
 
         foreach (GameObject go in gameObjectsToDisable)
             if (go != null) go.SetActive(false);
-
-        Debug.Log($"Checkpoint {checkpointID} activated! Press F to respawn here.");
     }
 }
