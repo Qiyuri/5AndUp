@@ -33,7 +33,6 @@ public class TestMovement : MonoBehaviour
     [Header("Traction")]
     [Range(0f, 1f)]
     public float lateralGrip  = 0.92f;
-    // drivingDrag set low so the drive force is not immediately fought by drag
     public float drivingDrag  = 0.2f;
     public float coastingDrag = 6f;
 
@@ -41,7 +40,6 @@ public class TestMovement : MonoBehaviour
     public float coastBrakeForce = 30f;
 
     [Header("Motors")]
-    // High acceleration so the motor speed value ramps up in ~2-3 frames
     public float acceleration = 80f;
     public float brakeForce   = 40f;
 
@@ -54,7 +52,10 @@ public class TestMovement : MonoBehaviour
 
     [Header("Airborne")]
     public float extraGravity   = 60f;
-    public float selfRightSpeed = 180f;
+    [Tooltip("Hoe snel de fiets rechtop draait in de lucht. Lager = zachter.")]
+    public float selfRightSpeed = 45f;
+    [Tooltip("Hoeveel frames de fiets in de lucht moet zijn voor het zichzelf rechtop draait. Voorkomt snappen bij botsingen.")]
+    public int   airborneFramesBeforeSelfRight = 8;
 
     // ── private ───────────────────────────────────────────────────────────────
     private float     leftMotorSpeed;
@@ -62,6 +63,7 @@ public class TestMovement : MonoBehaviour
     private Rigidbody rb;
     private bool      wasGrounded       = true;
     private int       landingGripFrames = 0;
+    private int       airborneFrames    = 0; // teller: hoe lang in de lucht
 
     // ── lifecycle ─────────────────────────────────────────────────────────────
     private void Start()
@@ -82,8 +84,27 @@ public class TestMovement : MonoBehaviour
 
         Vector3 groundNormal = GetGroundNormal(grounded);
 
-        if (grounded && !wasGrounded) landingGripFrames = 8;
-        if (landingGripFrames > 0)    landingGripFrames--;
+        // ── Landing: motor speed synchroniseren + tellers bijwerken ──────────
+        if (grounded && !wasGrounded)
+        {
+            landingGripFrames = 8;
+            airborneFrames    = 0;
+
+            float actualForwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
+            leftMotorSpeed  = Mathf.Clamp(leftMotorSpeed,
+                                          -Mathf.Abs(actualForwardSpeed),
+                                           Mathf.Abs(actualForwardSpeed));
+            rightMotorSpeed = Mathf.Clamp(rightMotorSpeed,
+                                          -Mathf.Abs(actualForwardSpeed),
+                                           Mathf.Abs(actualForwardSpeed));
+        }
+
+        // Bijhouden hoeveel frames de fiets in de lucht is
+        if (!grounded) airborneFrames++;
+        else           airborneFrames = 0;
+
+        if (landingGripFrames > 0) landingGripFrames--;
+
         wasGrounded = grounded;
 
         if (GameModeManager.IsSingleplayer())
@@ -102,8 +123,6 @@ public class TestMovement : MonoBehaviour
     }
 
     // ── singleplayer input ────────────────────────────────────────────────────
-    // MoveTowards with a high acceleration rate so the motor speed
-    // reaches its target in ~2-3 fixed frames — snappy but not instant.
     private void HandleSingleplayerInput(bool leftGrounded, bool rightGrounded)
     {
         bool  braking  = Input.GetKey(KeyCode.Space);
@@ -132,8 +151,8 @@ public class TestMovement : MonoBehaviour
 
         if (leftGrounded)
         {
-            float t = braking ? 0f : Input.GetKey(KeyCode.W)       ?  maxSpeed
-                    :               Input.GetKey(KeyCode.S)         ? -maxSpeed : 0f;
+            float t = braking ? 0f : Input.GetKey(KeyCode.W) ?  maxSpeed
+                    :               Input.GetKey(KeyCode.S)   ? -maxSpeed : 0f;
             leftMotorSpeed = Mathf.MoveTowards(leftMotorSpeed, t,
                              (braking ? brakeForce : acceleration) * dt);
         }
@@ -157,13 +176,18 @@ public class TestMovement : MonoBehaviour
         float avg  = (leftMotorSpeed + rightMotorSpeed) * 0.5f;
         float diff = leftMotorSpeed - rightMotorSpeed;
 
-        // Multiplier raised from 0.05 to 0.15 so the same motor speed
-        // produces noticeably more immediate physical force.
         rb.AddForce(transform.forward * avg * driveForce * 0.15f, ForceMode.Acceleration);
 
         float   targetYaw = diff * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
         Vector3 localAV   = transform.InverseTransformDirection(rb.angularVelocity);
-        localAV.y = Mathf.Lerp(localAV.y, targetYaw, steerSnapSpeed * Time.fixedDeltaTime);
+
+        // Als er geen stuurverschil is, yaw hard naar nul remmen zodat de fiets
+        // niet blijft doordraaien nadat je één motor loslaat.
+        float yawDampRate = Mathf.Abs(diff) < 0.01f
+            ? steerSnapSpeed * 6f   // hard stoppen bij geen stuurinput
+            : steerSnapSpeed;       // normaal sturen
+
+        localAV.y = Mathf.MoveTowards(localAV.y, targetYaw, yawDampRate * Time.fixedDeltaTime);
         rb.angularVelocity = transform.TransformDirection(localAV);
 
         float steerInput  = Mathf.Clamp(diff / (maxSpeed * 2f), -1f, 1f);
@@ -236,10 +260,17 @@ public class TestMovement : MonoBehaviour
 
         if (!grounded) return;
 
-        float   speedFrac   = Mathf.Clamp01(rb.linearVelocity.magnitude / maxSpeed);
-        float   torqueScale = Mathf.Lerp(1f, 0.15f, speedFrac);
-        Vector3 torqueAxis  = Vector3.Cross(transform.up, groundNormal);
-        rb.AddTorque(torqueAxis * uprightTorque * torqueScale, ForceMode.Acceleration);
+        Vector3 bikeUp    = transform.up;
+        Vector3 rightAxis = transform.forward;
+
+        float tiltAngle = Vector3.SignedAngle(
+            Vector3.ProjectOnPlane(bikeUp,       rightAxis).normalized,
+            Vector3.ProjectOnPlane(groundNormal, rightAxis).normalized,
+            rightAxis
+        );
+
+        float torqueMagnitude = tiltAngle * uprightTorque * 0.05f;
+        rb.AddTorque(rightAxis * torqueMagnitude, ForceMode.Acceleration);
     }
 
     // ── airborne ──────────────────────────────────────────────────────────────
@@ -248,9 +279,15 @@ public class TestMovement : MonoBehaviour
         rb.linearDamping = 0f;
         rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
 
-        if (rb.angularVelocity.magnitude < 6f)
+        // Pas zelf-rechtzetten toe pas na een aantal frames in de lucht.
+        // Dit voorkomt dat de fiets bij een botsing met een object direct
+        // snel naar de opgelegde rotatie springt.
+        bool settledEnough  = rb.angularVelocity.magnitude < 6f;
+        bool longEnoughInAir = airborneFrames >= airborneFramesBeforeSelfRight;
+
+        if (settledEnough && longEnoughInAir)
         {
-            Vector3    fwd    = transform.forward; fwd.y = 0f;
+            Vector3 fwd = transform.forward; fwd.y = 0f;
             if (fwd.sqrMagnitude < 0.001f) fwd = Vector3.forward;
             Quaternion target = Quaternion.LookRotation(fwd.normalized, Vector3.up);
             rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, target,
@@ -311,7 +348,8 @@ public class TestMovement : MonoBehaviour
     // ── public API ────────────────────────────────────────────────────────────
     public void ResetSpeeds()
     {
-        leftMotorSpeed = 0f; rightMotorSpeed = 0f;
+        leftMotorSpeed  = 0f;
+        rightMotorSpeed = 0f;
         if (rb == null) rb = GetComponent<Rigidbody>();
         rb.linearVelocity  = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
