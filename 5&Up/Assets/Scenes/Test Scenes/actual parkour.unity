@@ -16085,6 +16085,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: RespawnToCheckpoint
       objectReference: {fileID: 0}
+    - target: {fileID: 1889944051773808064, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3047345786282343559, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
@@ -16159,7 +16163,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6224364464435135044, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6729027326620143030, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_Name
@@ -16207,7 +16211,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7862886822822056697, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7864926330168572812, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -16232,12 +16236,13 @@ PrefabInstance:
     - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1917336676}
+      objectReference: {fileID: 0}
     - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: RespawnToCheckpoint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7862886822822056697, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -16272,17 +16277,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 663935890}
   m_SourcePrefab: {fileID: 100100000, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
---- !u!114 &1917336676 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7862886822822056697, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5651b321bc392841abd3ecc4f70cb88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckPoints
 --- !u!1001 &1956563519
 PrefabInstance:
   m_ObjectHideFlags: 0
