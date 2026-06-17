@@ -290,6 +290,28 @@ public class CheckPoints : MonoBehaviour
             yield break;
         }
 
+        // Toon het cheat-beeld meteen bij het invoeren van de code
+        GameObject cheatGO = null;
+        foreach (Transform t in Resources.FindObjectsOfTypeAll<Transform>())
+        {
+            if (t.gameObject.scene.isLoaded && t.gameObject.name == cheatImageName)
+            {
+                cheatGO = t.gameObject;
+                break;
+            }
+        }
+
+        if (cheatGO != null)
+        {
+            if (_cheatImageCoroutine != null)
+                StopCoroutine(_cheatImageCoroutine);
+            _cheatImageCoroutine = StartCoroutine(ShowCheatCanvas(cheatGO));
+        }
+        else
+        {
+            Debug.LogWarning($"[CheckPoints] Cheat object '{cheatImageName}' niet gevonden in de scene!");
+        }
+
         // Onthoud de startpositie van de speler zodat we terug kunnen keren
         Vector3    returnPosition = RespawnManager.GetCurrentPosition();
         Quaternion returnRotation = RespawnManager.GetCurrentRotation();
@@ -339,29 +361,6 @@ public class CheckPoints : MonoBehaviour
         // Teleporteer de speler terug naar waar hij was
         RespawnManager.RespawnToPosition(returnPosition, returnRotation);
         Debug.Log($"[CheckPoints] CHEAT KLAAR: alle checkpoints ontgrendeld, speler terug op startpositie.");
-
-        // Zoek het cheese object via alle Transforms in de scene
-        // (ook inactive objecten worden zo gevonden)
-        GameObject cheatGO = null;
-        foreach (Transform t in Resources.FindObjectsOfTypeAll<Transform>())
-        {
-            if (t.gameObject.scene.isLoaded && t.gameObject.name == cheatImageName)
-            {
-                cheatGO = t.gameObject;
-                break;
-            }
-        }
-
-        if (cheatGO != null)
-        {
-            if (_cheatImageCoroutine != null)
-                StopCoroutine(_cheatImageCoroutine);
-            _cheatImageCoroutine = StartCoroutine(ShowCheatCanvas(cheatGO));
-        }
-        else
-        {
-            Debug.LogWarning($"[CheckPoints] Cheat object '{cheatImageName}' niet gevonden in de scene!");
-        }
 
         _cheatCoroutine = null;
     }
