@@ -7053,99 +7053,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1646732895118448509, guid: cd27a55fbfcd16f43af19b2a5a1c1e2c, type: 3}
   m_PrefabInstance: {fileID: 1007229643}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1105080595
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1105080597}
-  - component: {fileID: 1105080596}
-  - component: {fileID: 1105080598}
-  - component: {fileID: 1105080599}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1105080596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105080595}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03bc441e5dc688545adaa10eaab205f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SaveSystem
---- !u!4 &1105080597
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105080595}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1280, y: 720, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1105080598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105080595}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5651b321bc392841abd3ecc4f70cb88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckPoints
-  checkpointWaitTime: 2
-  cheatImageName: CheeseCanvas
-  checkpointImages:
-  - checkpointID: 0
-    targetObject: {fileID: 1211190881}
-  - checkpointID: 1
-    targetObject: {fileID: 314614495}
-  - checkpointID: 2
-    targetObject: {fileID: 569281057}
-  - checkpointID: 3
-    targetObject: {fileID: 691423377}
-  - checkpointID: 4
-    targetObject: {fileID: 48269242}
-  - checkpointID: 5
-    targetObject: {fileID: 2069233739}
-  - checkpointID: 6
-    targetObject: {fileID: 439179860}
-  - checkpointID: 7
-    targetObject: {fileID: 1910904130}
-  - checkpointID: 8
-    targetObject: {fileID: 179159387}
-  - checkpointID: 9
-    targetObject: {fileID: 1947883662}
---- !u!114 &1105080599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105080595}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2babf6e5775c53e428f54dcc9deb85c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
 --- !u!1 &1127195034
 GameObject:
   m_ObjectHideFlags: 0
@@ -20442,6 +20349,143 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -5495902117074765545, guid: 0017292585d529b4782700ec5b7b6618, type: 3}
+--- !u!1001 &8457627111681354808
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1310791927729565833, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_Name
+      value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1280
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 720
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3687242181125707339, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[0].objectName
+      value: Checkpoint locked1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[1].objectName
+      value: Checkpoint locked2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[2].objectName
+      value: Checkpoint locked3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[3].objectName
+      value: Checkpoint locked4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[4].objectName
+      value: Checkpoint locked5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[5].objectName
+      value: Checkpoint locked6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[6].objectName
+      value: Checkpoint locked7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[7].objectName
+      value: Checkpoint locked8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[8].objectName
+      value: Checkpoint locked9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[9].objectName
+      value: Checkpoint locked10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[0].targetObject
+      value: 
+      objectReference: {fileID: 1211190881}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[1].targetObject
+      value: 
+      objectReference: {fileID: 314614495}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[2].targetObject
+      value: 
+      objectReference: {fileID: 569281057}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[3].targetObject
+      value: 
+      objectReference: {fileID: 691423377}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[4].targetObject
+      value: 
+      objectReference: {fileID: 48269242}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[5].targetObject
+      value: 
+      objectReference: {fileID: 2069233739}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[6].targetObject
+      value: 
+      objectReference: {fileID: 439179860}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[7].targetObject
+      value: 
+      objectReference: {fileID: 1910904130}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[8].targetObject
+      value: 
+      objectReference: {fileID: 179159387}
+    - target: {fileID: 4552521681158041657, guid: 742349facc7b5684587ff2180700238a, type: 3}
+      propertyPath: checkpointImages.Array.data[9].targetObject
+      value: 
+      objectReference: {fileID: 1947883662}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 742349facc7b5684587ff2180700238a, type: 3}
 --- !u!23 &8619584001851762492
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20646,7 +20690,7 @@ SceneRoots:
   - {fileID: 1901946498}
   - {fileID: 414391058279246710}
   - {fileID: 1917336675}
-  - {fileID: 1105080597}
+  - {fileID: 8457627111681354808}
   - {fileID: 66392114}
   - {fileID: 1513214135}
   - {fileID: 351608770}
