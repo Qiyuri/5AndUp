@@ -395,24 +395,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7400668529e561242b6658a5cc5ff9a3, type: 3}
---- !u!1 &36271814 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4469583210387484597, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &36271819
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 36271814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 7
 --- !u!1001 &48259052
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1637,24 +1619,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65e4de6e38c9d04469d05c39f9cac2b3, type: 3}
   m_PrefabInstance: {fileID: 901542867}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &323131484 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8042456777900146205, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &323131489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 323131484}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 3
 --- !u!1 &333848206 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5694182098109609355, guid: 54bd71b6f0daa35449ac255834c2abfd, type: 3}
@@ -3181,24 +3145,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1611704686}
   m_SourcePrefab: {fileID: 100100000, guid: 01268ebbca6229145a1f089da166f214, type: 3}
---- !u!1 &593204236 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1711128942554219762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &593204241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593204236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 8
 --- !u!1001 &611209973
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3404,24 +3350,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8bd51a5ba43606b40a03cde9abc7fa79, type: 3}
   m_PrefabInstance: {fileID: 1358075920}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &656137066 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1694144040339744878, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &656137071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 656137066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 2
 --- !u!1 &662765080
 GameObject:
   m_ObjectHideFlags: 0
@@ -3535,24 +3463,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1749960991}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: -90}
---- !u!1 &663935885 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2246468288245585762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &663935890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 663935885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 9
 --- !u!1001 &676050552
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4203,24 +4113,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 01268ebbca6229145a1f089da166f214, type: 3}
   m_PrefabInstance: {fileID: 1523633223}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &806539378 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5786863560941900944, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &806539383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 806539378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 0
 --- !u!1001 &817350347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4437,24 +4329,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 74955594}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &863712932 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3515293101891389854, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &863712937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 863712932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 5
 --- !u!1001 &866639642
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10169,42 +10043,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1749960991}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1808788777 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7069319772648424857, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1808788782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1808788777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 1
---- !u!1 &1818035280 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 768471533172055278, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1818035285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1818035280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 4
 --- !u!1 &1825891473 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a605ea0d454657c418674e6516015b2d, type: 3}
@@ -15488,18 +15326,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1082357752364099400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1082357752364099400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 1082357752364099400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
-      objectReference: {fileID: 0}
     - target: {fileID: 1116583753178775324, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_Type
       value: 0
@@ -15520,18 +15346,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1811550879212383664, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 1811550879212383664, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
-      objectReference: {fileID: 0}
-    - target: {fileID: 1889944051773808064, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2669884610942183415, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_Type
       value: 0
@@ -15543,14 +15357,6 @@ PrefabInstance:
     - target: {fileID: 3047345786282343559, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3047345786282343559, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 3047345786282343559, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
       objectReference: {fileID: 0}
     - target: {fileID: 3068313521015899160, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
@@ -15592,25 +15398,9 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3645702104617886237, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 3645702104617886237, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
-      objectReference: {fileID: 0}
     - target: {fileID: 3881419825324495699, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3881419825324495699, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 3881419825324495699, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
       objectReference: {fileID: 0}
     - target: {fileID: 3886424358960084158, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -15640,10 +15430,6 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 4c528cbf210aa45489bba7a7b61e3238, type: 3}
-    - target: {fileID: 4379728096466926778, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4439835970227089898, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -15712,10 +15498,6 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4294967295
       objectReference: {fileID: 0}
-    - target: {fileID: 5106733357801711984, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5215754788332495787, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -15735,14 +15517,6 @@ PrefabInstance:
     - target: {fileID: 5215754788332495787, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4294967295
-      objectReference: {fileID: 0}
-    - target: {fileID: 5268672569729065594, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: sceneNames.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5268672569729065594, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: 'sceneNames.Array.data[0]'
-      value: 5&up
       objectReference: {fileID: 0}
     - target: {fileID: 5415038116132326129, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
@@ -15816,10 +15590,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BackToMenu button
       objectReference: {fileID: 0}
-    - target: {fileID: 6224364464435135044, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6494912845081240002, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -15840,10 +15610,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MenuCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 6729027326620143030, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6945967975182799764, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_Type
       value: 0
@@ -15855,14 +15621,6 @@ PrefabInstance:
     - target: {fileID: 7015958268277263882, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7015958268277263882, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 7015958268277263882, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
       objectReference: {fileID: 0}
     - target: {fileID: 7055092550272352086, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_text
@@ -15888,25 +15646,9 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7078272967302800315, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 7078272967302800315, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
-      objectReference: {fileID: 0}
     - target: {fileID: 7399599505225817145, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7399599505225817145, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 7399599505225817145, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
       objectReference: {fileID: 0}
     - target: {fileID: 7536863277091382893, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
@@ -15936,21 +15678,9 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 4c528cbf210aa45489bba7a7b61e3238, type: 3}
-    - target: {fileID: 7862886822822056697, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7864926330168572812, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7864926330168572812, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1105080598}
-    - target: {fileID: 7864926330168572812, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
       objectReference: {fileID: 0}
     - target: {fileID: 7883782768731130400, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
@@ -15980,18 +15710,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8542720048697096845, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RespawnToCheckpoint
-      objectReference: {fileID: 0}
     - target: {fileID: 8857593994472039324, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -16016,41 +15734,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 4c528cbf210aa45489bba7a7b61e3238, type: 3}
-    m_RemovedComponents:
-    - {fileID: 7862886822822056697, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5786863560941900944, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 806539383}
-    - targetCorrespondingSourceObject: {fileID: 7069319772648424857, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1808788782}
-    - targetCorrespondingSourceObject: {fileID: 1694144040339744878, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 656137071}
-    - targetCorrespondingSourceObject: {fileID: 8042456777900146205, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 323131489}
-    - targetCorrespondingSourceObject: {fileID: 768471533172055278, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1818035285}
-    - targetCorrespondingSourceObject: {fileID: 3515293101891389854, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 863712937}
-    - targetCorrespondingSourceObject: {fileID: 6568118766781500326, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2098255969}
-    - targetCorrespondingSourceObject: {fileID: 4469583210387484597, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 36271819}
-    - targetCorrespondingSourceObject: {fileID: 1711128942554219762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 593204241}
-    - targetCorrespondingSourceObject: {fileID: 2246468288245585762, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 663935890}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
 --- !u!1001 &1956563519
 PrefabInstance:
@@ -16790,24 +16477,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 790352190000569376, guid: 54bd71b6f0daa35449ac255834c2abfd, type: 3}
   m_PrefabInstance: {fileID: 1454063877}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2098255964 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6568118766781500326, guid: 73f8f475b734c584fa5cb4a50a29b0b2, type: 3}
-  m_PrefabInstance: {fileID: 1917336675}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2098255969
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2098255964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
-  checkpointID: 6
 --- !u!1001 &2132936576
 PrefabInstance:
   m_ObjectHideFlags: 0

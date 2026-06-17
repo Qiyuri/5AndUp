@@ -2997,10 +2997,6 @@ PrefabInstance:
       value: -787.8718
       objectReference: {fileID: 0}
     - target: {fileID: 3114087298515090639, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_fontStyle
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3114087298515090639, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_fontSizeBase
       value: 500
       objectReference: {fileID: 0}
@@ -3120,10 +3116,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -73
       objectReference: {fileID: 0}
-    - target: {fileID: 5978760603674868211, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: Co-op
-      objectReference: {fileID: 0}
     - target: {fileID: 6739554489548762114, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_Type
       value: 0
@@ -3240,16 +3232,6 @@ PrefabInstance:
       propertyPath: m_fontColor.r
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7020248059235745396, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7059682970366549280, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_text
-      value: 'Co-op
-
-'
-      objectReference: {fileID: 0}
     - target: {fileID: 7059682970366549280, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -3305,10 +3287,6 @@ PrefabInstance:
     - target: {fileID: 7459930234158012638, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_fontColor.r
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8171480018971620706, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9157734972292233121, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_AnchoredPosition.x
