@@ -53,7 +53,6 @@ public class RespawnManager : MonoBehaviour
 
     /// <summary>
     /// Respawn to a specific position and rotation.
-    /// Can be called from a CheckpointManager or any other system.
     /// </summary>
     public void RespawnToPosition(Vector3 position, Quaternion rotation)
     {
@@ -77,40 +76,37 @@ public class RespawnManager : MonoBehaviour
         Debug.Log("Spawn point updated to new checkpoint.");
     }
 
-    // Teleports via the Rigidbody so the physics engine is always in sync,
-    // regardless of framerate. Kinematic for one fixed frame ensures no
-    // residual velocity or collision response carries over from the old position.
+    /// <summary>
+    /// Geeft de huidige spawnpositie terug — gebruikt door de cheat in CheckPoints.
+    /// </summary>
+    public Vector3 GetCurrentPosition() => spawnPosition;
+
+    /// <summary>
+    /// Geeft de huidige spawnrotatie terug — gebruikt door de cheat in CheckPoints.
+    /// </summary>
+    public Quaternion GetCurrentRotation() => spawnRotation;
+
     private IEnumerator DoRespawn(Vector3 position, Quaternion rotation)
     {
-        // Stop all movement first
         TestMovement moveScript = GetComponent<TestMovement>();
         if (moveScript != null)
             moveScript.ResetSpeeds();
 
         if (rb != null)
         {
-            // Go kinematic: physics engine stops simulating this body
             bool wasKinematic  = rb.isKinematic;
             rb.isKinematic     = true;
-
-            // Move via Rigidbody — this is guaranteed to be in sync with
-            // the physics engine unlike setting transform.position directly
             rb.position        = position;
             rb.rotation        = rotation;
 
-            // Wait for the physics engine to process exactly one FixedUpdate
-            // at the new position before re-enabling simulation
             yield return new WaitForFixedUpdate();
 
             rb.isKinematic     = wasKinematic;
-
-            // Zero out any velocity the solver may have accumulated
             rb.linearVelocity  = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
         else
         {
-            // Fallback if no Rigidbody
             transform.position = position;
             transform.rotation = rotation;
         }

@@ -36,9 +36,18 @@ public class CheckPoints : MonoBehaviour
         }
     }
 
+    // ── Cheat code state ──────────────────────────────────────────────────────
+    private const string CHEAT_SEQUENCE = "frans maakt veel kans";
+    private const int    CHEAT_REPEATS  = 1;
+    private const float  CHEAT_WINDOW        = 10f;
+    private const float  CHEAT_MAX_WAIT      = 3f;
+    private string       cheatBuffer    = "";
+    private List<float>  cheatTimes     = new List<float>();
+
+    // ── Awake ─────────────────────────────────────────────────────────────────
+
     void Awake()
     {
-        // Singleton: vernietig duplicaten, overleef scene loads
         if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
@@ -52,13 +61,17 @@ public class CheckPoints : MonoBehaviour
             Debug.LogWarning("[CheckPoints] SaveSystem niet gevonden — voortgang wordt niet opgeslagen.");
     }
 
-    // Elke keer dat een nieuwe scene laadt, moeten de checkpoint-posities opnieuw
-    // geregistreerd worden (de wereld is nieuw), maar de triggered-set blijft bewaard.
-    // Reset daarom alleen de positie-dictionary, niet de voortgang.
+    void Update()
+    {
+        DetectCheatCode();
+    }
+
+    // ── Scene reload ──────────────────────────────────────────────────────────
+
     public void OnSceneReloaded()
     {
         checkpoints.Clear();
-        _respawnManager = null; // Haal de RespawnManager opnieuw op in de nieuwe scene
+        _respawnManager = null;
         Debug.Log("[CheckPoints] Scene herladen — checkpoint-posities gereset, voortgang bewaard.");
     }
 
@@ -85,7 +98,6 @@ public class CheckPoints : MonoBehaviour
 
     private void SaveProgress()
     {
-        // SaveSystem is ook DontDestroyOnLoad, dus altijd beschikbaar
         if (saveSystem == null)
             saveSystem = FindAnyObjectByType<SaveSystem>();
 
@@ -215,5 +227,111 @@ public class CheckPoints : MonoBehaviour
             activeCheckpointCoroutine = null;
             Debug.Log("[CheckPoints] Checkpoint wacht geannuleerd — speler heeft trigger verlaten.");
         }
+    }
+
+    // ── Cheat code: 3x "1234567890-=" binnen 10 seconden ────────────────────
+
+    private void DetectCheatCode()
+    {
+        if (string.IsNullOrEmpty(Input.inputString)) return;
+
+        foreach (char c in Input.inputString)
+        {
+            cheatBuffer += c;
+
+            // Buffer bijknippen zodat hij nooit meer dan 3x de sequence lang is
+            int maxLen = CHEAT_SEQUENCE.Length * CHEAT_REPEATS;
+            if (cheatBuffer.Length > maxLen)
+                cheatBuffer = cheatBuffer.Substring(cheatBuffer.Length - maxLen);
+
+            // Kijk of de sequence net afgerond is
+            if (cheatBuffer.EndsWith(CHEAT_SEQUENCE))
+            {
+                // Verwijder tijden buiten het tijdvenster
+                cheatTimes.RemoveAll(t => Time.time - t > CHEAT_WINDOW);
+                cheatTimes.Add(Time.time);
+
+                Debug.Log($"[CheckPoints] Cheat sequence ingevoerd ({cheatTimes.Count}/{CHEAT_REPEATS}).");
+
+                if (cheatTimes.Count >= CHEAT_REPEATS)
+                {
+                    UnlockAllCheckpoints();
+                    cheatBuffer = "";
+                    cheatTimes.Clear();
+                }
+            }
+        }
+    }
+
+    private void UnlockAllCheckpoints()
+    {
+        // Stop eventuele vorige cheat-run
+        if (_cheatCoroutine != null)
+            StopCoroutine(_cheatCoroutine);
+
+        _cheatCoroutine = StartCoroutine(CheatUnlockSequence());
+    }
+
+    private Coroutine _cheatCoroutine;
+
+    private IEnumerator CheatUnlockSequence()
+    {
+        if (RespawnManager == null)
+        {
+            Debug.LogError("[CheckPoints] CHEAT: RespawnManager niet gevonden, afgebroken.");
+            yield break;
+        }
+
+        // Onthoud de startpositie van de speler zodat we terug kunnen keren
+        Vector3    returnPosition = RespawnManager.GetCurrentPosition();
+        Quaternion returnRotation = RespawnManager.GetCurrentRotation();
+
+        // Sorteer checkpoints op ID zodat we ze op volgorde aflopen
+        List<int> sortedIDs = new List<int>(checkpoints.Keys);
+        sortedIDs.Sort();
+
+        Debug.Log($"[CheckPoints] CHEAT GESTART: {sortedIDs.Count} checkpoints worden ontgrendeld.");
+
+        foreach (int id in sortedIDs)
+        {
+            // Sla over als dit checkpoint al ontgrendeld is
+            if (triggeredCheckpoints.Contains(id))
+            {
+                Debug.Log($"[CheckPoints] CHEAT: Checkpoint {id} al ontgrendeld, sla over.");
+                continue;
+            }
+
+            Checkpoint cp = checkpoints[id];
+
+            // Teleporteer de speler naar dit checkpoint
+            RespawnManager.RespawnToPosition(cp.position, cp.rotation);
+            Debug.Log($"[CheckPoints] CHEAT: Geteleporteerd naar checkpoint {id}, wacht max {CHEAT_MAX_WAIT}s of tot geclaimd...");
+
+            // Wacht maximaal CHEAT_MAX_WAIT seconden, of tot het checkpoint
+            // al geclaimd is (bijv. doordat de trigger zelf ook afging).
+            float waited = 0f;
+            while (waited < CHEAT_MAX_WAIT && !triggeredCheckpoints.Contains(id))
+            {
+                yield return new WaitForFixedUpdate();
+                waited += Time.fixedDeltaTime;
+            }
+
+            // Unlock dit checkpoint als het nog niet geclaimd is
+            if (!triggeredCheckpoints.Contains(id))
+            {
+                triggeredCheckpoints.Add(id);
+                activeRespawnCheckpointID = id;
+                RespawnManager.SetSpawnPoint(cp.position, cp.rotation);
+                SaveProgress();
+            }
+
+            Debug.Log($"[CheckPoints] CHEAT: Checkpoint {id} ontgrendeld na {waited:F1}s.");
+        }
+
+        // Teleporteer de speler terug naar waar hij was
+        RespawnManager.RespawnToPosition(returnPosition, returnRotation);
+        Debug.Log($"[CheckPoints] CHEAT KLAAR: alle checkpoints ontgrendeld, speler terug op startpositie.");
+
+        _cheatCoroutine = null;
     }
 }
