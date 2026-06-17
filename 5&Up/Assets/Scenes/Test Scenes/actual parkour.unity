@@ -1270,10 +1270,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 678255481}
   slowDownDistance: 1
@@ -2633,10 +2633,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 1797795615}
   slowDownDistance: 1
@@ -3529,7 +3529,7 @@ Transform:
   m_GameObject: {fileID: 662765080}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: -238.36041, y: 135.9505, z: 15.916138}
+  m_LocalPosition: {x: -656, y: 112, z: 15.916138}
   m_LocalScale: {x: 20.05468, y: 1, z: 25.769331}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4166,10 +4166,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 1797795615}
   slowDownDistance: 1
@@ -5059,10 +5059,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 1797795615}
   slowDownDistance: 1
@@ -5167,10 +5167,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 678255481}
   slowDownDistance: 1
@@ -5372,10 +5372,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 678255481}
   slowDownDistance: 1
@@ -6395,10 +6395,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 678255481}
   slowDownDistance: 1
@@ -7894,10 +7894,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 1797795615}
   slowDownDistance: 1
@@ -8159,10 +8159,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 678255481}
   slowDownDistance: 1
@@ -9271,10 +9271,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 678255481}
   slowDownDistance: 1
@@ -16422,10 +16422,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   raycastCount: 30
-  detectionWidth: 8
+  detectionWidth: 10
   raycastDistance: 70
   raycastDirection: {x: 0, y: 0, z: 1}
-  pushSpeed: 150
+  pushSpeed: 200
   returnSpeed: 70
   endPoint: {fileID: 678255481}
   slowDownDistance: 1
