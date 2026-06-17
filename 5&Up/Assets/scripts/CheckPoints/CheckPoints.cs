@@ -31,6 +31,21 @@ public class CheckPoints : MonoBehaviour
     private const float CHEAT_IMAGE_DURATION = 5f;
     private Coroutine   _cheatImageCoroutine;
 
+    // ── UI Image control ──────────────────────────────────────────────────────
+    [System.Serializable]
+    public class CheckpointImage
+    {
+        [Tooltip("ID van het checkpoint dat dit GameObject deactiveert.")]
+        public int checkpointID;
+        [Tooltip("Het GameObject dat verborgen wordt zodra het checkpoint behaald is.")]
+        public GameObject targetObject;
+    }
+
+    [Header("UI Image Control")]
+    [SerializeField]
+    [Tooltip("Koppel elk GameObject aan een checkpoint-ID. Het object wordt gedeactiveerd zodra dat checkpoint behaald is.")]
+    private List<CheckpointImage> checkpointImages = new List<CheckpointImage>();
+
     private int activeRespawnCheckpointID = -1;
 
     private RespawnManager _respawnManager;
@@ -215,6 +230,7 @@ public class CheckPoints : MonoBehaviour
             activeRespawnCheckpointID = checkpointID;
 
             SaveProgress();
+            DeactivateImagesForCheckpoint(checkpointID);
 
             Debug.Log($"[CheckPoints] Checkpoint {checkpointID} behaald na {checkpointWaitTime} seconden.");
         }
@@ -234,6 +250,24 @@ public class CheckPoints : MonoBehaviour
             StopCoroutine(activeCheckpointCoroutine);
             activeCheckpointCoroutine = null;
             Debug.Log("[CheckPoints] Checkpoint wacht geannuleerd — speler heeft trigger verlaten.");
+        }
+    }
+
+    // ── UI Image: deactiveer bij checkpoint ───────────────────────────────────
+
+    /// <summary>
+    /// Deactiveert alle GameObjects die gekoppeld zijn aan het opgegeven checkpoint-ID.
+    /// Wordt automatisch aangeroepen zodra een checkpoint behaald is.
+    /// </summary>
+    private void DeactivateImagesForCheckpoint(int checkpointID)
+    {
+        foreach (CheckpointImage entry in checkpointImages)
+        {
+            if (entry.targetObject != null && entry.checkpointID == checkpointID)
+            {
+                entry.targetObject.SetActive(false);
+                Debug.Log($"[CheckPoints] GameObject '{entry.targetObject.name}' gedeactiveerd (checkpoint {checkpointID}).");
+            }
         }
     }
 
@@ -353,6 +387,7 @@ public class CheckPoints : MonoBehaviour
                 activeRespawnCheckpointID = id;
                 RespawnManager.SetSpawnPoint(cp.position, cp.rotation);
                 SaveProgress();
+                DeactivateImagesForCheckpoint(id);
             }
 
             Debug.Log($"[CheckPoints] CHEAT: Checkpoint {id} ontgrendeld na {waited:F1}s.");
