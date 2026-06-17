@@ -32,15 +32,14 @@ public class CheckPoints : MonoBehaviour
     private Coroutine   _cheatImageCoroutine;
 
     // ── UI Image control ──────────────────────────────────────────────────────
-[System.Serializable]
-public class CheckpointImage
-{
-    [Tooltip("ID van het checkpoint.")]
-    public int checkpointID;
-
-    [Tooltip("Naam van het object dat verborgen moet worden.")]
-    public string objectName;
-}
+    [System.Serializable]
+    public class CheckpointImage
+    {
+        [Tooltip("ID van het checkpoint dat dit GameObject deactiveert.")]
+        public int checkpointID;
+        [Tooltip("Het GameObject dat verborgen wordt zodra het checkpoint behaald is.")]
+        public GameObject targetObject;
+    }
 
     [Header("UI Image Control")]
     [SerializeField]
@@ -162,12 +161,6 @@ public class CheckpointImage
         }
 
         Debug.Log($"[CheckPoints] {triggeredCheckpoints.Count} checkpoint(s) geladen uit save.");
-        // Herstel alle checkpoint images na laden
-    
-        foreach (int checkpointID in triggeredCheckpoints)
-        {
-            DeactivateImagesForCheckpoint(checkpointID);
-        }
     }
 
     // ── Respawning ────────────────────────────────────────────────────────────
@@ -266,22 +259,17 @@ public class CheckpointImage
     /// Deactiveert alle GameObjects die gekoppeld zijn aan het opgegeven checkpoint-ID.
     /// Wordt automatisch aangeroepen zodra een checkpoint behaald is.
     /// </summary>
-   private void DeactivateImagesForCheckpoint(int checkpointID)
-{
-    foreach (CheckpointImage entry in checkpointImages)
+    private void DeactivateImagesForCheckpoint(int checkpointID)
     {
-        if (entry.checkpointID != checkpointID)
-            continue;
-
-        GameObject obj = GameObject.Find(entry.objectName);
-
-        if (obj != null)
+        foreach (CheckpointImage entry in checkpointImages)
         {
-            obj.SetActive(false);
-            Debug.Log($"[CheckPoints] GameObject '{obj.name}' gedeactiveerd (checkpoint {checkpointID}).");
+            if (entry.targetObject != null && entry.checkpointID == checkpointID)
+            {
+                entry.targetObject.SetActive(false);
+                Debug.Log($"[CheckPoints] GameObject '{entry.targetObject.name}' gedeactiveerd (checkpoint {checkpointID}).");
+            }
         }
     }
-}
 
     // ── Cheat code: 3x "1234567890-=" binnen 10 seconden ────────────────────
 
