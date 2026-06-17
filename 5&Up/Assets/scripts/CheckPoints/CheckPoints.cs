@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,6 +23,13 @@ public class CheckPoints : MonoBehaviour
 
     [SerializeField] private float checkpointWaitTime = 2f;
     private Coroutine activeCheckpointCoroutine;
+
+    [Header("Cheat Image")]
+    [SerializeField]
+    [Tooltip("Naam van het cheese GameObject dat getoond wordt na de cheat.")]
+    private string cheatImageName = "cheese";
+    private const float CHEAT_IMAGE_DURATION = 5f;
+    private Coroutine   _cheatImageCoroutine;
 
     private int activeRespawnCheckpointID = -1;
 
@@ -332,6 +340,37 @@ public class CheckPoints : MonoBehaviour
         RespawnManager.RespawnToPosition(returnPosition, returnRotation);
         Debug.Log($"[CheckPoints] CHEAT KLAAR: alle checkpoints ontgrendeld, speler terug op startpositie.");
 
+        // Zoek het cheese object via alle Transforms in de scene
+        // (ook inactive objecten worden zo gevonden)
+        GameObject cheatGO = null;
+        foreach (Transform t in Resources.FindObjectsOfTypeAll<Transform>())
+        {
+            if (t.gameObject.scene.isLoaded && t.gameObject.name == cheatImageName)
+            {
+                cheatGO = t.gameObject;
+                break;
+            }
+        }
+
+        if (cheatGO != null)
+        {
+            if (_cheatImageCoroutine != null)
+                StopCoroutine(_cheatImageCoroutine);
+            _cheatImageCoroutine = StartCoroutine(ShowCheatCanvas(cheatGO));
+        }
+        else
+        {
+            Debug.LogWarning($"[CheckPoints] Cheat object '{cheatImageName}' niet gevonden in de scene!");
+        }
+
         _cheatCoroutine = null;
+    }
+
+    private IEnumerator ShowCheatCanvas(GameObject cheatGO)
+    {
+        cheatGO.SetActive(true);
+        yield return new WaitForSeconds(CHEAT_IMAGE_DURATION);
+        cheatGO.SetActive(false);
+        _cheatImageCoroutine = null;
     }
 }
