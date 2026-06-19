@@ -31,20 +31,12 @@ public class CheckPoints : MonoBehaviour
     private const float CHEAT_IMAGE_DURATION = 5f;
     private Coroutine   _cheatImageCoroutine;
 
-    // ── UI Image control ──────────────────────────────────────────────────────
-    [System.Serializable]
-    public class CheckpointImage
-    {
-        [Tooltip("ID van het checkpoint dat dit GameObject deactiveert.")]
-        public int checkpointID;
-        [Tooltip("Het GameObject dat verborgen wordt zodra het checkpoint behaald is.")]
-        public GameObject targetObject;
-    }
-
-    [Header("UI Image Control")]
-    [SerializeField]
-    [Tooltip("Koppel elk GameObject aan een checkpoint-ID. Het object wordt gedeactiveerd zodra dat checkpoint behaald is.")]
-    private List<CheckpointImage> checkpointImages = new List<CheckpointImage>();
+    // ── Button unlock control ─────────────────────────────────────────────────
+    // Buttons register themselves at runtime via RegisterButton() so that
+    // cross-scene references are never stored here. Each scene's buttons
+    // register on Start and unregister on destroy automatically.
+    private readonly Dictionary<int, List<Button>> _registeredButtons =
+        new Dictionary<int, List<Button>>();
 
     private int activeRespawnCheckpointID = -1;
 
@@ -230,7 +222,7 @@ public class CheckPoints : MonoBehaviour
             activeRespawnCheckpointID = checkpointID;
 
             SaveProgress();
-            DeactivateImagesForCheckpoint(checkpointID);
+            EnableButtonsForCheckpoint(checkpointID);
 
             Debug.Log($"[CheckPoints] Checkpoint {checkpointID} behaald na {checkpointWaitTime} seconden.");
         }
@@ -253,21 +245,55 @@ public class CheckPoints : MonoBehaviour
         }
     }
 
-    // ── UI Image: deactiveer bij checkpoint ───────────────────────────────────
+    // ── Button registration API ───────────────────────────────────────────────
 
     /// <summary>
-    /// Deactiveert alle GameObjects die gekoppeld zijn aan het opgegeven checkpoint-ID.
-    /// Wordt automatisch aangeroepen zodra een checkpoint behaald is.
+    /// Called by CheckpointButtonRegistrar on Start. Adds the button to the
+    /// runtime list and immediately enables it if the checkpoint is already done.
     /// </summary>
-    private void DeactivateImagesForCheckpoint(int checkpointID)
+    public void RegisterButton(int checkpointID, Button button)
     {
-        foreach (CheckpointImage entry in checkpointImages)
+        if (!_registeredButtons.ContainsKey(checkpointID))
+            _registeredButtons[checkpointID] = new List<Button>();
+
+        _registeredButtons[checkpointID].Add(button);
+
+        // Restore interactable state right away if already unlocked
+        if (triggeredCheckpoints.Contains(checkpointID))
         {
-            if (entry.targetObject != null && entry.checkpointID == checkpointID)
-            {
-                entry.targetObject.SetActive(false);
-                Debug.Log($"[CheckPoints] GameObject '{entry.targetObject.name}' gedeactiveerd (checkpoint {checkpointID}).");
-            }
+            button.interactable = true;
+            Debug.Log($"[CheckPoints] Button '{button.name}' instantly enabled (checkpoint {checkpointID} already done).");
+        }
+    }
+
+    /// <summary>
+    /// Called by CheckpointButtonRegistrar on OnDestroy so stale scene
+    /// references are never left in the dictionary.
+    /// </summary>
+    public void UnregisterButton(int checkpointID, Button button)
+    {
+        if (_registeredButtons.TryGetValue(checkpointID, out var list))
+        {
+            list.Remove(button);
+            Debug.Log($"[CheckPoints] Button '{button.name}' unregistered (checkpoint {checkpointID}).");
+        }
+    }
+
+    // ── Button unlock: enable on checkpoint ──────────────────────────────────
+
+    /// <summary>
+    /// Makes all currently-registered Buttons for this checkpoint interactable.
+    /// Called automatically whenever a checkpoint is reached.
+    /// </summary>
+    private void EnableButtonsForCheckpoint(int checkpointID)
+    {
+        if (!_registeredButtons.TryGetValue(checkpointID, out var list)) return;
+
+        foreach (Button btn in list)
+        {
+            if (btn == null) continue;
+            btn.interactable = true;
+            Debug.Log($"[CheckPoints] Button '{btn.name}' enabled (checkpoint {checkpointID}).");
         }
     }
 
@@ -387,7 +413,7 @@ public class CheckPoints : MonoBehaviour
                 activeRespawnCheckpointID = id;
                 RespawnManager.SetSpawnPoint(cp.position, cp.rotation);
                 SaveProgress();
-                DeactivateImagesForCheckpoint(id);
+                EnableButtonsForCheckpoint(id);
             }
 
             Debug.Log($"[CheckPoints] CHEAT: Checkpoint {id} ontgrendeld na {waited:F1}s.");
