@@ -2932,6 +2932,10 @@ PrefabInstance:
       propertyPath: m_fontColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2512736856818714443, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 2528807913117713883, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -2980,6 +2984,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 4c528cbf210aa45489bba7a7b61e3238, type: 3}
+    - target: {fileID: 3021307239102669227, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3114087298515090639, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_fontSize
       value: 500
@@ -3108,6 +3116,14 @@ PrefabInstance:
       propertyPath: m_fontColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5125035428506582952, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290408538836019037, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5442985661330310997, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -910
@@ -3204,6 +3220,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6802810097793534346, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6824793949523292166, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_Type
       value: 0
@@ -3287,6 +3307,10 @@ PrefabInstance:
     - target: {fileID: 7459930234158012638, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_fontColor.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8171480018971620706, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9157734972292233121, guid: 9b339f076ca0b2740b57fe549c8187be, type: 3}
       propertyPath: m_AnchoredPosition.x
