@@ -562,7 +562,7 @@ MonoBehaviour:
     m_Value: 0
   shadowsEnd:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 1
   highlightsStart:
     m_OverrideState: 1
     m_Value: 0.55

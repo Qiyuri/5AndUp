@@ -17440,6 +17440,10 @@ PrefabInstance:
       propertyPath: groundCheckDistance
       value: 0.8
       objectReference: {fileID: 0}
+    - target: {fileID: 6045894975876069760, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: far clip plane
+      value: 5000
+      objectReference: {fileID: 0}
     - target: {fileID: 7525673095713426201, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
       propertyPath: respawnSound
       value: 
