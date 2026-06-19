@@ -15,17 +15,17 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.002
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0.81
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SubtractiveShadowColor: {r: 0.59748423, g: 0.54299664, b: 0.54299664, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 2bd8959f5fbd3644aa33af1a155fc147, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 01c4d0b304179594b96f9eb4401324f4, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: f2cfa003f50d8dd41919c699e436adcd, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -1705,7 +1705,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &241734678 stripped
@@ -3451,7 +3451,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!54 &503677184
@@ -5287,7 +5287,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &781304364 stripped
@@ -6148,7 +6148,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &948218084 stripped
@@ -6256,7 +6256,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &962536471 stripped
@@ -6598,7 +6598,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &1036411201 stripped
@@ -7695,7 +7695,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &1211005998 stripped
@@ -9452,7 +9452,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &1471508748 stripped
@@ -9854,7 +9854,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &1494466779 stripped
@@ -11041,7 +11041,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &1611704690 stripped
@@ -18636,7 +18636,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   raycastCount: 15
   raycastSpacing: 0.5
-  boostSpeed: 700
+  boostSpeed: 150
   boostCooldown: 0
   debugDrawRaycast: 1
 --- !u!4 &2028431793 stripped
@@ -19668,6 +19668,14 @@ PrefabInstance:
     - target: {fileID: 5801152683002379133, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
       propertyPath: groundCheckDistance
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7525673095713426201, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: respawnSound
+      value: 
+      objectReference: {fileID: 8300000, guid: b44785d1ee65e464f8002f0e0599fae1, type: 3}
+    - target: {fileID: 7525673095713426201, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: respawnHoldTime
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
       propertyPath: maxPitch
