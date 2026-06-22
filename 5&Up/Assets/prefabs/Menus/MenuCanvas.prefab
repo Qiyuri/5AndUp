@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 5926690260973448334}
   - component: {fileID: 3881419825324495699}
   - component: {fileID: 6347883515982688115}
+  - component: {fileID: 2328064656518249006}
   m_Layer: 5
   m_Name: Checkpoint5
   m_TagString: Untagged
@@ -254,7 +255,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 5926690260973448334}
   m_OnClick:
     m_PersistentCalls:
@@ -271,6 +272,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 4
+--- !u!114 &2328064656518249006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 768471533172055278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 4
 --- !u!1 &1269113960926655148
 GameObject:
@@ -364,8 +378,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 44
+  m_fontSizeBase: 44
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -696,6 +710,7 @@ GameObject:
   - component: {fileID: 4564453313490655225}
   - component: {fileID: 7399599505225817145}
   - component: {fileID: 4412092274489721767}
+  - component: {fileID: 8277265894001033909}
   m_Layer: 5
   m_Name: Checkpoint3
   m_TagString: Untagged
@@ -800,7 +815,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 4564453313490655225}
   m_OnClick:
     m_PersistentCalls:
@@ -818,6 +833,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
   checkpointID: 2
+--- !u!114 &8277265894001033909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694144040339744878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
+  checkpointID: 2
 --- !u!1 &1711128942554219762
 GameObject:
   m_ObjectHideFlags: 0
@@ -831,6 +859,7 @@ GameObject:
   - component: {fileID: 3177929144397400291}
   - component: {fileID: 7078272967302800315}
   - component: {fileID: 7876679678925787689}
+  - component: {fileID: 813268682342807415}
   m_Layer: 5
   m_Name: Checkpoint9
   m_TagString: Untagged
@@ -935,7 +964,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 3177929144397400291}
   m_OnClick:
     m_PersistentCalls:
@@ -952,6 +981,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 8
+--- !u!114 &813268682342807415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711128942554219762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 8
 --- !u!1 &1889944051773808064
 GameObject:
@@ -1044,6 +1086,7 @@ GameObject:
   - component: {fileID: 8974971275436216299}
   - component: {fileID: 1811550879212383664}
   - component: {fileID: 979734913035520274}
+  - component: {fileID: 8855604515998147965}
   m_Layer: 5
   m_Name: Checkpoint10
   m_TagString: Untagged
@@ -1148,7 +1191,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 8974971275436216299}
   m_OnClick:
     m_PersistentCalls:
@@ -1165,6 +1208,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 9
+--- !u!114 &8855604515998147965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2246468288245585762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 9
 --- !u!1 &2362683245068679335
 GameObject:
@@ -1802,6 +1858,7 @@ GameObject:
   - component: {fileID: 8245879453064329691}
   - component: {fileID: 7864926330168572812}
   - component: {fileID: 1151424989154538059}
+  - component: {fileID: 3668032545170216847}
   m_Layer: 5
   m_Name: Checkpoint6
   m_TagString: Untagged
@@ -1906,7 +1963,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 8245879453064329691}
   m_OnClick:
     m_PersistentCalls:
@@ -1923,6 +1980,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 5
+--- !u!114 &3668032545170216847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3515293101891389854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 5
 --- !u!1 &3839777956107345766
 GameObject:
@@ -2153,8 +2223,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 42
+  m_fontSizeBase: 42
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2624,6 +2694,7 @@ GameObject:
   - component: {fileID: 4220617347528388355}
   - component: {fileID: 3645702104617886237}
   - component: {fileID: 7188369573934767123}
+  - component: {fileID: 853025644806565271}
   m_Layer: 5
   m_Name: Checkpoint8
   m_TagString: Untagged
@@ -2728,7 +2799,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 4220617347528388355}
   m_OnClick:
     m_PersistentCalls:
@@ -2745,6 +2816,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 7
+--- !u!114 &853025644806565271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4469583210387484597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 7
 --- !u!1 &4597243693276742047
 GameObject:
@@ -3020,8 +3104,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 44
+  m_fontSizeBase: 44
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3078,6 +3162,7 @@ GameObject:
   - component: {fileID: 1116583753178775324}
   - component: {fileID: 8542720048697096845}
   - component: {fileID: 8600230460499792124}
+  - component: {fileID: 2694994795390859550}
   m_Layer: 5
   m_Name: Checkpoint1
   m_TagString: Untagged
@@ -3182,7 +3267,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1116583753178775324}
   m_OnClick:
     m_PersistentCalls:
@@ -3199,6 +3284,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 0
+--- !u!114 &2694994795390859550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5786863560941900944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 0
 --- !u!1 &5928813023767566094
 GameObject:
@@ -3424,6 +3522,7 @@ GameObject:
   - component: {fileID: 5715284591132453001}
   - component: {fileID: 3047345786282343559}
   - component: {fileID: 4693459394243159059}
+  - component: {fileID: 4070045886736601088}
   m_Layer: 5
   m_Name: Checkpoint7
   m_TagString: Untagged
@@ -3528,7 +3627,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 5715284591132453001}
   m_OnClick:
     m_PersistentCalls:
@@ -3545,6 +3644,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 6
+--- !u!114 &4070045886736601088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6568118766781500326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 6
 --- !u!1 &6729027326620143030
 GameObject:
@@ -3708,6 +3820,7 @@ GameObject:
   - component: {fileID: 1473377333045988310}
   - component: {fileID: 1082357752364099400}
   - component: {fileID: 1001533043271704453}
+  - component: {fileID: 2821491707796953872}
   m_Layer: 5
   m_Name: Checkpoint2
   m_TagString: Untagged
@@ -3812,7 +3925,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1473377333045988310}
   m_OnClick:
     m_PersistentCalls:
@@ -3829,6 +3942,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 1
+--- !u!114 &2821491707796953872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7069319772648424857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 1
 --- !u!1 &7715269128848293409
 GameObject:
@@ -3980,6 +4106,7 @@ GameObject:
   - component: {fileID: 2669884610942183415}
   - component: {fileID: 7015958268277263882}
   - component: {fileID: 2101481931332692025}
+  - component: {fileID: 6035388615899425419}
   m_Layer: 5
   m_Name: Checkpoint4
   m_TagString: Untagged
@@ -4084,7 +4211,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2669884610942183415}
   m_OnClick:
     m_PersistentCalls:
@@ -4101,6 +4228,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64afa1ba3a25cc446a7ef988ec913cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheckpointButton
+  checkpointID: 3
+--- !u!114 &6035388615899425419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8042456777900146205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcc549a0f4afb54c9e980197d61ad7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointButtonRegistrar
   checkpointID: 3
 --- !u!1 &8075607375073678645
 GameObject:
