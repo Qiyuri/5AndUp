@@ -39,7 +39,7 @@ public class CheckpointSpawns : MonoBehaviour
     private static int  s_totalSpawns     = 0;
     private static int  s_registeredCount = 0;
     private static bool s_loadTriggered   = false;
-    private static bool s_sceneResetDone  = false; // Voorkomt dubbele OnSceneReloaded aanroep
+    private static bool s_sceneResetDone  = false;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStaticState()
@@ -54,7 +54,6 @@ public class CheckpointSpawns : MonoBehaviour
     {
         s_totalSpawns++;
 
-        // Eerste spawn in deze scene reset de positie-dictionary in de singleton
         if (!s_sceneResetDone)
         {
             s_sceneResetDone = true;
@@ -69,7 +68,6 @@ public class CheckpointSpawns : MonoBehaviour
 
     void Start()
     {
-        // Gebruik de singleton i.p.v. FindAnyObjectByType — werkt ook na scene reload
         CheckPoints cp = CheckPoints.Instance;
         if (cp != null)
         {
@@ -77,7 +75,7 @@ public class CheckpointSpawns : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"[CheckpointSpawns] CheckPoints singleton niet gevonden! Zorg dat CheckPoints.cs DontDestroyOnLoad heeft.");
+            Debug.LogError($"[CheckpointSpawns] CheckPoints singleton niet gevonden!");
             return;
         }
 
@@ -85,7 +83,6 @@ public class CheckpointSpawns : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Zodra alle spawns Start() hebben gedraaid → laad save
         s_registeredCount++;
         if (!s_loadTriggered && s_registeredCount >= s_totalSpawns)
         {
@@ -93,13 +90,12 @@ public class CheckpointSpawns : MonoBehaviour
             cp.OnAllCheckpointsRegistered();
         }
 
-        // Herstel visuele staat als checkpoint al was behaald in vorige sessie
         StartCoroutine(RestoreVisualStateIfNeeded());
     }
 
     private IEnumerator RestoreVisualStateIfNeeded()
     {
-        yield return null; // Wacht tot LoadSavedProgress klaar is
+        yield return null;
 
         if (CheckPoints.Instance != null && CheckPoints.Instance.IsCheckpointTriggered(checkpointID))
         {
@@ -120,6 +116,10 @@ public class CheckpointSpawns : MonoBehaviour
         if (cp == null) { Debug.LogError("[CheckpointSpawns] CheckPoints singleton niet gevonden!"); return; }
 
         cp.SetActiveCheckpoint(checkpointID);
+
+        // RunTimer is NOT called here — it fires inside ActivationSequence
+        // after the checkpoint is fully claimed, so respawning through an
+        // already-activated checkpoint never resets or splits the timer.
 
         if (hasBeenActivated || activationPending) return;
 
@@ -157,6 +157,11 @@ public class CheckpointSpawns : MonoBehaviour
         activationPending = false;
 
         ApplyActivatedVisuals(playSounds: true, spawnParticles: true);
+
+        // Timer fires here — after the checkpoint is fully claimed.
+        // Because hasBeenActivated is now true, this can never run twice
+        // for the same checkpoint, so respawning won't affect the timer.
+        RunTimer.Instance?.OnCheckpointReached(checkpointID);
 
         Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID} geactiveerd!");
     }
