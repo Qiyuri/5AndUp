@@ -143,6 +143,10 @@ public class RunTimer : MonoBehaviour
         _lastHitID     = startCheckpointID;
         for (int i = 0; i < MAX; i++) _sectorTimes[i] = 0f;
 
+        // Reset which checkpoints were claimed this run so their visuals,
+        // sounds, and particles can fire again. Permanent save is untouched.
+        CheckPoints.Instance?.ResetRunState();
+
         // Clear any finish message / sector info immediately.
         ShowInfo("", permanent: true);
         if (totalTimeText) totalTimeText.text = "00:00.000";

@@ -97,12 +97,45 @@ public class CheckpointSpawns : MonoBehaviour
     {
         yield return null;
 
-        if (CheckPoints.Instance != null && CheckPoints.Instance.IsCheckpointTriggered(checkpointID))
+        CheckPoints cp = CheckPoints.Instance;
+        if (cp == null) yield break;
+
+        if (cp.IsCheckpointClaimedThisRun(checkpointID))
         {
+            // Already claimed this run (e.g. scene reload mid-run) — restore visuals.
             ApplyActivatedVisuals(playSounds: false, spawnParticles: false);
             hasBeenActivated = true;
-            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: visueel hersteld vanuit save.");
+            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: visueel hersteld (al geclaimd deze run).");
         }
+        else
+        {
+            // New run — make sure visuals start in their default/unclaimed state
+            // even if they were activated in a previous run.
+            ResetVisuals();
+            hasBeenActivated  = false;
+            activationPending = false;
+            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: visueel gereset voor nieuwe run.");
+        }
+    }
+
+    /// <summary>
+    /// Resets renderer colours and re-applies the default GameObject active states
+    /// so the checkpoint looks unclaimed at the start of every fresh run.
+    /// </summary>
+    private void ResetVisuals()
+    {
+        // Revert renderer colours to white (default). If you have a specific
+        // "deactivated colour" field you'd like to use instead, swap it here.
+        foreach (Renderer r in renderersToTurnGreen)
+            if (r != null) r.material.color = Color.white;
+
+        // Invert the enable/disable arrays: objects that get enabled on activation
+        // should be hidden again, and vice-versa.
+        foreach (GameObject go in gameObjectsToEnable)
+            if (go != null) go.SetActive(false);
+
+        foreach (GameObject go in gameObjectsToDisable)
+            if (go != null) go.SetActive(true);
     }
 
     public int GetCheckpointID() => checkpointID;

@@ -18,7 +18,8 @@ public class CheckPoints : MonoBehaviour
     public static CheckPoints Instance => _instance;
 
     private Dictionary<int, Checkpoint> checkpoints = new Dictionary<int, Checkpoint>();
-    private HashSet<int> triggeredCheckpoints = new HashSet<int>();
+    private HashSet<int> triggeredCheckpoints = new HashSet<int>(); // Permanent — saved, used for menu/TP
+    private HashSet<int> claimedThisRun       = new HashSet<int>(); // Runtime only — resets each run
     private SaveSystem saveSystem;
 
     [SerializeField] private float checkpointWaitTime = 2f;
@@ -88,6 +89,18 @@ public class CheckPoints : MonoBehaviour
         checkpoints.Clear();
         _respawnManager = null;
         Debug.Log("[CheckPoints] Scene herladen — checkpoint-posities gereset, voortgang bewaard.");
+    }
+
+    /// <summary>
+    /// Clears which checkpoints were claimed THIS run so their visuals/sounds
+    /// can fire again. Does NOT touch triggeredCheckpoints (the permanent save),
+    /// so menu buttons and TP stay unlocked.
+    /// Called by RunTimer when a new run starts.
+    /// </summary>
+    public void ResetRunState()
+    {
+        claimedThisRun.Clear();
+        Debug.Log("[CheckPoints] Run state gereset — checkpoints kunnen opnieuw geclaimd worden.");
     }
 
     private IEnumerator LoadAfterRegistration()
@@ -218,7 +231,8 @@ public class CheckPoints : MonoBehaviour
         if (RespawnManager != null)
         {
             RespawnManager.SetSpawnPoint(checkpoint.position, checkpoint.rotation);
-            triggeredCheckpoints.Add(checkpointID);
+            triggeredCheckpoints.Add(checkpointID);  // Permanent save (menu/TP)
+            claimedThisRun.Add(checkpointID);         // Runtime-only (visuals/timer gate)
             activeRespawnCheckpointID = checkpointID;
 
             SaveProgress();
@@ -230,9 +244,22 @@ public class CheckPoints : MonoBehaviour
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// True if this checkpoint was saved (ever achieved). Used by menu buttons and TP.
+    /// </summary>
     public bool IsCheckpointTriggered(int checkpointID)
     {
         return triggeredCheckpoints.Contains(checkpointID);
+    }
+
+    /// <summary>
+    /// True if this checkpoint was claimed during the CURRENT run.
+    /// Used by CheckpointSpawns to decide whether to replay visuals/sounds.
+    /// Resets to false for all checkpoints when ResetRunState() is called.
+    /// </summary>
+    public bool IsCheckpointClaimedThisRun(int checkpointID)
+    {
+        return claimedThisRun.Contains(checkpointID);
     }
 
     public void CancelCheckpointWait()
@@ -410,6 +437,7 @@ public class CheckPoints : MonoBehaviour
             if (!triggeredCheckpoints.Contains(id))
             {
                 triggeredCheckpoints.Add(id);
+                claimedThisRun.Add(id);
                 activeRespawnCheckpointID = id;
                 RespawnManager.SetSpawnPoint(cp.position, cp.rotation);
                 SaveProgress();
