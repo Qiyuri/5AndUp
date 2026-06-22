@@ -1,6 +1,7 @@
 // RunTimer.cs
-// Timer starts when checkpoint 0 is fully claimed, splits on each subsequent
-// claim, stops at the end zone. PB saved via PlayerPrefs.
+// Timer starts (or restarts) whenever the start line is crossed.
+// Splits on each subsequent checkpoint claim, stops at the end zone.
+// PB saved via PlayerPrefs.
 
 using UnityEngine;
 using TMPro;
@@ -25,6 +26,7 @@ public class RunTimer : MonoBehaviour
 
     // ── State ──────────────────────────────────────────────────────────────────
     private bool  _running;
+    private bool  _finished;          // true between finish and next start-line cross
     private float _startTime;
     private float _lastSplitTime;
     private int   _lastHitID;
@@ -43,8 +45,8 @@ public class RunTimer : MonoBehaviour
         if (_instance != null && _instance != this) { Destroy(gameObject); return; }
         _instance = this;
         LoadPB();
-        if (infoText)      infoText.text      = "";
-        if (totalTimeText) totalTimeText.text  = "00:00.000";
+        if (infoText)      infoText.text     = "";
+        if (totalTimeText) totalTimeText.text = "00:00.000";
     }
 
     void OnDestroy() { if (_instance == this) _instance = null; }
@@ -61,19 +63,25 @@ public class RunTimer : MonoBehaviour
     // ── Public API ─────────────────────────────────────────────────────────────
 
     /// <summary>
+    /// Called directly by StartLineTrigger every time the player crosses the
+    /// start line — bypasses the one-shot checkpoint activation system so the
+    /// run always resets, even after a finished run.
+    /// </summary>
+    public void OnStartLineCrossed()
+    {
+        StartRun();
+    }
+
+    /// <summary>
     /// Called from CheckpointSpawns.ActivationSequence() AFTER a checkpoint
-    /// is fully claimed — NOT on trigger enter.
-    /// Checkpoint 0 starts the timer. All others record a split.
-    /// Respawning through an already-claimed checkpoint has no effect because
-    /// ActivationSequence only fires once per checkpoint.
+    /// is fully claimed. Checkpoint 0 is handled by OnStartLineCrossed instead.
+    /// All others record a split (ignored if timer isn't running or ID is
+    /// out of order).
     /// </summary>
     public void OnCheckpointReached(int id)
     {
-        if (id == startCheckpointID)
-        {
-            StartRun();
-            return;
-        }
+        // CP0 is now handled by the start-line trigger; ignore it here.
+        if (id == startCheckpointID) return;
 
         if (!_running || id <= _lastHitID) return;
 
@@ -96,7 +104,9 @@ public class RunTimer : MonoBehaviour
     public void OnRunFinished()
     {
         if (!_running) return;
-        _running = false;
+
+        _running  = false;
+        _finished = true;
 
         float total   = Time.time - _startTime;
         bool  isNewPB = _pbTotal <= 0f || total < _pbTotal;
@@ -109,11 +119,14 @@ public class RunTimer : MonoBehaviour
             SavePB();
         }
 
-        string pbLine = isNewPB || _pbTotal <= 0f
+        string pbLine = isNewPB
             ? "new PB!"
             : $"{total - _pbTotal:+0.000;-0.000}s vs PB ({Fmt(_pbTotal)})";
 
+        // Freeze the displayed time at the finish value.
         if (totalTimeText) totalTimeText.text = Fmt(total);
+
+        // Show the result permanently until the next run starts.
         ShowInfo(pbLine, permanent: true);
 
         Debug.Log($"[RunTimer] Finish — {Fmt(total)}  {pbLine}");
@@ -124,12 +137,17 @@ public class RunTimer : MonoBehaviour
     private void StartRun()
     {
         _running       = true;
+        _finished      = false;
         _startTime     = Time.time;
         _lastSplitTime = 0f;
         _lastHitID     = startCheckpointID;
         for (int i = 0; i < MAX; i++) _sectorTimes[i] = 0f;
+
+        // Clear any finish message / sector info immediately.
         ShowInfo("", permanent: true);
-        Debug.Log("[RunTimer] Timer started.");
+        if (totalTimeText) totalTimeText.text = "00:00.000";
+
+        Debug.Log("[RunTimer] Timer started / reset.");
     }
 
     private void ShowInfo(string msg, bool permanent = false)
