@@ -60,6 +60,7 @@ public class TestMovement : MonoBehaviour
     // ── private ───────────────────────────────────────────────────────────────
     private float     leftMotorSpeed;
     private float     rightMotorSpeed;
+    private float     rawSteerInput;    // directe stuurinput (singleplayer), geen motor-vertraging
     private Rigidbody rb;
     private bool      wasGrounded       = true;
     private int       landingGripFrames = 0;
@@ -131,6 +132,10 @@ public class TestMovement : MonoBehaviour
         float steer    = Input.GetKey(KeyCode.D) ? 1f
                        : Input.GetKey(KeyCode.A) ? -1f : 0f;
 
+        // Sla ruwe stuurinput op — HandleDifferentialDrive gebruikt dit
+        // direct voor yaw/lean, zodat sturen niet wacht op motor-opbouw.
+        rawSteerInput = braking ? 0f : steer;
+
         float leftTarget  = braking ? 0f : Mathf.Clamp((throttle + steer) * maxSpeed, -maxSpeed, maxSpeed);
         float rightTarget = braking ? 0f : Mathf.Clamp((throttle - steer) * maxSpeed, -maxSpeed, maxSpeed);
 
@@ -178,19 +183,33 @@ public class TestMovement : MonoBehaviour
 
         rb.AddForce(transform.forward * avg * driveForce * 0.15f, ForceMode.Acceleration);
 
-        float   targetYaw = diff * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
+        // Singleplayer: gebruik ruwe stuurinput voor directe yaw — geen vertraging door motor-opbouw.
+        // Multiplayer: gebruik motor-diff zoals voorheen (elke speler bestuurt één motor).
+        float steerInput;
+        float steerSignal; // geschaald naar dezelfde eenheid als diff (motorSpeed-verschil)
+        if (GameModeManager.IsSingleplayer())
+        {
+            steerInput  = rawSteerInput;
+            steerSignal = rawSteerInput * maxSpeed * 2f;
+        }
+        else
+        {
+            steerSignal = diff;
+            steerInput  = Mathf.Clamp(diff / (maxSpeed * 2f), -1f, 1f);
+        }
+
+        float   targetYaw = steerSignal * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
         Vector3 localAV   = transform.InverseTransformDirection(rb.angularVelocity);
 
         // Als er geen stuurverschil is, yaw hard naar nul remmen zodat de fiets
         // niet blijft doordraaien nadat je één motor loslaat.
-        float yawDampRate = Mathf.Abs(diff) < 0.01f
+        float yawDampRate = Mathf.Abs(steerSignal) < 0.01f
             ? steerSnapSpeed * 6f   // hard stoppen bij geen stuurinput
             : steerSnapSpeed;       // normaal sturen
 
         localAV.y = Mathf.MoveTowards(localAV.y, targetYaw, yawDampRate * Time.fixedDeltaTime);
         rb.angularVelocity = transform.TransformDirection(localAV);
 
-        float steerInput  = Mathf.Clamp(diff / (maxSpeed * 2f), -1f, 1f);
         float currentLean = Vector3.SignedAngle(Vector3.up, transform.up, transform.forward);
         float targetLean  = -steerInput * maxLeanAngle;
         float leanError   = Mathf.Clamp(targetLean - currentLean, -60f, 60f);
