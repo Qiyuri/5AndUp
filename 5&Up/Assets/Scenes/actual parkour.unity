@@ -17397,12 +17397,32 @@ PrefabInstance:
       value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: distance
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
       propertyPath: maxPitch
       value: 85
       objectReference: {fileID: 0}
     - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: minPitch
+      value: -70
+      objectReference: {fileID: 0}
+    - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: maxDistance
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: heightOffset
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
       propertyPath: autoFollowDelay
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
+      propertyPath: mouseSensitivity
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7733016081173904779, guid: 386304344e8dbfe48bb46bc7eaa14ac7, type: 3}
       propertyPath: autoFollowThreshold
