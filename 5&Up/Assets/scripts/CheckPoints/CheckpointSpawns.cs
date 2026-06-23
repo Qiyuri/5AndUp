@@ -26,6 +26,11 @@ public class CheckpointSpawns : MonoBehaviour
 
     [SerializeField] private Color activatedColour = Color.green;
 
+    [SerializeField]
+    [Tooltip("De standaard kleur van de renderers (rood, of wat ze zijn vóór activering). " +
+             "Wordt gebruikt om ze terug te zetten bij een nieuwe run.")]
+    private Color defaultColour = Color.red;
+
     [Header("GameObject wijzigingen")]
     [SerializeField] private GameObject[] gameObjectsToEnable;
     [SerializeField] private GameObject[] gameObjectsToDisable;
@@ -54,6 +59,12 @@ public class CheckpointSpawns : MonoBehaviour
     {
         s_totalSpawns++;
 
+        // Reset visuals meteen in Awake, vóór enige coroutine of frame delay,
+        // zodat ze altijd in de juiste staat starten ongeacht wat er vorige run gebeurde.
+        ResetVisuals();
+        hasBeenActivated  = false;
+        activationPending = false;
+
         if (!s_sceneResetDone)
         {
             s_sceneResetDone = true;
@@ -64,6 +75,32 @@ public class CheckpointSpawns : MonoBehaviour
     void OnDestroy()
     {
         s_totalSpawns = Mathf.Max(0, s_totalSpawns - 1);
+    }
+
+    void OnEnable()
+    {
+        CheckPoints.OnRunReset += OnRunReset;
+    }
+
+    void OnDisable()
+    {
+        CheckPoints.OnRunReset -= OnRunReset;
+    }
+
+    private void OnRunReset()
+    {
+        // Nieuwe run gestart — zet visuals terug naar unclaimed staat
+        // zodat het checkpoint opnieuw geclaimd kan worden, ook zonder scene reload.
+        if (activationCoroutine != null)
+        {
+            StopCoroutine(activationCoroutine);
+            activationCoroutine = null;
+        }
+        audioSource?.Stop();
+        hasBeenActivated  = false;
+        activationPending = false;
+        ResetVisuals();
+        Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: gereset voor nieuwe run.");
     }
 
     void Start()
@@ -102,20 +139,12 @@ public class CheckpointSpawns : MonoBehaviour
 
         if (cp.IsCheckpointClaimedThisRun(checkpointID))
         {
-            // Already claimed this run (e.g. scene reload mid-run) — restore visuals.
+            // Al geclaimd in deze run (bijv. scene herlaad mid-run) — herstel visuals.
             ApplyActivatedVisuals(playSounds: false, spawnParticles: false);
             hasBeenActivated = true;
             Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: visueel hersteld (al geclaimd deze run).");
         }
-        else
-        {
-            // New run — make sure visuals start in their default/unclaimed state
-            // even if they were activated in a previous run.
-            ResetVisuals();
-            hasBeenActivated  = false;
-            activationPending = false;
-            Debug.Log($"[CheckpointSpawns] Checkpoint {checkpointID}: visueel gereset voor nieuwe run.");
-        }
+        // Geen else nodig: als het niet geclaimd is, staan de visuals al in de default staat.
     }
 
     /// <summary>
@@ -124,16 +153,16 @@ public class CheckpointSpawns : MonoBehaviour
     /// </summary>
     private void ResetVisuals()
     {
-        // Revert renderer colours to white (default). If you have a specific
-        // "deactivated colour" field you'd like to use instead, swap it here.
+        // Gebruik de ingestelde defaultColour (rood) — nooit gecached van het materiaal,
+        // zodat dit altijd correct is ongeacht wat er vorige run in memory zat.
         foreach (Renderer r in renderersToTurnGreen)
-            if (r != null) r.material.color = Color.white;
+            if (r != null) r.material.color = defaultColour;
 
-        // Invert the enable/disable arrays: objects that get enabled on activation
-        // should be hidden again, and vice-versa.
+        // Objecten die enabled worden bij activering → weer uitzetten.
         foreach (GameObject go in gameObjectsToEnable)
             if (go != null) go.SetActive(false);
 
+        // Objecten die disabled worden bij activering → weer aanzetten.
         foreach (GameObject go in gameObjectsToDisable)
             if (go != null) go.SetActive(true);
     }

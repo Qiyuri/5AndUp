@@ -22,6 +22,12 @@ public class CheckPoints : MonoBehaviour
     private HashSet<int> claimedThisRun       = new HashSet<int>(); // Runtime only — resets each run
     private SaveSystem saveSystem;
 
+    /// <summary>
+    /// Fired by ResetRunState() so every CheckpointSpawns in the scene can
+    /// reset its own visuals without needing a scene reload.
+    /// </summary>
+    public static event System.Action OnRunReset;
+
     [SerializeField] private float checkpointWaitTime = 2f;
     private Coroutine activeCheckpointCoroutine;
 
@@ -100,6 +106,7 @@ public class CheckPoints : MonoBehaviour
     public void ResetRunState()
     {
         claimedThisRun.Clear();
+        OnRunReset?.Invoke();
         Debug.Log("[CheckPoints] Run state gereset — checkpoints kunnen opnieuw geclaimd worden.");
     }
 
