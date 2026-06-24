@@ -60,11 +60,21 @@ public class TestMovement : MonoBehaviour
     // ── private ───────────────────────────────────────────────────────────────
     private float     leftMotorSpeed;
     private float     rightMotorSpeed;
-    private float     rawSteerInput;    // directe stuurinput (singleplayer), geen motor-vertraging
     private Rigidbody rb;
     private bool      wasGrounded       = true;
     private int       landingGripFrames = 0;
-    private int       airborneFrames    = 0; // teller: hoe lang in de lucht
+    private int       airborneFrames    = 0;
+
+    [Header("Singleplayer Steering")]
+    [Tooltip("How fast steering builds up at low/zero speed. Lower = smoother, higher = snappier.")]
+    public float steerSmoothSpeed = 4f;
+    [Tooltip("At max speed, steerSmoothSpeed is multiplied by this. 0.2 = 20% → very slow steer buildup at high speed.")]
+    public float highSpeedSteerMultiplier = 0.25f;
+
+    // Raw singleplayer steer input (-1/0/1 from key press)
+    private float _spRawSteer    = 0f;
+    // Smoothed version used for the actual yaw drive
+    private float _smoothedSteer = 0f;
 
     // ── lifecycle ─────────────────────────────────────────────────────────────
     private void Start()
@@ -85,7 +95,7 @@ public class TestMovement : MonoBehaviour
 
         Vector3 groundNormal = GetGroundNormal(grounded);
 
-        // ── Landing: motor speed synchroniseren + tellers bijwerken ──────────
+        // ── Landing ───────────────────────────────────────────────────────────
         if (grounded && !wasGrounded)
         {
             landingGripFrames = 8;
@@ -100,7 +110,6 @@ public class TestMovement : MonoBehaviour
                                            Mathf.Abs(actualForwardSpeed));
         }
 
-        // Bijhouden hoeveel frames de fiets in de lucht is
         if (!grounded) airborneFrames++;
         else           airborneFrames = 0;
 
@@ -129,15 +138,15 @@ public class TestMovement : MonoBehaviour
         bool  braking  = Input.GetKey(KeyCode.Space);
         float throttle = Input.GetKey(KeyCode.W) ? 1f
                        : Input.GetKey(KeyCode.S) ? -1f : 0f;
-        float steer    = Input.GetKey(KeyCode.D) ? 1f
-                       : Input.GetKey(KeyCode.A) ? -1f : 0f;
 
-        // Sla ruwe stuurinput op — HandleDifferentialDrive gebruikt dit
-        // direct voor yaw/lean, zodat sturen niet wacht op motor-opbouw.
-        rawSteerInput = braking ? 0f : steer;
+        // Store raw steer so HandleDifferentialDrive can use it directly for yaw.
+        _spRawSteer = Input.GetKey(KeyCode.D) ?  1f
+                    : Input.GetKey(KeyCode.A) ? -1f : 0f;
 
-        float leftTarget  = braking ? 0f : Mathf.Clamp((throttle + steer) * maxSpeed, -maxSpeed, maxSpeed);
-        float rightTarget = braking ? 0f : Mathf.Clamp((throttle - steer) * maxSpeed, -maxSpeed, maxSpeed);
+        // Motor targets — steer still mixed in so wheels spin correctly
+        // and forward movement steers naturally.
+        float leftTarget  = braking ? 0f : Mathf.Clamp((throttle + _spRawSteer) * maxSpeed, -maxSpeed, maxSpeed);
+        float rightTarget = braking ? 0f : Mathf.Clamp((throttle - _spRawSteer) * maxSpeed, -maxSpeed, maxSpeed);
 
         float rate = braking ? brakeForce : acceleration;
         float dt   = Time.fixedDeltaTime;
@@ -169,6 +178,8 @@ public class TestMovement : MonoBehaviour
             rightMotorSpeed = Mathf.MoveTowards(rightMotorSpeed, t,
                               (braking ? brakeForce : acceleration) * dt);
         }
+
+        _spRawSteer = 0f; // unused in multiplayer
     }
 
     // ── shared differential-drive movement ────────────────────────────────────
@@ -178,38 +189,47 @@ public class TestMovement : MonoBehaviour
 
         bool throttleHeld = leftMotorSpeed != 0f || rightMotorSpeed != 0f;
 
-        float avg  = (leftMotorSpeed + rightMotorSpeed) * 0.5f;
-        float diff = leftMotorSpeed - rightMotorSpeed;
-
+        float avg = (leftMotorSpeed + rightMotorSpeed) * 0.5f;
         rb.AddForce(transform.forward * avg * driveForce * 0.15f, ForceMode.Acceleration);
 
-        // Singleplayer: gebruik ruwe stuurinput voor directe yaw — geen vertraging door motor-opbouw.
-        // Multiplayer: gebruik motor-diff zoals voorheen (elke speler bestuurt één motor).
-        float steerInput;
-        float steerSignal; // geschaald naar dezelfde eenheid als diff (motorSpeed-verschil)
+        // ── Yaw ───────────────────────────────────────────────────────────────
+        // Singleplayer: smooth the raw steer toward the input so turning
+        // builds up gradually. But snap damping uses the RAW input — so
+        // the moment the key is released, yaw stops hard (no drift).
+        // Multiplayer: unchanged, uses motor differential.
         if (GameModeManager.IsSingleplayer())
         {
-            steerInput  = rawSteerInput;
-            steerSignal = rawSteerInput * maxSpeed * 2f;
-        }
-        else
-        {
-            steerSignal = diff;
-            steerInput  = Mathf.Clamp(diff / (maxSpeed * 2f), -1f, 1f);
+            // At low speed: full steerSmoothSpeed. At maxSpeed: multiplied by
+            // highSpeedSteerMultiplier — so steering builds up much slower at pace.
+            float forwardSpeed   = Mathf.Abs(Vector3.Dot(rb.linearVelocity, transform.forward));
+            float speedRatio     = Mathf.Clamp01(forwardSpeed / maxSpeed);
+            float effectiveSmooth = Mathf.Lerp(steerSmoothSpeed,
+                                               steerSmoothSpeed * highSpeedSteerMultiplier,
+                                               speedRatio);
+            _smoothedSteer = Mathf.MoveTowards(_smoothedSteer, _spRawSteer,
+                                               effectiveSmooth * Time.fixedDeltaTime);
         }
 
-        float   targetYaw = steerSignal * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
+        float diff = GameModeManager.IsSingleplayer()
+            ? _smoothedSteer * maxSpeed * 2f
+            : leftMotorSpeed - rightMotorSpeed;
+
+        float   targetYaw = diff * maxYawSpeed * Mathf.Deg2Rad * 0.1f;
         Vector3 localAV   = transform.InverseTransformDirection(rb.angularVelocity);
 
-        // Als er geen stuurverschil is, yaw hard naar nul remmen zodat de fiets
-        // niet blijft doordraaien nadat je één motor loslaat.
-        float yawDampRate = Mathf.Abs(steerSignal) < 0.01f
-            ? steerSnapSpeed * 6f   // hard stoppen bij geen stuurinput
-            : steerSnapSpeed;       // normaal sturen
+        // Key released in singleplayer → snap yaw to zero immediately.
+        // Key held → let MoveTowards smoothly follow targetYaw.
+        bool steerReleased = GameModeManager.IsSingleplayer()
+            ? Mathf.Abs(_spRawSteer) < 0.01f
+            : Mathf.Abs(diff) < 0.01f;
+
+        float yawDampRate = steerReleased ? steerSnapSpeed * 6f : steerSnapSpeed;
 
         localAV.y = Mathf.MoveTowards(localAV.y, targetYaw, yawDampRate * Time.fixedDeltaTime);
         rb.angularVelocity = transform.TransformDirection(localAV);
 
+        // ── Lean ──────────────────────────────────────────────────────────────
+        float steerInput  = Mathf.Clamp(diff / (maxSpeed * 2f), -1f, 1f);
         float currentLean = Vector3.SignedAngle(Vector3.up, transform.up, transform.forward);
         float targetLean  = -steerInput * maxLeanAngle;
         float leanError   = Mathf.Clamp(targetLean - currentLean, -60f, 60f);
@@ -298,10 +318,7 @@ public class TestMovement : MonoBehaviour
         rb.linearDamping = 0f;
         rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
 
-        // Pas zelf-rechtzetten toe pas na een aantal frames in de lucht.
-        // Dit voorkomt dat de fiets bij een botsing met een object direct
-        // snel naar de opgelegde rotatie springt.
-        bool settledEnough  = rb.angularVelocity.magnitude < 6f;
+        bool settledEnough   = rb.angularVelocity.magnitude < 6f;
         bool longEnoughInAir = airborneFrames >= airborneFramesBeforeSelfRight;
 
         if (settledEnough && longEnoughInAir)
@@ -369,6 +386,8 @@ public class TestMovement : MonoBehaviour
     {
         leftMotorSpeed  = 0f;
         rightMotorSpeed = 0f;
+        _spRawSteer     = 0f;
+        _smoothedSteer  = 0f;
         if (rb == null) rb = GetComponent<Rigidbody>();
         rb.linearVelocity  = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
